@@ -332,6 +332,7 @@
       <section id="raspados" class="menu-section rounded-3xl overflow-hidden shadow-md bg-white"> 
         <div class="p-5 flex justify-between items-center bg-[#ffc952] text-slate-900"> 
           <div> 
+            <!-- Texto corregido para mayor contraste -->
             <p class="text-xs font-bold uppercase tracking-widest text-slate-800">Bien fresquitos</p> 
             <h2 class="heading-font text-2xl font-extrabold m-0">Raspados</h2> 
           </div> 
@@ -514,6 +515,7 @@
     // Modal Promoción Inicial
     if (modalPromo) {
       setTimeout(() => {
+        isModalOpen = true;
         modalPromo.showModal();
       }, 500);
 
@@ -529,6 +531,11 @@
         ) {
           modalPromo.close();
         }
+      });
+
+      // Manejo correcto de evento close (incluyendo tecla ESC)
+      modalPromo.addEventListener('close', () => {
+        isModalOpen = false;
       });
     }
 
@@ -576,7 +583,6 @@
 
     const cerrarCarrusel = () => {
       modalCarrusel?.close();
-      isModalOpen = false;
     };
 
     btnCerrarCarrusel?.addEventListener('click', cerrarCarrusel);
@@ -591,6 +597,11 @@
       ) {
         cerrarCarrusel();
       }
+    });
+
+    // Resetear isModalOpen incluso si el usuario cierra el modal presionando ESC
+    modalCarrusel?.addEventListener('close', () => {
+      isModalOpen = false;
     });
   });
   </script>
