@@ -104,7 +104,7 @@
       display: block;
     }
 
-    /* Título e indicador sobre la foto (Letra blanca sin fondo) */
+    /* Título sobre la foto (Letra blanca sin fondo) */
     .swiper-txt {
       position: absolute;
       bottom: 0;
@@ -125,11 +125,10 @@
       font-family: "Fraunces", serif;
     }
 
-    .swiper-txt p {
-      color: rgba(255, 255, 255, 0.85);
-      font-size: 0.85rem;
-      font-weight: 700;
-      margin-top: 4px;
+    /* Fijar posición al abrir modales nativos */
+    dialog::backdrop {
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
     }
   </style> 
 </head> 
@@ -195,7 +194,7 @@
         </div> 
       </section> 
 
-      <dialog id="modalPromociones" class="menu-section rounded-3xl overflow-hidden shadow-2xl bg-white p-0 border-0 max-w-md w-11/12 backdrop:bg-black/50 backdrop:backdrop-blur-sm">
+      <dialog id="modalPromociones" class="rounded-3xl overflow-hidden shadow-2xl bg-white p-0 border-0 max-w-md w-11/12">
         <div class="p-5 flex justify-between items-center text-center bg-[#fc424e] text-white relative"> 
           <div> 
             <p class="text-xs font-bold uppercase tracking-widest text-white/90">¡El combo perfecto para tu antojo!</p> 
@@ -228,7 +227,7 @@
       </dialog>
 
       <!-- Modal Carrusel estilo Swiper -->
-      <dialog id="modalCarrusel" class="rounded-3xl overflow-hidden shadow-2xl bg-transparent p-0 border-0 max-w-sm w-11/12 backdrop:bg-black/70 backdrop:backdrop-blur-sm relative">
+      <dialog id="modalCarrusel" class="rounded-3xl overflow-hidden shadow-2xl bg-transparent p-0 border-0 max-w-sm w-11/12 relative">
         <button id="btnCerrarCarrusel" class="absolute top-3 right-3 z-30 w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 text-white grid place-items-center transition-colors cursor-pointer" aria-label="Cerrar">
           ✕
         </button>
@@ -444,88 +443,17 @@
 
   </div> 
 
-  <!-- Swiper JS CDN (debe cargarse antes de tu script principal) -->
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
-  <!-- JavaScript Unificado de la App --> 
-  <script> 
-  document.addEventListener("DOMContentLoaded", () => { 
-    // 1. Inicializar iconos
-    lucide.createIcons(); 
-
-    // 2. Navegación por Categorías
-    const navButtons = [...document.querySelectorAll(".nav-pill")]; 
-    const sections = navButtons.map(btn => document.getElementById(btn.dataset.target)); 
-    const modalPromo = document.getElementById('modalPromociones');
-    const btnCerrarPromo = document.getElementById('btnCerrarPromo');
-
-    navButtons.forEach(button => { 
-      button.addEventListener("click", () => { 
-        const section = document.getElementById(button.dataset.target); 
-        if (section) { 
-          section.scrollIntoView({ behavior: "smooth", block: "start" }); 
-        } 
-      }); 
-    }); 
-
-    const activateButton = (targetId) => {
-      navButtons.forEach(btn => { 
-        const isTarget = btn.dataset.target === targetId;
-        btn.classList.toggle("is-active", isTarget); 
-
-        if (isTarget) {
-          btn.scrollIntoView({
-            behavior: "smooth",
-            inline: "center",
-            block: "nearest"
-          });
-        }
-      });
-    };
-
-    const observer = new IntersectionObserver((entries) => { 
-      const isAtBottom = (window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight - 10;
-      if (isAtBottom) return;
-
-      entries.forEach(entry => { 
-        if (entry.isIntersecting) { 
-          activateButton(entry.target.id);
-        } 
-      }); 
-    }, { rootMargin: "-20% 0px -40% 0px", threshold: 0.1 }); 
-
-    sections.forEach(section => { 
-      if (section) observer.observe(section); 
-    }); 
-
-    // Modal Promoción Inicial
-    if (modalPromo) {
-      setTimeout(() => {
-        modalPromo.showModal();
-      }, 500);
-
-      btnCerrarPromo?.addEventListener('click', () => modalPromo.close());
-
-      modalPromo.addEventListener('click', (e) => {
-        const dialogBounds = modalPromo.getBoundingClientRect();
-        if (
-          e.clientX < dialogBounds.left ||
-          e.clientX > dialogBounds.right ||
-          e.clientY < dialogBounds.top ||
-          e.clientY > dialogBounds.bottom
-        ) {
-          modalPromo.close();
-        }
-      });
-    }
   <!-- Swiper JS CDN -->
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-  <!-- JavaScript Unificado de la App --> 
+  <!-- JavaScript Unificado --> 
   <script> 
   document.addEventListener("DOMContentLoaded", () => { 
     // 1. Inicializar iconos
     lucide.createIcons(); 
+
+    // Variable para controlar la pausa del observador de scroll
+    let isModalOpen = false;
 
     // 2. Navegación por Categorías
     const navButtons = [...document.querySelectorAll(".nav-pill")]; 
@@ -558,83 +486,8 @@
     };
 
     const observer = new IntersectionObserver((entries) => { 
-      const isAtBottom = (window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight - 10;
-      if (isAtBottom) return;
-
-      entries.forEach(entry => { 
-        if (entry.isIntersecting) { 
-          activateButton(entry.target.id);
-        } 
-      }); 
-    }, { rootMargin: "-20% 0px -40% 0px", threshold: 0.1 }); 
-
-    sections.forEach(section => { 
-      if (section) observer.observe(section); 
-    }); 
-
-    // Modal Promoción Inicial
-    if (modalPromo) {
-      setTimeout(() => {
-        modalPromo.showModal();
-      }, 500);
-
-      btnCerrarPromo?.addEventListener('click', () => modalPromo.close());
-
-      modalPromo.addEventListener('click', (e) => {
-        const dialogBounds = modalPromo.getBoundingClientRect();
-        if (
-          e.clientX < dialogBounds.left ||
-          e.clientX > dialogBounds.right ||
-          e.clientY < dialogBounds.top ||
-          e.clientY > dialogBounds.bottom
-        ) {
-          modalPromo.close();
-        }
-      });
-    }
-
-    // 3. Inicialización del Carrusel Swiper de Bolis
-    const modalCarrusel = document.getElementById('modalCarrusel');
-  <!-- Swiper JS CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
-  <!-- JavaScript Unificado de la App --> 
-  <script> 
-  document.addEventListener("DOMContentLoaded", () => { 
-    // 1. Inicializar iconos
-    lucide.createIcons(); 
-
-    // 2. Navegación por Categorías
-    const navButtons = [...document.querySelectorAll(".nav-pill")]; 
-    const sections = navButtons.map(btn => document.getElementById(btn.dataset.target)); 
-    const modalPromo = document.getElementById('modalPromociones');
-    const btnCerrarPromo = document.getElementById('btnCerrarPromo');
-
-    navButtons.forEach(button => { 
-      button.addEventListener("click", () => { 
-        const section = document.getElementById(button.dataset.target); 
-        if (section) { 
-          section.scrollIntoView({ behavior: "smooth", block: "start" }); 
-        } 
-      }); 
-    }); 
-
-    const activateButton = (targetId) => {
-      navButtons.forEach(btn => { 
-        const isTarget = btn.dataset.target === targetId;
-        btn.classList.toggle("is-active", isTarget); 
-
-        if (isTarget) {
-          btn.scrollIntoView({
-            behavior: "smooth",
-            inline: "center",
-            block: "nearest"
-          });
-        }
-      });
-    };
-
-    const observer = new IntersectionObserver((entries) => { 
+      if (isModalOpen) return; // Desactiva la auto-navegación si el carrusel está abierto
+      
       const isAtBottom = (window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight - 10;
       if (isAtBottom) return;
 
@@ -699,24 +552,39 @@
       slidesPerView: "auto"
     });
 
-    // Eventos de clic manteniendo la posición del scroll
+    // Eventos de clic para abrir sabor manteniendo el scroll fijo
     flavorButtons.forEach((btn, index) => {
       btn.addEventListener('click', (e) => {
-        // Guarda la posición actual de la pantalla
-        const currentScroll = window.scrollY;
+        e.preventDefault();
+        isModalOpen = true; // Congela observadores
 
+        // 1. Guardar la posición exacta actual
+        const currentY = window.scrollY || window.pageYOffset;
+
+        // 2. Mover slide y abrir modal
         swiper.slideToLoop(index, 0);
         modalCarrusel?.showModal();
         swiper.update();
 
-        // Evita que el navegador haga scroll al modal
-        window.scrollTo({ top: currentScroll, behavior: 'instant' });
-        btnCerrarCarrusel?.focus({ preventScroll: true });
+        // 3. Forzar inmediatamente al navegador a mantenerse en esa altura exacta
+        window.scrollTo(0, currentY);
+
+        // Focus sin desplazamiento
+        if (btnCerrarCarrusel) {
+          btnCerrarCarrusel.focus({ preventScroll: true });
+        }
       });
     });
 
-    // Cierre de Modal Carrusel
-    btnCerrarCarrusel?.addEventListener('click', () => modalCarrusel?.close());
+    // Función de cierre del modal
+    const cerrarCarrusel = () => {
+      const currentY = window.scrollY || window.pageYOffset;
+      modalCarrusel?.close();
+      window.scrollTo(0, currentY);
+      setTimeout(() => { isModalOpen = false; }, 100);
+    };
+
+    btnCerrarCarrusel?.addEventListener('click', cerrarCarrusel);
 
     modalCarrusel?.addEventListener('click', (e) => {
       const dialogBounds = modalCarrusel.getBoundingClientRect();
@@ -726,7 +594,7 @@
         e.clientY < dialogBounds.top ||
         e.clientY > dialogBounds.bottom
       ) {
-        modalCarrusel.close();
+        cerrarCarrusel();
       }
     });
   });
