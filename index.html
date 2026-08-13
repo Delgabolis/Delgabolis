@@ -1,11 +1,12 @@
 <!DOCTYPE html> 
 <html lang="es-MX"> 
 <head> 
-  <!-- Swiper CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <meta charset="UTF-8"> 
   <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
   <title>Menú Delgabolis Delicius</title> 
+
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
    
   <!-- Tailwind CSS CDN --> 
   <script src="https://cdn.tailwindcss.com/3.4.17"></script> 
@@ -84,66 +85,63 @@
       border: 3px dashed currentColor; 
       font-family: "Fraunces", serif; 
     } 
+
     /* Estilos para las tarjetas del carrusel estilo Swiper */
-.swiper-slide {
-  position: relative;
-  height: 380px;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-  background-color: #000;
-}
+    .swiper-slide {
+      position: relative;
+      height: 380px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      background-color: #000;
+    }
 
-.swiper-slide img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 20px;
-  display: block;
-}
+    .swiper-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 20px;
+      display: block;
+    }
 
-/* Título e indicador sobre la foto (Letra blanca sin fondo) */
-.swiper-txt {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 20px;
-  z-index: 10;
-  background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%); /* Sombra suave para legibilidad sin cuadro */
-  text-align: center;
-}
+    /* Título e indicador sobre la foto (Letra blanca sin fondo) */
+    .swiper-txt {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 20px;
+      z-index: 10;
+      background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+      text-align: center;
+    }
 
-.swiper-txt h3 {
-  color: #ffffff;
-  font-size: 1.5rem;
-  font-weight: 800;
-  margin: 0;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.8); /* Asegura excelente visibilidad */
-  font-family: "Fraunces", serif;
-}
+    .swiper-txt h3 {
+      color: #ffffff;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin: 0;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+      font-family: "Fraunces", serif;
+    }
 
-.swiper-txt p {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.8rem;
-  font-weight: 700;
-  margin-top: 4px;
-}
-
+    .swiper-txt p {
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-top: 4px;
+    }
   </style> 
 </head> 
 <body class="antialiased"> 
 
   <div class="max-w-md mx-auto min-h-screen pb-12"> 
   
-    <!-- Contenedor flex para centrar la imagen horizontalmente -->
     <div class="flex justify-center w-full my-4">
       <img src="logo_bolis.png" alt="Logo Delgabolis Delicius" class="w-40 h-40 object-cover">
     </div>
      
-    <!-- Encabezado / Banner --> 
     <header class="relative m-4 overflow-hidden rounded-3xl text-white shadow-xl min-h-[240px] flex justify-center items-center text-center"> 
-      <!-- Fondo decorativo / Degradado personalizado --> 
       <div class="absolute inset-0 bg-gradient-to-t from-[#fec2de] to-[#f477b1] z-10"></div> 
        
       <div class="relative z-20 p-6"> 
@@ -159,7 +157,6 @@
       </div>
     </header>
 
-    <!-- Navegación por Categorías (Sticky) --> 
     <nav class="category-nav" aria-label="Categorías del menú">
       <button class="nav-pill is-active" data-target="promociones">Promociones</button>
       <button class="nav-pill" data-target="bolis">Bolis</button> 
@@ -224,68 +221,65 @@
               <p class="text-sm text-slate-500">Crepa dulce con M&M's o chispas de chocolate</p> 
             </div> 
             <div class="price-stamp bg-pink-50 text-[#ee5d83] font-extrabold text-xl shrink-0"> 
-  $130 
-</div>
+              $130 
+            </div>
           </div> 
         </div> 
       </dialog>
-      <!-- Modal Carrusel estilo Swiper (Sin cuadro superior, texto blanco transparente sobre la foto) -->
-<dialog id="modalCarrusel" class="rounded-3xl overflow-hidden shadow-2xl bg-transparent p-0 border-0 max-w-sm w-11/12 backdrop:bg-black/70 backdrop:backdrop-blur-sm relative">
-  
-  <!-- Botón de Cierre -->
-  <button id="btnCerrarCarrusel" class="absolute top-3 right-3 z-30 w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 text-white grid place-items-center transition-colors cursor-pointer" aria-label="Cerrar">
-    ✕
-  </button>
 
-  <!-- Contenedor Principal de Swiper -->
-  <div class="swiper mySwiper w-full py-4">
-    <div class="swiper-wrapper" id="swiperWrapper">
-      <!-- Los slides de cada sabor se generan dinámicamente con JS o puedes colocarlos manualmente -->
-    </div>
-  </div>
-</dialog>
+      <!-- Modal Carrusel estilo Swiper -->
+      <dialog id="modalCarrusel" class="rounded-3xl overflow-hidden shadow-2xl bg-transparent p-0 border-0 max-w-sm w-11/12 backdrop:bg-black/70 backdrop:backdrop-blur-sm relative">
+        <button id="btnCerrarCarrusel" class="absolute top-3 right-3 z-30 w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 text-white grid place-items-center transition-colors cursor-pointer" aria-label="Cerrar">
+          ✕
+        </button>
+
+        <div class="swiper mySwiper w-full py-4">
+          <div class="swiper-wrapper" id="swiperWrapper">
+            <!-- Los slides se cargan dinámicamente -->
+          </div>
+        </div>
+      </dialog>
+
       <!-- Sección 1: Bolis --> 
-<section id="bolis" class="menu-section rounded-3xl overflow-hidden shadow-md bg-white"> 
-  <div class="p-5 flex justify-between items-center bg-[#ee5d83] text-white"> 
-    <div> 
-      <p class="text-xs font-bold uppercase tracking-widest text-white/90">Favoritos de la casa</p> 
-      <h2 class="heading-font text-2xl font-extrabold m-0">Bolis de Sabores</h2> 
-    </div> 
-    <div class="w-10 h-10 rounded-2xl bg-white/20 grid place-items-center"> 
-      <i data-lucide="popsicle" class="w-6 h-6"></i> 
-    </div> 
-  </div> 
-   
-  <div class="p-5"> 
-    <div class="flex justify-between items-start gap-4 mb-4"> 
-      <div> 
-        <h3 class="font-extrabold text-slate-800 text-lg">Cremosos y deliciosos</h3> 
-        <p class="text-sm text-slate-500">Haz clic en un sabor para ver su foto</p> 
-      </div> 
-      <div class="price-stamp bg-pink-50 text-[#ee5d83] font-extrabold text-xl shrink-0"> 
-        $20 
-      </div> 
-    </div> 
+      <section id="bolis" class="menu-section rounded-3xl overflow-hidden shadow-md bg-white"> 
+        <div class="p-5 flex justify-between items-center bg-[#ee5d83] text-white"> 
+          <div> 
+            <p class="text-xs font-bold uppercase tracking-widest text-white/90">Favoritos de la casa</p> 
+            <h2 class="heading-font text-2xl font-extrabold m-0">Bolis de Sabores</h2> 
+          </div> 
+          <div class="w-10 h-10 rounded-2xl bg-white/20 grid place-items-center"> 
+            <i data-lucide="popsicle" class="w-6 h-6"></i> 
+          </div> 
+        </div> 
+         
+        <div class="p-5"> 
+          <div class="flex justify-between items-start gap-4 mb-4"> 
+            <div> 
+              <h3 class="font-extrabold text-slate-800 text-lg">Cremosos y deliciosos</h3> 
+              <p class="text-sm text-slate-500">Haz clic en un sabor para ver su foto</p> 
+            </div> 
+            <div class="price-stamp bg-pink-50 text-[#ee5d83] font-extrabold text-xl shrink-0"> 
+              $20 
+            </div> 
+          </div> 
 
-    <!-- Botones de Sabores -->
-    <div class="flex flex-wrap gap-2 pt-2" id="flavor-buttons-container"> 
-      <button class="flavor-btn px-3 py-1.5 rounded-full bg-pink-50 text-[#ee5d83] hover:bg-[#ee5d83] hover:text-white transition-colors text-sm font-semibold border border-pink-200 cursor-pointer" data-flavor-name="Mango Chamoy" data-flavor-img="img/bolis-mango-chamoy.jpg">Mango chamoy</button>
-      <button class="flavor-btn px-3 py-1.5 rounded-full bg-pink-50 text-[#ee5d83] hover:bg-[#ee5d83] hover:text-white transition-colors text-sm font-semibold border border-pink-200 cursor-pointer" data-flavor-name="Cacahuate" data-flavor-img="img/bolis-cacahuate.jpg">Cacahuate</button>
-      <button class="flavor-btn px-3 py-1.5 rounded-full bg-pink-50 text-[#ee5d83] hover:bg-[#ee5d83] hover:text-white transition-colors text-sm font-semibold border border-pink-200 cursor-pointer" data-flavor-name="Chicle" data-flavor-img="img/bolis-chicle.jpg">Chicle</button>
-      <button class="flavor-btn px-3 py-1.5 rounded-full bg-pink-50 text-[#ee5d83] hover:bg-[#ee5d83] hover:text-white transition-colors text-sm font-semibold border border-pink-200 cursor-pointer" data-flavor-name="Café" data-flavor-img="img/bolis-cafe.jpg">Café</button>
-      <button class="flavor-btn px-3 py-1.5 rounded-full bg-pink-50 text-[#ee5d83] hover:bg-[#ee5d83] hover:text-white transition-colors text-sm font-semibold border border-pink-200 cursor-pointer" data-flavor-name="Gansito" data-flavor-img="img/bolis-gansito.jpg">Gansito</button>
-      <button class="flavor-btn px-3 py-1.5 rounded-full bg-pink-50 text-[#ee5d83] hover:bg-[#ee5d83] hover:text-white transition-colors text-sm font-semibold border border-pink-200 cursor-pointer" data-flavor-name="Oreo" data-flavor-img="img/bolis-oreo.jpg">Oreo</button>
-      <button class="flavor-btn px-3 py-1.5 rounded-full bg-pink-50 text-[#ee5d83] hover:bg-[#ee5d83] hover:text-white transition-colors text-sm font-semibold border border-pink-200 cursor-pointer" data-flavor-name="Avellana" data-flavor-img="img/bolis-avellana.jpg">Avellana</button>
-      <button class="flavor-btn px-3 py-1.5 rounded-full bg-pink-50 text-[#ee5d83] hover:bg-[#ee5d83] hover:text-white transition-colors text-sm font-semibold border border-pink-200 cursor-pointer" data-flavor-name="Mazapán" data-flavor-img="img/bolis-mazapan.jpg">Mazapán</button>
-      <button class="flavor-btn px-3 py-1.5 rounded-full bg-pink-50 text-[#ee5d83] hover:bg-[#ee5d83] hover:text-white transition-colors text-sm font-semibold border border-pink-200 cursor-pointer" data-flavor-name="Limón" data-flavor-img="img/bolis-limon.jpg">Limón</button>
-      <button class="flavor-btn px-3 py-1.5 rounded-full bg-pink-50 text-[#ee5d83] hover:bg-[#ee5d83] hover:text-white transition-colors text-sm font-semibold border border-pink-200 cursor-pointer" data-flavor-name="Yogurt Mango" data-flavor-img="img/bolis-yogurt-mango.jpg">Yogurt mango</button>
-      <button class="flavor-btn px-3 py-1.5 rounded-full bg-pink-50 text-[#ee5d83] hover:bg-[#ee5d83] hover:text-white transition-colors text-sm font-semibold border border-pink-200 cursor-pointer" data-flavor-name="Yogurt Fresa" data-flavor-img="img/bolis-yogurt-fresa.jpg">Yogurt fresa</button>
-      <button class="flavor-btn px-3 py-1.5 rounded-full bg-pink-50 text-[#ee5d83] hover:bg-[#ee5d83] hover:text-white transition-colors text-sm font-semibold border border-pink-200 cursor-pointer" data-flavor-name="Picafresa" data-flavor-img="img/bolis-picafresa.jpg">Picafresa</button>
-      <button class="flavor-btn px-3 py-1.5 rounded-full bg-pink-50 text-[#ee5d83] hover:bg-[#ee5d83] hover:text-white transition-colors text-sm font-semibold border border-pink-200 cursor-pointer" data-flavor-name="Panditas Locas" data-flavor-img="img/bolis-panditas.jpg">Panditas locas</button>
-    </div> 
-  </div> 
-</section>
-
+          <div class="flex flex-wrap gap-2 pt-2" id="flavor-buttons-container"> 
+            <button class="flavor-btn px-3 py-1.5 rounded-full bg-pink-50 text-[#ee5d83] hover:bg-[#ee5d83] hover:text-white transition-colors text-sm font-semibold border border-pink-200 cursor-pointer" data-flavor-name="Mango Chamoy" data-flavor-img="img/bolis-mango-chamoy.jpg">Mango chamoy</button>
+            <button class="flavor-btn px-3 py-1.5 rounded-full bg-pink-50 text-[#ee5d83] hover:bg-[#ee5d83] hover:text-white transition-colors text-sm font-semibold border border-pink-200 cursor-pointer" data-flavor-name="Cacahuate" data-flavor-img="img/bolis-cacahuate.jpg">Cacahuate</button>
+            <button class="flavor-btn px-3 py-1.5 rounded-full bg-pink-50 text-[#ee5d83] hover:bg-[#ee5d83] hover:text-white transition-colors text-sm font-semibold border border-pink-200 cursor-pointer" data-flavor-name="Chicle" data-flavor-img="img/bolis-chicle.jpg">Chicle</button>
+            <button class="flavor-btn px-3 py-1.5 rounded-full bg-pink-50 text-[#ee5d83] hover:bg-[#ee5d83] hover:text-white transition-colors text-sm font-semibold border border-pink-200 cursor-pointer" data-flavor-name="Café" data-flavor-img="img/bolis-cafe.jpg">Café</button>
+            <button class="flavor-btn px-3 py-1.5 rounded-full bg-pink-50 text-[#ee5d83] hover:bg-[#ee5d83] hover:text-white transition-colors text-sm font-semibold border border-pink-200 cursor-pointer" data-flavor-name="Gansito" data-flavor-img="img/bolis-gansito.jpg">Gansito</button>
+            <button class="flavor-btn px-3 py-1.5 rounded-full bg-pink-50 text-[#ee5d83] hover:bg-[#ee5d83] hover:text-white transition-colors text-sm font-semibold border border-pink-200 cursor-pointer" data-flavor-name="Oreo" data-flavor-img="img/bolis-oreo.jpg">Oreo</button>
+            <button class="flavor-btn px-3 py-1.5 rounded-full bg-pink-50 text-[#ee5d83] hover:bg-[#ee5d83] hover:text-white transition-colors text-sm font-semibold border border-pink-200 cursor-pointer" data-flavor-name="Avellana" data-flavor-img="img/bolis-avellana.jpg">Avellana</button>
+            <button class="flavor-btn px-3 py-1.5 rounded-full bg-pink-50 text-[#ee5d83] hover:bg-[#ee5d83] hover:text-white transition-colors text-sm font-semibold border border-pink-200 cursor-pointer" data-flavor-name="Mazapán" data-flavor-img="img/bolis-mazapan.jpg">Mazapán</button>
+            <button class="flavor-btn px-3 py-1.5 rounded-full bg-pink-50 text-[#ee5d83] hover:bg-[#ee5d83] hover:text-white transition-colors text-sm font-semibold border border-pink-200 cursor-pointer" data-flavor-name="Limón" data-flavor-img="img/bolis-limon.jpg">Limón</button>
+            <button class="flavor-btn px-3 py-1.5 rounded-full bg-pink-50 text-[#ee5d83] hover:bg-[#ee5d83] hover:text-white transition-colors text-sm font-semibold border border-pink-200 cursor-pointer" data-flavor-name="Yogurt Mango" data-flavor-img="img/bolis-yogurt-mango.jpg">Yogurt mango</button>
+            <button class="flavor-btn px-3 py-1.5 rounded-full bg-pink-50 text-[#ee5d83] hover:bg-[#ee5d83] hover:text-white transition-colors text-sm font-semibold border border-pink-200 cursor-pointer" data-flavor-name="Yogurt Fresa" data-flavor-img="img/bolis-yogurt-fresa.jpg">Yogurt fresa</button>
+            <button class="flavor-btn px-3 py-1.5 rounded-full bg-pink-50 text-[#ee5d83] hover:bg-[#ee5d83] hover:text-white transition-colors text-sm font-semibold border border-pink-200 cursor-pointer" data-flavor-name="Picafresa" data-flavor-img="img/bolis-picafresa.jpg">Picafresa</button>
+            <button class="flavor-btn px-3 py-1.5 rounded-full bg-pink-50 text-[#ee5d83] hover:bg-[#ee5d83] hover:text-white transition-colors text-sm font-semibold border border-pink-200 cursor-pointer" data-flavor-name="Panditas Locas" data-flavor-img="img/bolis-panditas.jpg">Panditas locas</button>
+          </div> 
+        </div> 
+      </section>
 
       <!-- Sección 2: Congelados --> 
       <section id="congelados" class="menu-section rounded-3xl overflow-hidden shadow-md bg-white"> 
@@ -444,26 +438,27 @@
 
     </div> 
 
-    <!-- Pie de página --> 
     <footer class="mt-8 text-center text-xs font-semibold text-slate-500"> 
       Delgabolis Delicius · Hecho con mucho sabor 
     </footer> 
 
   </div> 
 
-  <!-- JavaScript Unificado --> 
+  <!-- Swiper JS CDN (debe cargarse antes de tu script principal) -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <!-- JavaScript Unificado de la App --> 
   <script> 
   document.addEventListener("DOMContentLoaded", () => { 
-    // Inicializar iconos
+    // 1. Inicializar iconos
     lucide.createIcons(); 
 
-    // Referencias a elementos
+    // 2. Navegación por Categorías
     const navButtons = [...document.querySelectorAll(".nav-pill")]; 
     const sections = navButtons.map(btn => document.getElementById(btn.dataset.target)); 
     const modalPromo = document.getElementById('modalPromociones');
     const btnCerrarPromo = document.getElementById('btnCerrarPromo');
 
-    // Navegación fluida por botones
     navButtons.forEach(button => { 
       button.addEventListener("click", () => { 
         const section = document.getElementById(button.dataset.target); 
@@ -473,7 +468,6 @@
       }); 
     }); 
 
-    // Activar estados en los botones de navegación
     const activateButton = (targetId) => {
       navButtons.forEach(btn => { 
         const isTarget = btn.dataset.target === targetId;
@@ -489,12 +483,6 @@
       });
     };
 
-    // IntersectionObserver para detectar la sección activa
-    const observerOptions = { 
-      rootMargin: "-20% 0px -40% 0px", 
-      threshold: 0.1 
-    }; 
-
     const observer = new IntersectionObserver((entries) => { 
       const isAtBottom = (window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight - 10;
       if (isAtBottom) return;
@@ -504,21 +492,19 @@
           activateButton(entry.target.id);
         } 
       }); 
-    }, observerOptions); 
+    }, { rootMargin: "-20% 0px -40% 0px", threshold: 0.1 }); 
 
     sections.forEach(section => { 
       if (section) observer.observe(section); 
     }); 
 
-    // Manejo de la ventana Modal / Promoción
+    // Modal Promoción Inicial
     if (modalPromo) {
       setTimeout(() => {
         modalPromo.showModal();
       }, 500);
 
-      btnCerrarPromo?.addEventListener('click', () => {
-        modalPromo.close();
-      });
+      btnCerrarPromo?.addEventListener('click', () => modalPromo.close());
 
       modalPromo.addEventListener('click', (e) => {
         const dialogBounds = modalPromo.getBoundingClientRect();
@@ -532,68 +518,61 @@
         }
       });
     }
-  });
-    document.addEventListener("DOMContentLoaded", () => {
-  const modalCarrusel = document.getElementById('modalCarrusel');
-  const btnCerrarCarrusel = document.getElementById('btnCerrarCarrusel');
-  const swiperWrapper = document.getElementById('swiperWrapper');
-  const flavorButtons = [...document.querySelectorAll('.flavor-btn')];
 
-  // 1. Cargar dinámicamente los botones de sabores en los slides de Swiper
-  swiperWrapper.innerHTML = flavorButtons.map((btn, index) => {
-    const name = btn.dataset.flavorName;
-    const imgSrc = btn.dataset.flavorImg || 'logo_bolis.png';
-    return `
-      <div class="swiper-slide">
-        <img src="${imgSrc}" alt="${name}" />
-        <div class="swiper-txt">
-          <h3>${name}</h3>
-          <p>${index + 1} / ${flavorButtons.length}</p>
+    // 3. Inicialización del Carrusel Swiper de Bolis
+    const modalCarrusel = document.getElementById('modalCarrusel');
+    const btnCerrarCarrusel = document.getElementById('btnCerrarCarrusel');
+    const swiperWrapper = document.getElementById('swiperWrapper');
+    const flavorButtons = [...document.querySelectorAll('.flavor-btn')];
+
+    // Cargar dinámicamente cada slide según los botones
+    swiperWrapper.innerHTML = flavorButtons.map((btn, index) => {
+      const name = btn.dataset.flavorName;
+      const imgSrc = btn.dataset.flavorImg || 'logo_bolis.png';
+      return `
+        <div class="swiper-slide">
+          <img src="${imgSrc}" alt="${name}" />
+          <div class="swiper-txt">
+            <h3>${name}</h3>
+            <p>${index + 1} / ${flavorButtons.length}</p>
+          </div>
         </div>
-      </div>
-    `;
-  }).join('');
+      `;
+    }).join('');
 
-  // 2. Inicializar la instancia de SwiperJS (Efecto igual al del video)[span_7](start_span)[span_7](end_span)
-  const swiper = new Swiper(".mySwiper", {
-    effect: "cards", // Efecto tipo tarjeta flotante responsivo
-    grabCursor: true,
-    loop: true,
-    centeredSlides: true,
-    slidesPerView: "auto",
-    spaceBetween: 20
-  });
+    // Instancia de Swiper JS
+    const swiper = new Swiper(".mySwiper", {
+      effect: "cards",
+      grabCursor: true,
+      loop: true,
+      centeredSlides: true,
+      slidesPerView: "auto"
+    });
 
-  // 3. Abrir el modal en el sabor específico al presionar un botón
-  flavorButtons.forEach((btn, index) => {
-    btn.addEventListener('click', () => {
-      swiper.slideToLoop(index, 0); // Va directamente al sabor seleccionado
-      modalCarrusel?.showModal();
-      swiper.update();
+    // Eventos de clic para abrir sabor en modal
+    flavorButtons.forEach((btn, index) => {
+      btn.addEventListener('click', () => {
+        swiper.slideToLoop(index, 0);
+        modalCarrusel?.showModal();
+        swiper.update();
+      });
+    });
+
+    // Cierre de Modal Carrusel
+    btnCerrarCarrusel?.addEventListener('click', () => modalCarrusel?.close());
+
+    modalCarrusel?.addEventListener('click', (e) => {
+      const dialogBounds = modalCarrusel.getBoundingClientRect();
+      if (
+        e.clientX < dialogBounds.left ||
+        e.clientX > dialogBounds.right ||
+        e.clientY < dialogBounds.top ||
+        e.clientY > dialogBounds.bottom
+      ) {
+        modalCarrusel.close();
+      }
     });
   });
-
-  // 4. Cierre del modal
-  btnCerrarCarrusel?.addEventListener('click', () => {
-    modalCarrusel?.close();
-  });
-
-  modalCarrusel?.addEventListener('click', (e) => {
-    const dialogBounds = modalCarrusel.getBoundingClientRect();
-    if (
-      e.clientX < dialogBounds.left ||
-      e.clientX > dialogBounds.right ||
-      e.clientY < dialogBounds.top ||
-      e.clientY > dialogBounds.bottom
-    ) {
-      modalCarrusel.close();
-    }
-  });
-});
-
-<!-- Swiper JS -->
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.min.js"></script>
-
   </script>
 </body> 
 </html>
