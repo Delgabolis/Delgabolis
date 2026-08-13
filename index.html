@@ -1,6 +1,8 @@
 <!DOCTYPE html> 
 <html lang="es-MX"> 
 <head> 
+  <!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <meta charset="UTF-8"> 
   <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
   <title>Menú Delgabolis Delicius</title> 
@@ -82,6 +84,52 @@
       border: 3px dashed currentColor; 
       font-family: "Fraunces", serif; 
     } 
+    /* Estilos para las tarjetas del carrusel estilo Swiper */
+.swiper-slide {
+  position: relative;
+  height: 380px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  background-color: #000;
+}
+
+.swiper-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 20px;
+  display: block;
+}
+
+/* Título e indicador sobre la foto (Letra blanca sin fondo) */
+.swiper-txt {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  z-index: 10;
+  background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%); /* Sombra suave para legibilidad sin cuadro */
+  text-align: center;
+}
+
+.swiper-txt h3 {
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8); /* Asegura excelente visibilidad */
+  font-family: "Fraunces", serif;
+}
+
+.swiper-txt p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
   </style> 
 </head> 
 <body class="antialiased"> 
@@ -181,35 +229,21 @@
           </div> 
         </div> 
       </dialog>
-      <!-- Modal Carrusel de Sabores -->
-<dialog id="modalCarrusel" class="rounded-3xl overflow-hidden shadow-2xl bg-white p-0 border-0 max-w-sm w-11/12 backdrop:bg-black/60 backdrop:backdrop-blur-sm">
-  <div class="p-4 flex justify-between items-center bg-[#ee5d83] text-white">
-    <h3 id="carruselSaborTitulo" class="heading-font text-xl font-extrabold m-0">Sabor</h3>
-    <button id="btnCerrarCarrusel" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 grid place-items-center text-white transition-colors cursor-pointer" aria-label="Cerrar">
-      ✕
-    </button>
-  </div>
+      <!-- Modal Carrusel estilo Swiper (Sin cuadro superior, texto blanco transparente sobre la foto) -->
+<dialog id="modalCarrusel" class="rounded-3xl overflow-hidden shadow-2xl bg-transparent p-0 border-0 max-w-sm w-11/12 backdrop:bg-black/70 backdrop:backdrop-blur-sm relative">
+  
+  <!-- Botón de Cierre -->
+  <button id="btnCerrarCarrusel" class="absolute top-3 right-3 z-30 w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 text-white grid place-items-center transition-colors cursor-pointer" aria-label="Cerrar">
+    ✕
+  </button>
 
-  <div class="relative p-4 flex flex-col items-center justify-center">
-    <!-- Contenedor de la Imagen -->
-    <div class="relative w-full h-64 rounded-2xl overflow-hidden bg-slate-100 flex items-center justify-center shadow-inner">
-      <img id="carruselImagen" src="" alt="Sabor de boli" class="w-full h-full object-cover transition-opacity duration-300">
-      
-      <!-- Botones Anterior / Siguiente -->
-      <button id="btnPrevSabor" class="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/40 hover:bg-black/60 text-white grid place-items-center transition-colors cursor-pointer">
-        ❮
-      </button>
-      <button id="btnNextSabor" class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/40 hover:bg-black/60 text-white grid place-items-center transition-colors cursor-pointer">
-        ❯
-      </button>
+  <!-- Contenedor Principal de Swiper -->
+  <div class="swiper mySwiper w-full py-4">
+    <div class="swiper-wrapper" id="swiperWrapper">
+      <!-- Los slides de cada sabor se generan dinámicamente con JS o puedes colocarlos manualmente -->
     </div>
-
-    <!-- Indicador de posición -->
-    <p id="carruselIndicador" class="mt-3 text-xs font-bold text-slate-400 uppercase tracking-widest">1 / 13</p>
   </div>
 </dialog>
-
-
       <!-- Sección 1: Bolis --> 
 <section id="bolis" class="menu-section rounded-3xl overflow-hidden shadow-md bg-white"> 
   <div class="p-5 flex justify-between items-center bg-[#ee5d83] text-white"> 
@@ -499,61 +533,66 @@
       });
     }
   });
-    // Manejo del Carrusel de Sabores de Bolis
-const modalCarrusel = document.getElementById('modalCarrusel');
-const btnCerrarCarrusel = document.getElementById('btnCerrarCarrusel');
-const carruselImagen = document.getElementById('carruselImagen');
-const carruselSaborTitulo = document.getElementById('carruselSaborTitulo');
-const carruselIndicador = document.getElementById('carruselIndicador');
-const btnPrevSabor = document.getElementById('btnPrevSabor');
-const btnNextSabor = document.getElementById('btnNextSabor');
+    document.addEventListener("DOMContentLoaded", () => {
+  const modalCarrusel = document.getElementById('modalCarrusel');
+  const btnCerrarCarrusel = document.getElementById('btnCerrarCarrusel');
+  const swiperWrapper = document.getElementById('swiperWrapper');
+  const flavorButtons = [...document.querySelectorAll('.flavor-btn')];
 
-const flavorButtons = [...document.querySelectorAll('.flavor-btn')];
-let currentFlavorIndex = 0;
+  // 1. Cargar dinámicamente los botones de sabores en los slides de Swiper
+  swiperWrapper.innerHTML = flavorButtons.map((btn, index) => {
+    const name = btn.dataset.flavorName;
+    const imgSrc = btn.dataset.flavorImg || 'logo_bolis.png';
+    return `
+      <div class="swiper-slide">
+        <img src="${imgSrc}" alt="${name}" />
+        <div class="swiper-txt">
+          <h3>${name}</h3>
+          <p>${index + 1} / ${flavorButtons.length}</p>
+        </div>
+      </div>
+    `;
+  }).join('');
 
-const updateCarrusel = (index) => {
-  currentFlavorIndex = index;
-  const btn = flavorButtons[currentFlavorIndex];
-  const name = btn.dataset.flavorName;
-  const imgSrc = btn.dataset.flavorImg;
+  // 2. Inicializar la instancia de SwiperJS (Efecto igual al del video)[span_7](start_span)[span_7](end_span)
+  const swiper = new Swiper(".mySwiper", {
+    effect: "cards", // Efecto tipo tarjeta flotante responsivo
+    grabCursor: true,
+    loop: true,
+    centeredSlides: true,
+    slidesPerView: "auto",
+    spaceBetween: 20
+  });
 
-  carruselSaborTitulo.textContent = name;
-  carruselImagen.src = imgSrc || 'logo_bolis.png'; // Imagen de respaldo si no existe la ruta
-  carruselIndicador.textContent = `${currentFlavorIndex + 1} / ${flavorButtons.length}`;
-};
+  // 3. Abrir el modal en el sabor específico al presionar un botón
+  flavorButtons.forEach((btn, index) => {
+    btn.addEventListener('click', () => {
+      swiper.slideToLoop(index, 0); // Va directamente al sabor seleccionado
+      modalCarrusel?.showModal();
+      swiper.update();
+    });
+  });
 
-flavorButtons.forEach((btn, idx) => {
-  btn.addEventListener('click', () => {
-    updateCarrusel(idx);
-    modalCarrusel?.showModal();
+  // 4. Cierre del modal
+  btnCerrarCarrusel?.addEventListener('click', () => {
+    modalCarrusel?.close();
+  });
+
+  modalCarrusel?.addEventListener('click', (e) => {
+    const dialogBounds = modalCarrusel.getBoundingClientRect();
+    if (
+      e.clientX < dialogBounds.left ||
+      e.clientX > dialogBounds.right ||
+      e.clientY < dialogBounds.top ||
+      e.clientY > dialogBounds.bottom
+    ) {
+      modalCarrusel.close();
+    }
   });
 });
 
-btnPrevSabor?.addEventListener('click', () => {
-  const newIndex = (currentFlavorIndex - 1 + flavorButtons.length) % flavorButtons.length;
-  updateCarrusel(newIndex);
-});
-
-btnNextSabor?.addEventListener('click', () => {
-  const newIndex = (currentFlavorIndex + 1) % flavorButtons.length;
-  updateCarrusel(newIndex);
-});
-
-btnCerrarCarrusel?.addEventListener('click', () => {
-  modalCarrusel?.close();
-});
-
-modalCarrusel?.addEventListener('click', (e) => {
-  const dialogBounds = modalCarrusel.getBoundingClientRect();
-  if (
-    e.clientX < dialogBounds.left ||
-    e.clientX > dialogBounds.right ||
-    e.clientY < dialogBounds.top ||
-    e.clientY > dialogBounds.bottom
-  ) {
-    modalCarrusel.close();
-  }
-});
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.min.js"></script>
 
   </script>
 </body> 
