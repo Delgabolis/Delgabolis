@@ -104,7 +104,7 @@
       display: block;
     }
 
-    /* Título sobre la foto (Letra blanca sin fondo) */
+    /* Título sobre la foto */
     .swiper-txt {
       position: absolute;
       bottom: 0;
@@ -125,7 +125,16 @@
       font-family: "Fraunces", serif;
     }
 
-    /* Fijar posición al abrir modales nativos */
+    /* FIX CENTRALIZACIÓN MODAL CARRUSEL */
+    dialog#modalCarrusel,
+    dialog#modalPromociones {
+      position: fixed;
+      inset: 0;
+      margin: auto;
+      max-height: 90vh;
+      outline: none;
+    }
+
     dialog::backdrop {
       background: rgba(0, 0, 0, 0.7);
       backdrop-filter: blur(4px);
@@ -227,7 +236,7 @@
       </dialog>
 
       <!-- Modal Carrusel estilo Swiper -->
-      <dialog id="modalCarrusel" class="rounded-3xl overflow-hidden shadow-2xl bg-transparent p-0 border-0 max-w-sm w-11/12 relative">
+      <dialog id="modalCarrusel" class="rounded-3xl overflow-hidden shadow-2xl bg-transparent p-0 border-0 max-w-sm w-11/12">
         <button id="btnCerrarCarrusel" class="absolute top-3 right-3 z-30 w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 text-white grid place-items-center transition-colors cursor-pointer" aria-label="Cerrar">
           ✕
         </button>
@@ -486,7 +495,7 @@
     };
 
     const observer = new IntersectionObserver((entries) => { 
-      if (isModalOpen) return; // Desactiva la auto-navegación si el carrusel está abierto
+      if (isModalOpen) return; 
       
       const isAtBottom = (window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight - 10;
       if (isAtBottom) return;
@@ -523,13 +532,12 @@
       });
     }
 
-    // 3. Inicialización del Carrusel Swiper de Bolis
+    // 3. Carrusel Swiper
     const modalCarrusel = document.getElementById('modalCarrusel');
     const btnCerrarCarrusel = document.getElementById('btnCerrarCarrusel');
     const swiperWrapper = document.getElementById('swiperWrapper');
     const flavorButtons = [...document.querySelectorAll('.flavor-btn')];
 
-    // Cargar dinámicamente solo el nombre del sabor
     swiperWrapper.innerHTML = flavorButtons.map((btn) => {
       const name = btn.dataset.flavorName;
       const imgSrc = btn.dataset.flavorImg || 'logo_bolis.png';
@@ -543,7 +551,6 @@
       `;
     }).join('');
 
-    // Instancia de Swiper JS
     const swiper = new Swiper(".mySwiper", {
       effect: "cards",
       grabCursor: true,
@@ -552,36 +559,24 @@
       slidesPerView: "auto"
     });
 
-    // Eventos de clic para abrir sabor manteniendo el scroll fijo
     flavorButtons.forEach((btn, index) => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
-        isModalOpen = true; // Congela observadores
+        isModalOpen = true;
 
-        // 1. Guardar la posición exacta actual
-        const currentY = window.scrollY || window.pageYOffset;
-
-        // 2. Mover slide y abrir modal
         swiper.slideToLoop(index, 0);
         modalCarrusel?.showModal();
         swiper.update();
 
-        // 3. Forzar inmediatamente al navegador a mantenerse en esa altura exacta
-        window.scrollTo(0, currentY);
-
-        // Focus sin desplazamiento
         if (btnCerrarCarrusel) {
           btnCerrarCarrusel.focus({ preventScroll: true });
         }
       });
     });
 
-    // Función de cierre del modal
     const cerrarCarrusel = () => {
-      const currentY = window.scrollY || window.pageYOffset;
       modalCarrusel?.close();
-      window.scrollTo(0, currentY);
-      setTimeout(() => { isModalOpen = false; }, 100);
+      isModalOpen = false;
     };
 
     btnCerrarCarrusel?.addEventListener('click', cerrarCarrusel);
