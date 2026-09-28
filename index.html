@@ -86,20 +86,23 @@
       font-family: "Fraunces", serif; 
     } 
 
-    /* Estilos para las tarjetas del carrusel estilo Swiper */
+      /* Estilos para las tarjetas del carrusel */
     .swiper-slide {
       position: relative;
-      height: 380px;
+      width: 280px; /* Ancho fijo para que no se deforme la tarjeta */
+      height: 380px; /* Alto fijo de la tarjeta */
       border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
       background-color: #000;
     }
 
+    /* Ajuste perfecto de la imagen */
     .swiper-slide img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: cover; /* Recorta la imagen proporcionalmente para llenar la tarjeta */
+      object-position: center; /* Centra la foto para enfocar lo mejor del producto */
       border-radius: 20px;
       display: block;
     }
