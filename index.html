@@ -33,9 +33,9 @@
       /* Fondo con imagen repetida en patrón */
       background-image: url('fondo-helados.jpg'); /* Reemplaza por la ruta de tu imagen */
       background-repeat: repeat; 
-      background-size: 300px auto; /* Ajusta este valor si quieres el patrón más chico o más grande */
-      background-attachment: fixed; /* Mantiene el fondo fijo al hacer scroll */
-      background-color: #fca5a5; /* Color de respaldo en caso de que la imagen tarde en cargar */
+      background-size: 300px auto; 
+      background-attachment: fixed; 
+      background-color: #fca5a5; 
     } 
 
     .heading-font { font-family: "Fraunces", serif; } 
@@ -86,11 +86,11 @@
       font-family: "Fraunces", serif; 
     } 
 
-      /* Estilos para las tarjetas del carrusel */
+    /* Estilos para las tarjetas del carrusel */
     .swiper-slide {
       position: relative;
-      width: 280px; /* Ancho fijo para que no se deforme la tarjeta */
-      height: 380px; /* Alto fijo de la tarjeta */
+      width: 280px; 
+      height: 380px; 
       border-radius: 20px;
       overflow: hidden;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
@@ -101,8 +101,8 @@
     .swiper-slide img {
       width: 100%;
       height: 100%;
-      object-fit: cover; /* Recorta la imagen proporcionalmente para llenar la tarjeta */
-      object-position: center; /* Centra la foto para enfocar lo mejor del producto */
+      object-fit: cover; 
+      object-position: center; 
       border-radius: 20px;
       display: block;
     }
@@ -332,7 +332,6 @@
       <section id="raspados" class="menu-section rounded-3xl overflow-hidden shadow-md bg-white"> 
         <div class="p-5 flex justify-between items-center bg-[#ffc952] text-slate-900"> 
           <div> 
-            <!-- Texto corregido para mayor contraste -->
             <p class="text-xs font-bold uppercase tracking-widest text-slate-800">Bien fresquitos</p> 
             <h2 class="heading-font text-2xl font-extrabold m-0">Raspados</h2> 
           </div> 
@@ -534,19 +533,17 @@
         }
       });
 
-      // Manejo correcto de evento close (incluyendo tecla ESC)
       modalPromo.addEventListener('close', () => {
         isModalOpen = false;
       });
     }
 
-            // 3. Carrusel Swiper (Solución al índice al cambiar de sabor)
+    // 3. Carrusel Swiper (Efecto Cards Optimizado)
     const modalCarrusel = document.getElementById('modalCarrusel');
     const btnCerrarCarrusel = document.getElementById('btnCerrarCarrusel');
     const swiperWrapper = document.getElementById('swiperWrapper');
-    let swiperInstance = null; // Variable para almacenar la instancia activa de Swiper
+    let swiperInstance = null; 
 
-    // Función reutilizable para abrir el carrusel con el grupo de botones correcto
     const setupFlavorGroup = (buttonSelector) => {
       const buttons = [...document.querySelectorAll(buttonSelector)];
 
@@ -555,12 +552,12 @@
           e.preventDefault();
           isModalOpen = true;
 
-          // 1. Destruir la instancia previa de Swiper para reiniciar posiciones
+          // Destruir la instancia previa para evitar acumulación de memoria
           if (swiperInstance) {
             swiperInstance.destroy(true, true);
           }
 
-          // 2. Cargar los slides dinámicamente en el HTML
+          // Cargar slides en el HTML
           swiperWrapper.innerHTML = buttons.map((b) => {
             const name = b.dataset.flavorName;
             const imgSrc = b.dataset.flavorImg || 'logo_bolis.png';
@@ -574,20 +571,17 @@
             `;
           }).join('');
 
-          // 3. Abrir primero el modal
+          // Mostrar el dialog
           modalCarrusel?.showModal();
 
-          // 4. Inicializar Swiper configurando initialSlide con el índice exacto presionado
-          setTimeout(() => {
-            swiperInstance = new Swiper(".mySwiper", {
-              effect: "cards",
-              grabCursor: true,
-              loop: true,
-              centeredSlides: true,
-              slidesPerView: "auto",
-              initialSlide: index // Carga directamente el sabor al que diste clic
-            });
-          }, 10);
+          // Crear la instancia de Swiper enfocando el índice correcto
+          swiperInstance = new Swiper(".mySwiper", {
+            effect: "cards",
+            grabCursor: true,
+            centeredSlides: true,
+            slidesPerView: "auto",
+            initialSlide: index
+          });
 
           if (btnCerrarCarrusel) {
             btnCerrarCarrusel.focus({ preventScroll: true });
@@ -596,7 +590,7 @@
       });
     };
 
-    // Registrar eventos para Bolis y Frappés
+    // Registrar los dos grupos de botones
     setupFlavorGroup('.flavor-btn');
     setupFlavorGroup('.frappe-flavor-btn');
 
@@ -618,12 +612,6 @@
       }
     });
 
-    modalCarrusel?.addEventListener('close', () => {
-      isModalOpen = false;
-    });
-
-
-    // Resetear isModalOpen incluso si el usuario cierra el modal presionando ESC
     modalCarrusel?.addEventListener('close', () => {
       isModalOpen = false;
     });
