@@ -40,8 +40,7 @@
 
     .heading-font { font-family: "Fraunces", serif; } 
 
-    /* Barra de navegación deslizable sin scrollbar visible */ 
-        /* Barra de navegación deslizable con fondo difuminado */ 
+    /* Barra de navegación base (transparente al inicio) */ 
     .category-nav { 
       position: sticky; 
       top: 0; 
@@ -50,15 +49,21 @@
       gap: 8px; 
       overflow-x: auto; 
       padding: 12px 16px; 
-      /* Fondo blanco semitransparente (ajusta el 0.65 si quieres más o menos transparencia) */
-      background: rgba(255, 255, 255, 0.65); 
-      /* Desenfoque del fondo (Efecto cristal) */
-      backdrop-filter: blur(10px); 
-      -webkit-backdrop-filter: blur(10px); 
+      background: transparent; 
+      backdrop-filter: blur(0px);
+      -webkit-backdrop-filter: blur(0px);
+      transition: background 0.3s ease, backdrop-filter 0.3s ease, -webkit-backdrop-filter 0.3s ease; 
       scrollbar-width: none; 
     } 
     .category-nav::-webkit-scrollbar { display: none; } 
 
+    /* Estado cuando se pega arriba (efecto difuminado activo) */
+    .category-nav.is-stuck {
+      background: rgba(255, 255, 255, 0.7); 
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Sombra suave para dar relieve */
+    }
     .nav-pill { 
       flex: 0 0 auto; 
       padding: 8px 18px; 
@@ -467,6 +472,20 @@
   document.addEventListener("DOMContentLoaded", () => { 
     // 1. Inicializar iconos
     lucide.createIcons(); 
+    // Activar fondo difuminado solo cuando la barra se pega arriba
+    const categoryNav = document.querySelector(".category-nav");
+    
+    if (categoryNav) {
+      const navObserver = new IntersectionObserver(
+        ([entry]) => {
+          // Si la barra deja de estar en su posición original, se le añade la clase 'is-stuck'
+          categoryNav.classList.toggle("is-stuck", entry.intersectionRatio < 1);
+        },
+        { threshold: [1] }
+      );
+
+      navObserver.observe(categoryNav);
+    }
 
     // Variable para controlar la pausa del observador de scroll
     let isModalOpen = false;
