@@ -554,7 +554,7 @@
       slidesPerView: "auto"
     });
 
-    // Función reutilizable para abrir el carrusel con un grupo de botones
+        // Función reutilizable para abrir el carrusel con un grupo de botones
     const setupFlavorGroup = (buttonSelector) => {
       const buttons = [...document.querySelectorAll(buttonSelector)];
 
@@ -563,7 +563,7 @@
           e.preventDefault();
           isModalOpen = true;
 
-          // Cargar los slides según el grupo al que se hizo clic (Bolis o Frappés)
+          // 1. Cargar los slides dinámicamente en el HTML
           swiperWrapper.innerHTML = buttons.map((b) => {
             const name = b.dataset.flavorName;
             const imgSrc = b.dataset.flavorImg || 'logo_bolis.png';
@@ -577,9 +577,14 @@
             `;
           }).join('');
 
-          swiper.update();
-          swiper.slideToLoop(index, 0);
+          // 2. Abrir primero el modal para que tenga dimensiones visibles en pantalla
           modalCarrusel?.showModal();
+
+          // 3. Forzar a Swiper a recalcular el tamaño del contenedor y posicionarse
+          setTimeout(() => {
+            swiper.update();
+            swiper.slideToLoop(index, 0);
+          }, 10);
 
           if (btnCerrarCarrusel) {
             btnCerrarCarrusel.focus({ preventScroll: true });
@@ -587,6 +592,7 @@
         });
       });
     };
+
 
     // Asignar el carrusel a ambos grupos de botones
     setupFlavorGroup('.flavor-btn');        // Bolis
