@@ -30,10 +30,12 @@
       margin: 0; 
       color: var(--ink); 
       font-family: "DM Sans", sans-serif; 
-      background: linear-gradient(135deg, #fffaf5 0%, #fff0f5 100%);
-  background-attachment: fixed; /* Mantiene el fondo suave mientras el usuario hace scroll */
-    }
-      background-size: 34px 34px, 48px 48px; 
+      /* Fondo con imagen repetida en patrón */
+      background-image: url('fondo-helados.jpg'); /* Reemplaza por la ruta de tu imagen */
+      background-repeat: repeat; 
+      background-size: 300px auto; /* Ajusta este valor si quieres el patrón más chico o más grande */
+      background-attachment: fixed; /* Mantiene el fondo fijo al hacer scroll */
+      background-color: #fca5a5; /* Color de respaldo en caso de que la imagen tarde en cargar */
     } 
 
     .heading-font { font-family: "Fraunces", serif; } 
