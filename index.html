@@ -31,7 +31,7 @@
       color: var(--ink); 
       font-family: "DM Sans", sans-serif; 
       /* Fondo con imagen repetida en patrón */
-      background-image: url('fondo-helados.jpg'); /* Reemplaza por la ruta de tu imagen */
+      background-image: url('fondo-helados.jpg'); 
       background-repeat: repeat; 
       background-size: 300px auto; 
       background-attachment: fixed; 
@@ -43,7 +43,7 @@
     /* Barra de navegación base (transparente al inicio) */ 
     .category-nav { 
       position: sticky; 
-      top: -1px; /* Permite detectar el anclaje correctamente */
+      top: -1px; 
       z-index: 20; 
       display: flex; 
       gap: 8px; 
@@ -62,7 +62,7 @@
       background: rgba(255, 255, 255, 0.75); 
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Sombra suave para dar relieve */
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
     }
 
     .nav-pill { 
@@ -312,28 +312,42 @@
           </div> 
         </div> 
          
-        <div class="p-5 divide-y divide-dashed divide-slate-200"> 
+        <div class="p-5 divide-y divide-dashed divide-slate-200" id="congelados-flavor-container"> 
           <div class="py-3 flex justify-between items-center"> 
             <div> 
-              <div class="font-bold text-slate-800">Chamoyadas</div> 
-              <div class="text-xs text-slate-500">Piña o mango</div> 
+              <button class="congelados-flavor-btn text-left font-bold text-slate-800 hover:text-[#27bcc3] transition-colors cursor-pointer" data-flavor-name="Chamoyadas (Piña o Mango)" data-flavor-img="img/congelados-chamoyadas.jpg">
+                Chamoyadas
+              </button> 
+              <div class="text-xs text-slate-500">Piña o mango · Haz clic para ver foto</div> 
             </div> 
             <div class="font-extrabold text-[#27bcc3]">$15</div> 
           </div> 
+
           <div class="py-3 flex justify-between items-center"> 
-            <div class="font-bold text-slate-800">Paletas Boing</div> 
+            <button class="congelados-flavor-btn font-bold text-slate-800 hover:text-[#27bcc3] transition-colors cursor-pointer" data-flavor-name="Paletas Boing" data-flavor-img="img/congelados-paletas-boing.jpg">
+              Paletas Boing
+            </button> 
             <div class="font-extrabold text-[#27bcc3]">$30</div> 
           </div> 
+
           <div class="py-3 flex justify-between items-center"> 
-            <div class="font-bold text-slate-800">Gomi Boing</div> 
+            <button class="congelados-flavor-btn font-bold text-slate-800 hover:text-[#27bcc3] transition-colors cursor-pointer" data-flavor-name="Gomi Boing" data-flavor-img="img/congelados-gomi-boing.jpg">
+              Gomi Boing
+            </button> 
             <div class="font-extrabold text-[#27bcc3]">$25</div> 
           </div> 
+
           <div class="py-3 flex justify-between items-center"> 
-            <div class="font-bold text-slate-800">Paletas Danonino</div> 
+            <button class="congelados-flavor-btn font-bold text-slate-800 hover:text-[#27bcc3] transition-colors cursor-pointer" data-flavor-name="Paletas Danonino" data-flavor-img="img/congelados-danonino.jpg">
+              Paletas Danonino
+            </button> 
             <div class="font-extrabold text-[#27bcc3]">$10</div> 
           </div> 
+
           <div class="py-3 flex justify-between items-center"> 
-            <div class="font-bold text-slate-800">Vaquitas preparadas</div> 
+            <button class="congelados-flavor-btn font-bold text-slate-800 hover:text-[#27bcc3] transition-colors cursor-pointer" data-flavor-name="Vaquitas preparadas" data-flavor-img="img/congelados-vaquitas.jpg">
+              Vaquitas preparadas
+            </button> 
             <div class="font-extrabold text-[#27bcc3]">$25</div> 
           </div> 
         </div> 
@@ -479,14 +493,12 @@
     
     if (categoryNav) {
       const handleStickyNav = () => {
-        // Mide la distancia de la barra desde el tope de la ventana
         const navTop = categoryNav.getBoundingClientRect().top;
-        // Si el tope es menor o igual a 0, significa que ya está fija en pantalla
         categoryNav.classList.toggle("is-stuck", navTop <= 0);
       };
 
       window.addEventListener("scroll", handleStickyNav, { passive: true });
-      handleStickyNav(); // Verificación inicial al cargar
+      handleStickyNav(); 
     }
 
     // Variable para controlar la pausa del observador de scroll
@@ -610,7 +622,7 @@
             slidesPerView: "auto"
           });
 
-          // Sincronizar el slide activo con el sabor presionado
+          // Sincronizar el slide activo con el producto presionado
           swiperInstance.slideToLoop(index, 0);
 
           if (btnCerrarCarrusel) {
@@ -620,9 +632,10 @@
       });
     };
 
-    // Registrar ambos grupos de botones
+    // Registrar los tres grupos de botones (Bolis, Frappés y Congelados)
     setupFlavorGroup('.flavor-btn');
     setupFlavorGroup('.frappe-flavor-btn');
+    setupFlavorGroup('.congelados-flavor-btn');
 
     const cerrarCarrusel = () => {
       modalCarrusel?.close();
