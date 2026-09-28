@@ -538,7 +538,7 @@
       });
     }
 
-    // 3. Carrusel Swiper (Efecto Cards Optimizado)
+    // 3. Carrusel Swiper (Con Loop Infinito)
     const modalCarrusel = document.getElementById('modalCarrusel');
     const btnCerrarCarrusel = document.getElementById('btnCerrarCarrusel');
     const swiperWrapper = document.getElementById('swiperWrapper');
@@ -552,12 +552,12 @@
           e.preventDefault();
           isModalOpen = true;
 
-          // Destruir la instancia previa para evitar acumulación de memoria
+          // Destruir la instancia previa
           if (swiperInstance) {
             swiperInstance.destroy(true, true);
           }
 
-          // Cargar slides en el HTML
+          // Cargar slides dinámicamente
           swiperWrapper.innerHTML = buttons.map((b) => {
             const name = b.dataset.flavorName;
             const imgSrc = b.dataset.flavorImg || 'logo_bolis.png';
@@ -571,17 +571,20 @@
             `;
           }).join('');
 
-          // Mostrar el dialog
+          // Mostrar dialog
           modalCarrusel?.showModal();
 
-          // Crear la instancia de Swiper enfocando el índice correcto
+          // Inicializar Swiper en modo Loop
           swiperInstance = new Swiper(".mySwiper", {
             effect: "cards",
             grabCursor: true,
+            loop: true,
             centeredSlides: true,
-            slidesPerView: "auto",
-            initialSlide: index
+            slidesPerView: "auto"
           });
+
+          // Sincronizar el slide activo con el sabor presionado
+          swiperInstance.slideToLoop(index, 0);
 
           if (btnCerrarCarrusel) {
             btnCerrarCarrusel.focus({ preventScroll: true });
@@ -590,7 +593,7 @@
       });
     };
 
-    // Registrar los dos grupos de botones
+    // Registrar ambos grupos de botones
     setupFlavorGroup('.flavor-btn');
     setupFlavorGroup('.frappe-flavor-btn');
 
