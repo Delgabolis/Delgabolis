@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  // 3. ANIMACIÓN GSAP DEL PRELOADER (PAUSA INICIAL Y SIN PARPADEO)
+  // 3. ANIMACIÓN GSAP DEL PRELOADER (PAUSA PROLONGADA Y SIN PARPADEO FINAL)
   const runPreloaderAnimation = () => {
     if (!preloader || !logoPreload || !logoTarget) {
       if (logoTarget) {
@@ -81,6 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // 3. Ocultar el logo destino durante la transición
       logoTarget.style.visibility = "hidden";
+      logoTarget.style.opacity = "0";
 
       // 4. Calcular desplazamiento y escala exacta hacia el destino
       const scaleX = targetRect.width / currentRect.width;
@@ -90,20 +91,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const tl = gsap.timeline({
         onComplete: () => {
-          // 5. Mostrar el logo real en su posición final sin parpadeo
-          logoTarget.style.visibility = "visible";
-          logoTarget.style.opacity = "1";
-
-          // Eliminar el clon flotante y el preloader
+          // Intercambio invisible: eliminar clon y fondo de inmediato
           const activeClone = document.getElementById("logo-clone");
           if (activeClone) activeClone.remove();
 
           if (preloader) preloader.remove();
-          setTimeout(iniciarPopupPromocion, 200);
+
+          // Abrir popup tras una pequeña pausa sin interferir con la opacidad del logo
+          setTimeout(iniciarPopupPromocion, 150);
         }
       });
 
-      // Animar el clon con pausa inicial de 500ms (0.5s)
+      // Paso A: Pausa inicial de 1 segundo (ajustable) + Traslado fluido
       tl.to(clone, {
         x: deltaX,
         y: deltaY,
@@ -111,16 +110,22 @@ document.addEventListener("DOMContentLoaded", () => {
         scaleY: scaleY,
         transformOrigin: "0% 0%",
         duration: 0.85,
-        delay: 0.5, // Retención inicial antes de iniciar el movimiento
+        delay: 1.0, // Permanencia en pantalla durante 1 segundo antes de moverse
         ease: "power2.inOut",
         force3D: true
       })
-      // Desvanecer el fondo del preloader justo antes de tocar el destino
+      // Paso B: Transición del logo final Y el preloader en paralelo para evitar cortes abruptos
+      .to(logoTarget, {
+        visibility: "visible",
+        opacity: 1,
+        duration: 0.15,
+        ease: "power1.in"
+      }, "-=0.15")
       .to(preloader, {
         opacity: 0,
-        duration: 0.2,
+        duration: 0.25,
         ease: "power1.out"
-      }, "-=0.2");
+      }, "-=0.25");
     });
   };
 
