@@ -13,14 +13,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let isModalOpen = false;
 
-  // 2. ABRIR EL POPUP DE PROMOCIÓN (ANIMACIÓN GSAP BACK.OUT)
+    // 2. ABRIR EL POPUP DE PROMOCIÓN (ANIMACIÓN GSAP BACK.OUT Y FONDO DIFUMINADO)
   const iniciarPopupPromocion = () => {
     if (!modalPromo) return;
 
     isModalOpen = true;
     modalPromo.showModal();
 
-    // Animación de entrada: Opacidad, Escala y Desplazamiento vertical elástico
+    // Animación de entrada: Opacidad, Escala y Desplazamiento elástico
     gsap.fromTo(
       modalPromo,
       {
@@ -35,6 +35,23 @@ document.addEventListener("DOMContentLoaded", () => {
         duration: 0.75,
         ease: "back.out(1.7)",
         force3D: true
+      }
+    );
+
+    // Animación suave para difuminar el fondo al mismo tiempo
+    gsap.fromTo(
+      "dialog::backdrop",
+      {
+        opacity: 0,
+        backdropFilter: "blur(0px)",
+        webkitBackdropFilter: "blur(0px)"
+      },
+      {
+        opacity: 1,
+        backdropFilter: "blur(8px)",
+        webkitBackdropFilter: "blur(8px)",
+        duration: 0.5,
+        ease: "power2.out"
       }
     );
 
@@ -69,6 +86,8 @@ document.addEventListener("DOMContentLoaded", () => {
         cerrarConAnimacion();
       }
     });
+  };
+
   };
 
   // 3. ANIMACIÓN GSAP DEL PRELOADER
