@@ -154,10 +154,12 @@ dialog#modalPromociones {
   margin: auto;
   max-height: 90vh;
   outline: none;
+  z-index: 100; /* Prioridad por encima del header y la navegación */
   will-change: transform, opacity;
 }
 
 dialog::backdrop {
+  z-index: 99; /* Asegura que la capa oscura del fondo esté por detrás del modal */
   background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(4px);
 }
