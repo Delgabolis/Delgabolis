@@ -21,7 +21,7 @@ body {
   font-family: "Fraunces", serif; 
 } 
 
-/* Preloader heredando el fondo del body */
+/* Preloader heredando el fondo exacto del body */
 #preloader {
   position: fixed;
   inset: 0;
@@ -35,12 +35,14 @@ body {
   background-color: inherit !important;
 }
 
+/* Reglas anti-parpadeo y anti-aliasing GPU */
 #logo-preload,
-#logo-target {
-  will-change: transform, opacity;
-  transform-style: preserve-3d;
+#logo-target,
+#logo-clone {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  transform-style: flat;
+  image-rendering: -webkit-optimize-contrast;
 }
 
 /* Barra de navegación sticky */ 
@@ -103,7 +105,7 @@ body {
   font-family: "Fraunces", serif; 
 } 
 
-/* Estilos para las tarjetas del carrusel */
+/* Estilos para las tarjetas del carrusel Swiper */
 .swiper-slide {
   position: relative;
   width: 280px; 
