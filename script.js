@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  // 3. ANIMACIÓN GSAP DEL PRELOADER
+  // 3. ANIMACIÓN GSAP DEL PRELOADER (CORREGIDA)
   const runPreloaderAnimation = () => {
     if (!preloader || !logoPreload || !logoTarget) {
       iniciarPopupPromocion();
@@ -61,15 +61,17 @@ document.addEventListener("DOMContentLoaded", () => {
       const deltaY = (targetRect.top + targetRect.height / 2) - (currentRect.top + currentRect.height / 2);
       const scale = targetRect.width / currentRect.width;
 
+      // Fijar el centro de transformación para evitar descompensaciones
+      gsap.set(logoPreload, { transformOrigin: "center center" });
+
       const tl = gsap.timeline({
         onComplete: () => {
           if (preloader) preloader.remove();
-          // Pausa cómoda de 650ms antes de mostrar el popup de promociones
           setTimeout(iniciarPopupPromocion, 650);
         }
       });
 
-      // Paso A: Mover y escalar el logo desde el centro hasta la posición final en el header
+      // Paso A: Mover y escalar el logo flotante a la posición final
       tl.to(logoPreload, {
         x: deltaX,
         y: deltaY,
@@ -77,18 +79,19 @@ document.addEventListener("DOMContentLoaded", () => {
         duration: 1.0,
         ease: "power3.inOut"
       })
-      // Paso B: Intercambio invisible del logo animado al logo real de la página
-      .call(() => {
-        gsap.set(logoTarget, { opacity: 1 });
-        logoTarget.classList.remove("opacity-0");
-        gsap.set(logoPreload, { opacity: 0 });
-      })
-      // Paso C: Desvanecer la capa del preloader para mostrar la interfaz limpia
+      // Paso B: Revelar el logo estático justo antes de finalizar el movimiento
+      .to(logoTarget, {
+        opacity: 1,
+        duration: 0.15,
+        ease: "power1.in",
+        onStart: () => logoTarget.classList.remove("opacity-0")
+      }, "-=0.15")
+      // Paso C: Ocultar la capa preloader suavemente de forma simultánea
       .to(preloader, {
         opacity: 0,
-        duration: 0.5,
+        duration: 0.4,
         ease: "power2.out"
-      });
+      }, "<");
     });
   };
 
