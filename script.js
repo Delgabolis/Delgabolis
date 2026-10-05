@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  // 3. ANIMACIÓN GSAP DEL PRELOADER (CORREGIDA)
+  // 3. ANIMACIÓN GSAP DEL PRELOADER
   const runPreloaderAnimation = () => {
     if (!preloader || !logoPreload || !logoTarget) {
       iniciarPopupPromocion();
@@ -47,6 +47,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     requestAnimationFrame(() => {
+      // Remover cualquier transición en línea de CSS que genere conflicto
+      logoPreload.style.transition = "none";
+
       const targetRect = logoTarget.getBoundingClientRect();
       const currentRect = logoPreload.getBoundingClientRect();
 
@@ -61,9 +64,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const deltaY = (targetRect.top + targetRect.height / 2) - (currentRect.top + currentRect.height / 2);
       const scale = targetRect.width / currentRect.width;
 
-      // Fijar el centro de transformación para evitar descompensaciones
-      gsap.set(logoPreload, { transformOrigin: "center center" });
-
       const tl = gsap.timeline({
         onComplete: () => {
           if (preloader) preloader.remove();
@@ -71,27 +71,22 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
-      // Paso A: Mover y escalar el logo flotante a la posición final
+      // 1. Mover y escalar el logo flotante sin cortes intermedios
       tl.to(logoPreload, {
         x: deltaX,
         y: deltaY,
         scale: scale,
-        duration: 1.0,
-        ease: "power3.inOut"
+        duration: 0.9,
+        ease: "power2.inOut",
+        transformOrigin: "50% 50%"
       })
-      // Paso B: Revelar el logo estático justo antes de finalizar el movimiento
-      .to(logoTarget, {
-        opacity: 1,
-        duration: 0.15,
-        ease: "power1.in",
-        onStart: () => logoTarget.classList.remove("opacity-0")
-      }, "-=0.15")
-      // Paso C: Ocultar la capa preloader suavemente de forma simultánea
+      // 2. Revelar el logo real y desvanecer la capa rosada al mismo tiempo al finalizar el trayecto
+      .set(logoTarget, { opacity: 1, onComplete: () => logoTarget.classList.remove("opacity-0") })
       .to(preloader, {
         opacity: 0,
-        duration: 0.4,
-        ease: "power2.out"
-      }, "<");
+        duration: 0.35,
+        ease: "power1.out"
+      });
     });
   };
 
