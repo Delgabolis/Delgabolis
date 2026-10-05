@@ -1,3 +1,62 @@
+document.addEventListener("DOMContentLoaded", () => {
+  // Registrar el plugin Flip de GSAP
+  gsap.registerPlugin(Flip);
+
+  const preloader = document.getElementById("preloader");
+  const logoPreload = document.getElementById("logo-preload");
+  const logoTarget = document.getElementById("logo-target");
+
+  const runGsapPreloader = () => {
+    if (!preloader || !logoPreload || !logoTarget) return;
+
+    // 1. Capturar el estado inicial del logo en pantalla completa
+    const state = Flip.getState(logoPreload);
+
+    // 2. Mover visualmente el elemento del preloader hacia el contenedor final
+    // Ocultamos el target original para reemplazarlo momentáneamente por el elemento animado
+    logoTarget.style.visibility = "hidden";
+    logoTarget.parentNode.appendChild(logoPreload);
+
+    // Remover clases de restricciones de pantalla completa para que tome las dimensiones del destino
+    logoPreload.classList.remove("max-w-[85vw]", "max-h-[85vh]", "w-auto", "h-auto");
+    logoPreload.classList.add("w-60", "max-w-full");
+
+    // 3. Crear la secuencia con GSAP
+    const tl = gsap.timeline();
+
+    // Transición de posición y tamaño usando Flip
+    tl.add(
+      Flip.from(state, {
+        duration: 1.2,
+        ease: "power3.inOut",
+        absolute: true, // Evita colapsos del layout durante la trayectoria
+      })
+    )
+    // Desvanecer el fondo rosado del preloader en paralelo o casi al final
+    .to(
+      preloader,
+      {
+        opacity: 0,
+        duration: 0.5,
+        ease: "power1.out",
+        onComplete: () => {
+          preloader.remove(); // Eliminar el fondo del DOM
+          logoTarget.style.visibility = "visible"; // Mostrar el logo destino oficial
+          logoPreload.remove(); // Limpiar el logo temporal
+        }
+      },
+      "-=0.4" // Empieza 0.4 segundos antes de que termine la animación del logo
+    );
+  };
+
+  // Ejecutar cuando se hayan cargado imágenes y layout
+  if (document.readyState === "complete") {
+    runGsapPreloader();
+  } else {
+    window.addEventListener("load", runGsapPreloader);
+  }
+
+
 document.addEventListener("DOMContentLoaded", () => { 
   // 1. Inicializar iconos
   lucide.createIcons(); 
