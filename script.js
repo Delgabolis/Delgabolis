@@ -1,9 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // 0. Registrar Plugin de GSAP
-  if (typeof gsap !== "undefined" && typeof Flip !== "undefined") {
-    gsap.registerPlugin(Flip);
-  }
-
   // 1. Inicializar iconos de Lucide
   if (window.lucide) {
     lucide.createIcons();
@@ -18,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let isModalOpen = false;
 
-  // 2. MOSTRAR EL POPUP DE PROMOCIONES
+  // 2. FUNCIÓN PARA ABRIR EL POPUP DE PROMOCIÓN
   const iniciarPopupPromocion = () => {
     if (!modalPromo) return;
 
@@ -44,51 +39,52 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  // 3. ANIMACIÓN GSAP PRELOADER
-  const runGsapPreloader = () => {
+  // 3. ANIMACIÓN GSAP DEL PRELOADER
+  const runPreloaderAnimation = () => {
     if (!preloader || !logoPreload || !logoTarget) {
       iniciarPopupPromocion();
       return;
     }
 
-    logoTarget.style.visibility = "hidden";
+    // Obtener la posición del destino para la transición
+    const targetRect = logoTarget.getBoundingClientRect();
+    const currentRect = logoPreload.getBoundingClientRect();
 
-    const state = Flip.getState(logoPreload);
-    logoTarget.parentNode.appendChild(logoPreload);
-
-    logoPreload.classList.remove("max-w-[85vw]", "max-h-[85vh]", "w-auto", "h-auto");
-    logoPreload.classList.add("w-60", "max-w-full");
+    const deltaX = targetRect.left + targetRect.width / 2 - (currentRect.left + currentRect.width / 2);
+    const deltaY = targetRect.top + targetRect.height / 2 - (currentRect.top + currentRect.height / 2);
+    const scale = targetRect.width / currentRect.width;
 
     const tl = gsap.timeline({
       onComplete: () => {
+        // Revelar logo final y eliminar capa de preloader
+        logoTarget.classList.remove("opacity-0");
         preloader.remove();
-        logoTarget.style.visibility = "visible";
+
+        // Lanzar popup
         setTimeout(iniciarPopupPromocion, 200);
       }
     });
 
-    tl.add(
-      Flip.from(state, {
-        duration: 1.0,
-        ease: "power3.inOut",
-        absolute: true,
-      })
-    ).to(
-      preloader,
-      {
-        opacity: 0,
-        duration: 0.3,
-        ease: "power1.out",
-      },
-      "-=0.2"
-    );
+    // Mover el logo hacia la posición final y desaparecer el fondo
+    tl.to(logoPreload, {
+      x: deltaX,
+      y: deltaY,
+      scale: scale,
+      duration: 0.9,
+      ease: "power2.inOut"
+    })
+    .to(preloader, {
+      opacity: 0,
+      duration: 0.3,
+      ease: "power1.out"
+    }, "-=0.3");
   };
 
-  // Ejecución de carga
+  // Ejecutar animación cuando la página y las imágenes estén listas
   if (document.readyState === "complete") {
-    runGsapPreloader();
+    runPreloaderAnimation();
   } else {
-    window.addEventListener("load", runGsapPreloader);
+    window.addEventListener("load", runPreloaderAnimation);
   }
 
   // 4. Fondo difuminado en Navegación al hacer scroll
