@@ -145,6 +145,7 @@ body {
   text-shadow: 0 2px 4px rgba(0,0,0,0.8);
   font-family: "Fraunces", serif;
 }
+
 /* Modales */
 dialog#modalCarrusel,
 dialog#modalPromociones {
@@ -153,13 +154,14 @@ dialog#modalPromociones {
   margin: auto;
   max-height: 90vh;
   outline: none;
-  z-index: 100; /* Prioridad por encima del header y la navegación */
+  z-index: 100;
   will-change: transform, opacity;
 }
 
+/* Transición suave del telón de fondo con desenfoque */
 dialog::backdrop {
-  z-index: 99; /* Asegura que la capa oscura del fondo esté por detrás del modal */
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: backdrop-filter 0.5s ease, -webkit-backdrop-filter 0.5s ease, background-color 0.5s ease;
 }
-
