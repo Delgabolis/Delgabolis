@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // 0. REGISTRAR PLUGIN DE GSAP
+  // 0. Registrar Plugin de GSAP
   if (typeof gsap !== "undefined" && typeof Flip !== "undefined") {
     gsap.registerPlugin(Flip);
   }
@@ -9,33 +9,70 @@ document.addEventListener("DOMContentLoaded", () => {
     lucide.createIcons();
   }
 
-  // 2. Preloader con animación GSAP + Flip
+  // Elementos
   const preloader = document.getElementById("preloader");
   const logoPreload = document.getElementById("logo-preload");
   const logoTarget = document.getElementById("logo-target");
+  const modalPromo = document.getElementById("modalPromociones");
+  const btnCerrarPromo = document.getElementById("btnCerrarPromo");
 
-  const modalPromo = document.getElementById('modalPromociones');
-  const btnCerrarPromo = document.getElementById('btnCerrarPromo');
   let isModalOpen = false;
 
+  // 2. Función para abrir el modal de promoción
+  const mostrarModalPromocion = () => {
+    if (!modalPromo) return;
+
+    isModalOpen = true;
+    modalPromo.showModal();
+
+    btnCerrarPromo?.addEventListener("click", () => modalPromo.close());
+
+    modalPromo.addEventListener("click", (e) => {
+      const dialogBounds = modalPromo.getBoundingClientRect();
+      if (
+        e.clientX < dialogBounds.left ||
+        e.clientX > dialogBounds.right ||
+        e.clientY < dialogBounds.top ||
+        e.clientY > dialogBounds.bottom
+      ) {
+        modalPromo.close();
+      }
+    });
+
+    modalPromo.addEventListener("close", () => {
+      isModalOpen = false;
+    });
+  };
+
+  // 3. Preloader con animación GSAP + Flip
   const runGsapPreloader = () => {
     if (!preloader || !logoPreload || !logoTarget) return;
 
-    // Ocultar target temporalmente
-    logoTarget.style.visibility = "hidden";
-
-    // Capturar el estado inicial del logo en el preloader
+    // Guardar estado inicial del logo en el preloader
     const state = Flip.getState(logoPreload);
 
-    // Mover el nodo al contenedor final en el DOM
+    // Ocultar la imágen target destino mientras se mueve el nodo
+    logoTarget.style.visibility = "hidden";
+
+    // Mover el logo al contenedor destino dentro del DOM
     logoTarget.parentNode.appendChild(logoPreload);
 
-    // Ajustar clases para que coincida con el tamaño destino
+    // Ajustar clases CSS para que tome las dimensiones del destino
     logoPreload.classList.remove("max-w-[85vw]", "max-h-[85vh]", "w-auto", "h-auto");
     logoPreload.classList.add("w-60", "max-w-full");
 
-    // Secuencia GSAP
-    const tl = gsap.timeline();
+    // Crear la animación
+    const tl = gsap.timeline({
+      onComplete: () => {
+        // Al terminar toda la animación:
+        preloader.style.display = "none";
+        logoTarget.style.visibility = "visible";
+        logoPreload.remove();
+
+        // RECIÉN AQUÍ SE ABRE EL MODAL DE PROMOCIÓN
+        setTimeout(mostrarModalPromocion, 400);
+      }
+    });
 
     tl.add(
       Flip.from(state, {
@@ -43,62 +80,25 @@ document.addEventListener("DOMContentLoaded", () => {
         ease: "power3.inOut",
         absolute: true,
       })
-    )
-    .to(
+    ).to(
       preloader,
       {
         opacity: 0,
-        duration: 0.5,
+        duration: 0.4,
         ease: "power1.out",
-        onComplete: () => {
-          preloader.style.display = "none";
-          logoTarget.style.visibility = "visible";
-          logoPreload.remove();
-
-          // ABRIR EL POPUP DE PROMOCIÓN ÚNICAMENTE AL TERMINAR EL PRELOADER
-          mostrarModalPromocion();
-        }
       },
-      "-=0.4"
+      "-=0.3"
     );
   };
 
-  // Ejecutar animación cuando las imágenes y estilos estén completamente cargados
+  // IMPORTANTE: Garantizar que todas las imágenes e imágen de logo estén totalmente cargadas
   if (document.readyState === "complete") {
     runGsapPreloader();
   } else {
     window.addEventListener("load", runGsapPreloader);
   }
 
-  // Función para abrir la promoción tras el preloader
-  function mostrarModalPromocion() {
-    if (modalPromo) {
-      setTimeout(() => {
-        isModalOpen = true;
-        modalPromo.showModal();
-      }, 300); // Pequeño delay fluido después de la transición
-
-      btnCerrarPromo?.addEventListener('click', () => modalPromo.close());
-
-      modalPromo.addEventListener('click', (e) => {
-        const dialogBounds = modalPromo.getBoundingClientRect();
-        if (
-          e.clientX < dialogBounds.left ||
-          e.clientX > dialogBounds.right ||
-          e.clientY < dialogBounds.top ||
-          e.clientY > dialogBounds.bottom
-        ) {
-          modalPromo.close();
-        }
-      });
-
-      modalPromo.addEventListener('close', () => {
-        isModalOpen = false;
-      });
-    }
-  }
-
-  // 3. Fondo difuminado en Navegación al hacer scroll
+  // 4. Fondo difuminado en Navegación al hacer scroll
   const categoryNav = document.querySelector(".category-nav");
   if (categoryNav) {
     const handleStickyNav = () => {
@@ -110,11 +110,11 @@ document.addEventListener("DOMContentLoaded", () => {
     handleStickyNav();
   }
 
-  // 4. Navegación por Categorías e Intersection Observer
+  // 5. Navegación por Categorías e Intersection Observer
   const navButtons = [...document.querySelectorAll(".nav-pill")];
-  const sections = navButtons.map(btn => document.getElementById(btn.dataset.target));
+  const sections = navButtons.map((btn) => document.getElementById(btn.dataset.target));
 
-  navButtons.forEach(button => {
+  navButtons.forEach((button) => {
     button.addEventListener("click", () => {
       const section = document.getElementById(button.dataset.target);
       if (section) {
@@ -124,7 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   const activateButton = (targetId) => {
-    navButtons.forEach(btn => {
+    navButtons.forEach((btn) => {
       const isTarget = btn.dataset.target === targetId;
       btn.classList.toggle("is-active", isTarget);
 
@@ -132,40 +132,43 @@ document.addEventListener("DOMContentLoaded", () => {
         btn.scrollIntoView({
           behavior: "smooth",
           inline: "center",
-          block: "nearest"
+          block: "nearest",
         });
       }
     });
   };
 
-  const observer = new IntersectionObserver((entries) => {
-    if (isModalOpen) return;
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (isModalOpen) return;
 
-    const isAtBottom = (window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight - 10;
-    if (isAtBottom) return;
+      const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 10;
+      if (isAtBottom) return;
 
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        activateButton(entry.target.id);
-      }
-    });
-  }, { rootMargin: "-20% 0px -40% 0px", threshold: 0.1 });
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          activateButton(entry.target.id);
+        }
+      });
+    },
+    { rootMargin: "-20% 0px -40% 0px", threshold: 0.1 }
+  );
 
-  sections.forEach(section => {
+  sections.forEach((section) => {
     if (section) observer.observe(section);
   });
 
-  // 5. Carrusel Swiper (Modal Dinámico)
-  const modalCarrusel = document.getElementById('modalCarrusel');
-  const btnCerrarCarrusel = document.getElementById('btnCerrarCarrusel');
-  const swiperWrapper = document.getElementById('swiperWrapper');
+  // 6. Carrusel Swiper (Modal Dinámico)
+  const modalCarrusel = document.getElementById("modalCarrusel");
+  const btnCerrarCarrusel = document.getElementById("btnCerrarCarrusel");
+  const swiperWrapper = document.getElementById("swiperWrapper");
   let swiperInstance = null;
 
   const setupFlavorGroup = (buttonSelector) => {
     const buttons = [...document.querySelectorAll(buttonSelector)];
 
     buttons.forEach((btn, index) => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener("click", (e) => {
         e.preventDefault();
         isModalOpen = true;
 
@@ -173,10 +176,11 @@ document.addEventListener("DOMContentLoaded", () => {
           swiperInstance.destroy(true, true);
         }
 
-        swiperWrapper.innerHTML = buttons.map((b) => {
-          const name = b.dataset.flavorName;
-          const imgSrc = b.dataset.flavorImg || 'logo_bolisv2.png';
-          return `
+        swiperWrapper.innerHTML = buttons
+          .map((b) => {
+            const name = b.dataset.flavorName;
+            const imgSrc = b.dataset.flavorImg || "logo_bolisv2.png";
+            return `
             <div class="swiper-slide">
               <img src="${imgSrc}" alt="${name}" />
               <div class="swiper-txt">
@@ -184,7 +188,8 @@ document.addEventListener("DOMContentLoaded", () => {
               </div>
             </div>
           `;
-        }).join('');
+          })
+          .join("");
 
         modalCarrusel?.showModal();
 
@@ -193,7 +198,7 @@ document.addEventListener("DOMContentLoaded", () => {
           grabCursor: true,
           loop: true,
           centeredSlides: true,
-          slidesPerView: "auto"
+          slidesPerView: "auto",
         });
 
         swiperInstance.slideToLoop(index, 0);
@@ -205,17 +210,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  setupFlavorGroup('.flavor-btn');
-  setupFlavorGroup('.frappe-flavor-btn');
-  setupFlavorGroup('.congelados-flavor-btn');
+  setupFlavorGroup(".flavor-btn");
+  setupFlavorGroup(".frappe-flavor-btn");
+  setupFlavorGroup(".congelados-flavor-btn");
 
   const cerrarCarrusel = () => {
     modalCarrusel?.close();
   };
 
-  btnCerrarCarrusel?.addEventListener('click', cerrarCarrusel);
+  btnCerrarCarrusel?.addEventListener("click", cerrarCarrusel);
 
-  modalCarrusel?.addEventListener('click', (e) => {
+  modalCarrusel?.addEventListener("click", (e) => {
     const dialogBounds = modalCarrusel.getBoundingClientRect();
     if (
       e.clientX < dialogBounds.left ||
@@ -227,7 +232,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  modalCarrusel?.addEventListener('close', () => {
+  modalCarrusel?.addEventListener("close", () => {
     isModalOpen = false;
   });
 });
