@@ -21,7 +21,15 @@ body {
 .heading-font { 
   font-family: "Fraunces", serif; 
 } 
+/* Asegura la fluidez de renderizado y el orden de capas */
+#preloader {
+  will-change: opacity;
+  z-index: 50;
+}
 
+#logo-preload {
+  will-change: transform;
+}
 /* Asegura que no haya saltos visuales durante el inicio del preloader */
 #preloader {
   will-change: opacity;
