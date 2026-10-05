@@ -63,34 +63,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const tl = gsap.timeline({
         onComplete: () => {
-          // Intercambio invisible del logo de apoyo al logo definitivo del DOM
-          gsap.set(logoTarget, { opacity: 1 });
-          logoTarget.classList.remove("opacity-0");
           if (preloader) preloader.remove();
-
-          // Pausa deliberada de 650ms para apreciar la interfaz antes del popup
           setTimeout(iniciarPopupPromocion, 650);
         }
       });
 
-      // Paso A: Mover y escalar el logo fluidamente hasta su destino exacto
+      // Paso 1: Mover y escalar el logo sin desvanecer la capa rosada
       tl.to(logoPreload, {
         x: deltaX,
         y: deltaY,
         scale: scale,
-        duration: 1.1,
+        duration: 0.95,
         ease: "power3.inOut"
       })
-      // Paso B: Desvanecer el fondo del preloader justo al encajar el logo
+      // Paso 2: Intercambio fluido con el logo estático en la página
+      .call(() => {
+        gsap.set(logoTarget, { opacity: 1 });
+        logoTarget.classList.remove("opacity-0");
+        gsap.set(logoPreload, { opacity: 0 });
+      })
+      // Paso 3: Desvanecer el fondo del preloader únicamente cuando el logo ya llegó a su destino
       .to(preloader, {
         opacity: 0,
-        duration: 0.4,
+        duration: 0.45,
         ease: "power2.out"
-      }, "-=0.2");
+      });
     });
   };
 
-  // Ejecutar cuando la página y sus imágenes estén listas
+  // Ejecutar cuando la página y sus imágenes estén totalmente cargadas
   if (document.readyState === "complete") {
     runPreloaderAnimation();
   } else {
