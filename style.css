@@ -30,6 +30,12 @@ body {
 #logo-preload {
   will-change: transform, opacity;
 }
+#preloader {
+  will-change: background-color, opacity;
+  z-index: 50;
+  transition: background-color 0.1s linear; /* Asegura suavidad en la transición del fondo */
+}
+
 
 #logo-target {
   /* Se remueve transition: opacity para evitar interferencias con GSAP */
