@@ -37,10 +37,14 @@ body {
 
 #logo-preload {
   will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 #logo-target {
   will-change: opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 /* Barra de navegación sticky */ 
