@@ -21,17 +21,19 @@ body {
   font-family: "Fraunces", serif; 
 } 
 
-/* Copiar exactamente las mismas propiedades que tiene tu body */
+/* Preloader heredando exactamente el mismo fondo del body */
 #preloader {
-  will-change: opacity;
+  position: fixed;
+  inset: 0;
   z-index: 50;
-  background-image: url('fondo-helados.jpg') !important; 
-  background-repeat: repeat !important; 
-  background-size: 300px auto !important; 
-  background-attachment: fixed !important; 
-  background-color: #fca5a5 !important; 
+  will-change: opacity;
+  
+  background-image: inherit !important;
+  background-repeat: inherit !important;
+  background-size: inherit !important;
+  background-attachment: inherit !important;
+  background-color: inherit !important;
 }
-
 
 #logo-preload {
   will-change: transform, opacity;
@@ -141,7 +143,7 @@ body {
   font-family: "Fraunces", serif;
 }
 
-/* Modal / Dialog */
+/* Modales */
 dialog#modalCarrusel,
 dialog#modalPromociones {
   position: fixed;
