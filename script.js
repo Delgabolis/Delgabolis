@@ -18,15 +18,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let isModalOpen = false;
 
-  // 2. FUNCIÓN EXCLUSIVA PARA MOSTRAR EL POPUP (Solo se llama al finalizar el preloader)
+  // 2. MOSTRAR EL POPUP DE PROMOCIONES
   const iniciarPopupPromocion = () => {
     if (!modalPromo) return;
 
-    // Abrir modal
     isModalOpen = true;
     modalPromo.showModal();
 
-    // Eventos de cierre
     btnCerrarPromo?.addEventListener("click", () => modalPromo.close());
 
     modalPromo.addEventListener("click", (e) => {
@@ -48,34 +46,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 3. ANIMACIÓN GSAP PRELOADER
   const runGsapPreloader = () => {
-    if (!preloader || !logoPreload || !logoTarget) return;
+    if (!preloader || !logoPreload || !logoTarget) {
+      iniciarPopupPromocion();
+      return;
+    }
 
-    // Asegurar ocultar target visualmente durante la transición
     logoTarget.style.visibility = "hidden";
 
-    // Mover nodo de logo al contenedor destino dentro del DOM
     const state = Flip.getState(logoPreload);
     logoTarget.parentNode.appendChild(logoPreload);
 
-    // Reasignar clases de tamaño
     logoPreload.classList.remove("max-w-[85vw]", "max-h-[85vh]", "w-auto", "h-auto");
     logoPreload.classList.add("w-60", "max-w-full");
 
-    // Construir la línea de tiempo GSAP
     const tl = gsap.timeline({
       onComplete: () => {
-        // Limpieza final del preloader
         preloader.remove();
         logoTarget.style.visibility = "visible";
-
-        // AHORA SÍ: Disparar el popup únicamente después de remover el preloader
-        setTimeout(iniciarPopupPromocion, 300);
+        setTimeout(iniciarPopupPromocion, 200);
       }
     });
 
     tl.add(
       Flip.from(state, {
-        duration: 1.2,
+        duration: 1.0,
         ease: "power3.inOut",
         absolute: true,
       })
@@ -83,14 +77,14 @@ document.addEventListener("DOMContentLoaded", () => {
       preloader,
       {
         opacity: 0,
-        duration: 0.4,
+        duration: 0.3,
         ease: "power1.out",
       },
-      "-=0.3"
+      "-=0.2"
     );
   };
 
-  // Esperar a la carga total de imágenes antes de ejecutar el preloader
+  // Ejecución de carga
   if (document.readyState === "complete") {
     runGsapPreloader();
   } else {
