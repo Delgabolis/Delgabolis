@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  // 3. ANIMACIÓN GSAP DEL PRELOADER
+// 3. ANIMACIÓN GSAP DEL PRELOADER
   const runPreloaderAnimation = () => {
     if (!preloader || !logoPreload || !logoTarget) {
       iniciarPopupPromocion();
@@ -90,6 +90,13 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   };
+
+  // Ejecutar cuando la página y sus imágenes estén totalmente cargadas
+  if (document.readyState === "complete") {
+    runPreloaderAnimation();
+  } else {
+    window.addEventListener("load", runPreloaderAnimation);
+  }
 
   // Ejecutar cuando la página y sus imágenes estén totalmente cargadas
   if (document.readyState === "complete") {
