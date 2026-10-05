@@ -22,6 +22,15 @@ body {
   font-family: "Fraunces", serif; 
 } 
 
+/* Asegura que no haya saltos visuales durante el inicio del preloader */
+#preloader {
+  will-change: opacity;
+}
+
+#logo-preload {
+  will-change: transform;
+}
+
 /* Barra de navegación base (transparente al inicio) */ 
 .category-nav { 
   position: sticky; 
