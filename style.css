@@ -21,7 +21,7 @@ body {
   font-family: "Fraunces", serif; 
 } 
 
-/* Preloader heredando exactamente el mismo fondo del body */
+/* Preloader heredando el fondo del body */
 #preloader {
   position: fixed;
   inset: 0;
