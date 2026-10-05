@@ -4,6 +4,14 @@ document.addEventListener("DOMContentLoaded", () => {
     lucide.createIcons();
   }
 
+  // Crear capa de Blur Overlay dinámicamente si no existe
+  let blurOverlay = document.getElementById("blur-overlay");
+  if (!blurOverlay) {
+    blurOverlay = document.createElement("div");
+    blurOverlay.id = "blur-overlay";
+    document.body.appendChild(blurOverlay);
+  }
+
   // Elementos principales
   const preloader = document.getElementById("preloader");
   const logoPreload = document.getElementById("logo-preload");
@@ -13,12 +21,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let isModalOpen = false;
 
-  // 2. ABRIR EL POPUP DE PROMOCIÓN CON ANIMACIÓN Y BLUR EN EL FONDO
+  const activarBlurFondo = (activar) => {
+    if (blurOverlay) {
+      if (activar) {
+        blurOverlay.classList.add("is-active");
+      } else {
+        blurOverlay.classList.remove("is-active");
+      }
+    }
+  };
+
+  // 2. ABRIR EL POPUP DE PROMOCIÓN
   const iniciarPopupPromocion = () => {
     if (!modalPromo) return;
 
     isModalOpen = true;
-    document.body.classList.add("modal-blur-active");
+    activarBlurFondo(true);
     modalPromo.showModal();
 
     // Animación de entrada
@@ -41,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Animación de salida al cerrar
     const cerrarConAnimacion = () => {
-      document.body.classList.remove("modal-blur-active");
+      activarBlurFondo(false);
       gsap.to(modalPromo, {
         opacity: 0,
         scale: 0.8,
@@ -71,6 +89,8 @@ document.addEventListener("DOMContentLoaded", () => {
         cerrarConAnimacion();
       }
     });
+
+    blurOverlay.addEventListener("click", cerrarConAnimacion);
   };
 
   // 3. ANIMACIÓN GSAP DEL PRELOADER
@@ -228,7 +248,7 @@ document.addEventListener("DOMContentLoaded", () => {
       btn.addEventListener("click", (e) => {
         e.preventDefault();
         isModalOpen = true;
-        document.body.classList.add("modal-blur-active");
+        activarBlurFondo(true);
 
         if (swiperInstance) {
           swiperInstance.destroy(true, true);
@@ -273,7 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupFlavorGroup(".congelados-flavor-btn");
 
   const cerrarCarrusel = () => {
-    document.body.classList.remove("modal-blur-active");
+    activarBlurFondo(false);
     modalCarrusel?.close();
   };
 
@@ -292,7 +312,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   modalCarrusel?.addEventListener("close", () => {
-    document.body.classList.remove("modal-blur-active");
+    activarBlurFondo(false);
     isModalOpen = false;
   });
 });
