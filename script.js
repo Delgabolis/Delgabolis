@@ -13,11 +13,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let isModalOpen = false;
 
-  // 2. ABRIR EL POPUP DE PROMOCIÓN (ANIMACIÓN GSAP BACK.OUT)
+  // 2. ABRIR EL POPUP DE PROMOCIÓN CON ANIMACIÓN Y BLUR DE FONDO
   const iniciarPopupPromocion = () => {
     if (!modalPromo) return;
 
     isModalOpen = true;
+    document.body.classList.add("modal-blur-active");
     modalPromo.showModal();
 
     // Animación de entrada: Opacidad, Escala y Desplazamiento elástico
@@ -40,6 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Animación de salida al cerrar
     const cerrarConAnimacion = () => {
+      document.body.classList.remove("modal-blur-active");
       gsap.to(modalPromo, {
         opacity: 0,
         scale: 0.8,
@@ -83,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     requestAnimationFrame(() => {
-      // 1. Obtener dimensiones y posiciones exactas
+      // Obtener dimensiones y posiciones exactas
       const targetRect = logoTarget.getBoundingClientRect();
       const currentRect = logoPreload.getBoundingClientRect();
 
@@ -95,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // 2. Crear clon flotante alineado en pantalla
+      // Crear clon flotante alineado en pantalla
       const clone = logoPreload.cloneNode(true);
       clone.id = "logo-clone";
       clone.style.position = "fixed";
@@ -111,10 +113,10 @@ document.addEventListener("DOMContentLoaded", () => {
       logoPreload.style.opacity = "0";
       document.body.appendChild(clone);
 
-      // Mantener oculto el logo de destino mientras la animación sucede
+      // Mantener oculto el logo de destino mientras ocurre la transición
       logoTarget.style.visibility = "hidden";
 
-      // 3. Calcular distancia y escala
+      // Calcular distancia y escala
       const scaleX = targetRect.width / currentRect.width;
       const scaleY = targetRect.height / currentRect.height;
       const deltaX = targetRect.left - currentRect.left;
@@ -122,21 +124,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const tl = gsap.timeline({
         onComplete: () => {
-          // Mostrar el logo final real
           logoTarget.style.visibility = "visible";
           logoTarget.style.opacity = "1";
 
-          // Limpiar clon y preloader
           const activeClone = document.getElementById("logo-clone");
           if (activeClone) activeClone.remove();
           if (preloader) preloader.remove();
 
-          // Lanzar popup
           setTimeout(iniciarPopupPromocion, 150);
         }
       });
 
-      // Secuencia limpia: Pausa inicial -> Desplazamiento -> Desvanecido de fondo
+      // Secuencia: Pausa -> Desplazamiento -> Desvanecido
       tl.to(clone, {
         x: deltaX,
         y: deltaY,
@@ -144,7 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
         scaleY: scaleY,
         transformOrigin: "0% 0%",
         duration: 0.85,
-        delay: 1.0, // Retención inicial de 1 segundo
+        delay: 1.0,
         ease: "power2.inOut",
         force3D: true
       })
