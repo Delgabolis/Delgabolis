@@ -46,41 +46,52 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Obtener la posición del destino para la transición
-    const targetRect = logoTarget.getBoundingClientRect();
-    const currentRect = logoPreload.getBoundingClientRect();
+    // Asegurar el renderizado preciso de dimensiones antes de calcular coordenadas
+    requestAnimationFrame(() => {
+      const targetRect = logoTarget.getBoundingClientRect();
+      const currentRect = logoPreload.getBoundingClientRect();
 
-    const deltaX = targetRect.left + targetRect.width / 2 - (currentRect.left + currentRect.width / 2);
-    const deltaY = targetRect.top + targetRect.height / 2 - (currentRect.top + currentRect.height / 2);
-    const scale = targetRect.width / currentRect.width;
-
-    const tl = gsap.timeline({
-      onComplete: () => {
-        // Revelar logo final y eliminar capa de preloader
+      // Resguardo por si la imagen aún no se ha renderizado completamente
+      if (currentRect.width === 0 || targetRect.width === 0) {
+        if (preloader) preloader.remove();
         logoTarget.classList.remove("opacity-0");
-        preloader.remove();
-
-        // Lanzar popup
-        setTimeout(iniciarPopupPromocion, 200);
+        iniciarPopupPromocion();
+        return;
       }
-    });
 
-    // Mover el logo hacia la posición final y desaparecer el fondo
-    tl.to(logoPreload, {
-      x: deltaX,
-      y: deltaY,
-      scale: scale,
-      duration: 0.9,
-      ease: "power2.inOut"
-    })
-    .to(preloader, {
-      opacity: 0,
-      duration: 0.3,
-      ease: "power1.out"
-    }, "-=0.3");
+      const deltaX = (targetRect.left + targetRect.width / 2) - (currentRect.left + currentRect.width / 2);
+      const deltaY = (targetRect.top + targetRect.height / 2) - (currentRect.top + currentRect.height / 2);
+      const scale = targetRect.width / currentRect.width;
+
+      const tl = gsap.timeline({
+        onComplete: () => {
+          // Asegurar visibilidad con GSAP y remover la capa
+          gsap.set(logoTarget, { opacity: 1 });
+          logoTarget.classList.remove("opacity-0");
+          if (preloader) preloader.remove();
+
+          // Lanzar popup
+          setTimeout(iniciarPopupPromocion, 200);
+        }
+      });
+
+      // Mover el logo hacia la posición final y desaparecer el fondo
+      tl.to(logoPreload, {
+        x: deltaX,
+        y: deltaY,
+        scale: scale,
+        duration: 0.9,
+        ease: "power2.inOut"
+      })
+      .to(preloader, {
+        opacity: 0,
+        duration: 0.3,
+        ease: "power1.out"
+      }, "-=0.3");
+    });
   };
 
-  // Ejecutar animación cuando la página y las imágenes estén listas
+  // Ejecutar animación cuando la página y las imágenes estén completamente cargadas
   if (document.readyState === "complete") {
     runPreloaderAnimation();
   } else {
