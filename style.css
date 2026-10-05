@@ -17,13 +17,12 @@ body {
   background-color: #fca5a5; 
 } 
 
-/* Difuminado exclusivo para el contenido principal detrás de la capa top-layer */
-body.modal-blur-active main,
-body.modal-blur-active header,
-body.modal-blur-active .category-nav {
-  filter: blur(8px);
-  -webkit-filter: blur(8px);
+/* Difuminado universal a todo el contenido de la página excepto los modales */
+body.modal-blur-active > *:not(dialog):not(#preloader):not(#logo-clone) {
+  filter: blur(8px) !important;
+  -webkit-filter: blur(8px) !important;
   transition: filter 0.3s ease, -webkit-filter 0.3s ease;
+  pointer-events: none; /* Previene clicks accidentales en la página mientras el modal está abierto */
 }
 
 .heading-font { 
