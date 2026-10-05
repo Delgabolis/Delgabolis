@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let isModalOpen = false;
 
-  // 2. FUNCIÓN PARA ABRIR EL POPUP DE PROMOCIÓN
+  // 2. ABRIR EL POPUP DE PROMOCIÓN
   const iniciarPopupPromocion = () => {
     if (!modalPromo) return;
 
@@ -64,11 +64,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const tl = gsap.timeline({
         onComplete: () => {
           if (preloader) preloader.remove();
-          setTimeout(iniciarPopupPromocion, 500);
+          // Pausa cómoda de 650ms antes de mostrar el popup de promociones
+          setTimeout(iniciarPopupPromocion, 650);
         }
       });
 
-      // 1. Mover y escalar el logo desde el centro hasta la posición exacta en el header
+      // Paso A: Mover y escalar el logo desde el centro hasta la posición final en el header
       tl.to(logoPreload, {
         x: deltaX,
         y: deltaY,
@@ -76,13 +77,13 @@ document.addEventListener("DOMContentLoaded", () => {
         duration: 1.0,
         ease: "power3.inOut"
       })
-      // 2. Revelar el logo estático en la página y ocultar el logo del preloader (intercambio invisible)
+      // Paso B: Intercambio invisible del logo animado al logo real de la página
       .call(() => {
         gsap.set(logoTarget, { opacity: 1 });
         logoTarget.classList.remove("opacity-0");
         gsap.set(logoPreload, { opacity: 0 });
       })
-      // 3. Desvanecer la capa de fondo del preloader para revelar la página limpia
+      // Paso C: Desvanecer la capa del preloader para mostrar la interfaz limpia
       .to(preloader, {
         opacity: 0,
         duration: 0.5,
@@ -91,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  // Ejecutar cuando la página y sus recursos estén listos
+  // Ejecutar cuando la ventana y sus imágenes se carguen por completo
   if (document.readyState === "complete") {
     runPreloaderAnimation();
   } else {
