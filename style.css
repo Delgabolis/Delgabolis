@@ -160,6 +160,7 @@ dialog#modalPromociones {
   margin: auto;
   max-height: 90vh;
   outline: none;
+  will-change: transform, opacity;
 }
 
 dialog::backdrop {
