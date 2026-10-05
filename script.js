@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  // 3. ANIMACIÓN GSAP DEL PRELOADER (CORREGIDA SIN PARPADEO)
+  // 3. ANIMACIÓN GSAP DEL PRELOADER (CALCULO DE ESQUINA SIN DESFASE)
   const runPreloaderAnimation = () => {
     if (!preloader || !logoPreload || !logoTarget) {
       iniciarPopupPromocion();
@@ -59,29 +59,31 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      const deltaX = (targetRect.left + targetRect.width / 2) - (currentRect.left + currentRect.width / 2);
-      const deltaY = (targetRect.top + targetRect.height / 2) - (currentRect.top + currentRect.width / 2);
+      // Escala basada en el ancho
       const scale = targetRect.width / currentRect.width;
+
+      // Cálculo alineado a la esquina superior izquierda (top-left) con pivote (0,0)
+      const deltaX = targetRect.left - currentRect.left;
+      const deltaY = targetRect.top - currentRect.top;
 
       const tl = gsap.timeline({
         onComplete: () => {
           if (preloader) preloader.remove();
-          setTimeout(iniciarPopupPromocion, 400);
+          setTimeout(iniciarPopupPromocion, 300);
         }
       });
 
-      // 1. Desplazar y escalar hacia el logo de destino
+      // 1. Animar usando transformOrigin 0% 0% para coincidencia píxel por píxel
       tl.to(logoPreload, {
         x: deltaX,
         y: deltaY,
         scale: scale,
         duration: 0.85,
         ease: "power2.inOut",
-        transformOrigin: "50% 50%"
+        transformOrigin: "0% 0%"
       })
-      // 2. Transición limpia en el mismo fotograma: activar logo final y desvanecer fondo
+      // 2. Revelar logo target y desvanecer la capa de fondo (sin ocultar bruscamente el logo animado)
       .set(logoTarget, { opacity: 1 })
-      .set(logoPreload, { opacity: 0 })
       .to(preloader, {
         opacity: 0,
         duration: 0.3,
@@ -90,7 +92,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  // Ejecutar cuando se hayan cargado imágenes y layout
   if (document.readyState === "complete") {
     runPreloaderAnimation();
   } else {
