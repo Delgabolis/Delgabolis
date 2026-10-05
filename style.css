@@ -176,11 +176,19 @@ dialog#modalPromociones {
   max-height: 90vh;
   padding: 0;
   border: none;
-  border-radius: 24px;
+  border-radius: 24px; /* O el radio de tu preferencia, ej. 20px o 24px */
   background: #ffffff;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   z-index: 100;
-  overflow: visible;
+  
+  /* REGLA CLAVE: Recorta cualquier contenido interno que sobresalga de las esquinas */
+  overflow: hidden; 
+}
+
+/* Opcional: Si el primer elemento dentro del modal tiene un background propio */
+dialog#modalPromociones > *:first-child {
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
 }
 
 dialog::backdrop {
