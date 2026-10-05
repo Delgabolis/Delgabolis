@@ -17,6 +17,13 @@ body {
   background-color: #fca5a5; 
 } 
 
+/* Difuminado suave del fondo de la app al abrir el popup */
+body.modal-blur-active > *:not(dialog) {
+  filter: blur(6px);
+  -webkit-filter: blur(6px);
+  transition: filter 0.3s ease, -webkit-filter 0.3s ease;
+}
+
 .heading-font { 
   font-family: "Fraunces", serif; 
 } 
@@ -35,7 +42,7 @@ body {
   background-color: inherit !important;
 }
 
-/* Reglas anti-parpadeo y optimización de renderizado GPU */
+/* Reglas anti-parpadeo y optimización GPU */
 #logo-preload,
 #logo-target,
 #logo-clone {
@@ -155,13 +162,10 @@ dialog#modalPromociones {
   max-height: 90vh;
   outline: none;
   z-index: 100;
-  will-change: transform, opacity;
+  border: none;
+  background: transparent;
 }
 
-/* Transición suave del telón de fondo con desenfoque */
 dialog::backdrop {
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  transition: backdrop-filter 0.5s ease, -webkit-backdrop-filter 0.5s ease, background-color 0.5s ease;
+  background-color: rgba(0, 0, 0, 0.4);
 }
