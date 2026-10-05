@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  // 3. ANIMACIÓN GSAP DEL PRELOADER
+  // 3. ANIMACIÓN GSAP DEL PRELOADER (CORREGIDA SIN PARPADEO)
   const runPreloaderAnimation = () => {
     if (!preloader || !logoPreload || !logoTarget) {
       iniciarPopupPromocion();
@@ -47,7 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     requestAnimationFrame(() => {
-      // Remover cualquier transición en línea de CSS que genere conflicto
       logoPreload.style.transition = "none";
 
       const targetRect = logoTarget.getBoundingClientRect();
@@ -55,42 +54,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (currentRect.width === 0 || targetRect.width === 0) {
         if (preloader) preloader.remove();
-        logoTarget.classList.remove("opacity-0");
+        logoTarget.style.opacity = "1";
         iniciarPopupPromocion();
         return;
       }
 
       const deltaX = (targetRect.left + targetRect.width / 2) - (currentRect.left + currentRect.width / 2);
-      const deltaY = (targetRect.top + targetRect.height / 2) - (currentRect.top + currentRect.height / 2);
+      const deltaY = (targetRect.top + targetRect.height / 2) - (currentRect.top + currentRect.width / 2);
       const scale = targetRect.width / currentRect.width;
 
       const tl = gsap.timeline({
         onComplete: () => {
           if (preloader) preloader.remove();
-          setTimeout(iniciarPopupPromocion, 650);
+          setTimeout(iniciarPopupPromocion, 400);
         }
       });
 
-      // 1. Mover y escalar el logo flotante sin cortes intermedios
+      // 1. Desplazar y escalar hacia el logo de destino
       tl.to(logoPreload, {
         x: deltaX,
         y: deltaY,
         scale: scale,
-        duration: 0.9,
+        duration: 0.85,
         ease: "power2.inOut",
         transformOrigin: "50% 50%"
       })
-      // 2. Revelar el logo real y desvanecer la capa rosada al mismo tiempo al finalizar el trayecto
-      .set(logoTarget, { opacity: 1, onComplete: () => logoTarget.classList.remove("opacity-0") })
+      // 2. Transición limpia en el mismo fotograma: activar logo final y desvanecer fondo
+      .set(logoTarget, { opacity: 1 })
+      .set(logoPreload, { opacity: 0 })
       .to(preloader, {
         opacity: 0,
-        duration: 0.35,
+        duration: 0.3,
         ease: "power1.out"
       });
     });
   };
 
-  // Ejecutar cuando la ventana y sus imágenes se carguen por completo
+  // Ejecutar cuando se hayan cargado imágenes y layout
   if (document.readyState === "complete") {
     runPreloaderAnimation();
   } else {
