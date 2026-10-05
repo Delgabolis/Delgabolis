@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  // 3. ANIMACIÓN GSAP DEL PRELOADER (CALCULO DE ESQUINA SIN DESFASE)
+  // 3. ANIMACIÓN GSAP DEL PRELOADER (TÉCNICA FLIP SIN PARPADEO/DESFASE)
   const runPreloaderAnimation = () => {
     if (!preloader || !logoPreload || !logoTarget) {
       iniciarPopupPromocion();
@@ -47,48 +47,68 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     requestAnimationFrame(() => {
-      logoPreload.style.transition = "none";
-
+      // 1. Obtener las posiciones exactas en pantalla de ambos elementos
       const targetRect = logoTarget.getBoundingClientRect();
       const currentRect = logoPreload.getBoundingClientRect();
 
       if (currentRect.width === 0 || targetRect.width === 0) {
         if (preloader) preloader.remove();
+        logoTarget.style.visibility = "visible";
         logoTarget.style.opacity = "1";
         iniciarPopupPromocion();
         return;
       }
 
-      // Escala basada en el ancho
-      const scale = targetRect.width / currentRect.width;
+      // 2. Crear un clon exacto en el preloader alineado al logo inicial
+      const clone = logoPreload.cloneNode(true);
+      clone.id = "logo-clone";
+      clone.style.position = "fixed";
+      clone.style.left = `${currentRect.left}px`;
+      clone.style.top = `${currentRect.top}px`;
+      clone.style.width = `${currentRect.width}px`;
+      clone.style.height = `${currentRect.height}px`;
+      clone.style.margin = "0";
+      clone.style.transform = "none";
+      clone.style.zIndex = "60";
 
-      // Cálculo alineado a la esquina superior izquierda (top-left) con pivote (0,0)
+      // Reemplazar el logo del preloader con el clon fijo
+      logoPreload.replaceWith(clone);
+
+      // 3. Ocultar visibilidad del logo destino sin alterar el layout del DOM
+      logoTarget.style.visibility = "hidden";
+      logoTarget.style.opacity = "1";
+
+      // 4. Calcular el desplazamiento y escala exacta hacia el destino
+      const scaleX = targetRect.width / currentRect.width;
+      const scaleY = targetRect.height / currentRect.height;
       const deltaX = targetRect.left - currentRect.left;
       const deltaY = targetRect.top - currentRect.top;
 
       const tl = gsap.timeline({
         onComplete: () => {
+          // Revelar el logo real exactamente en el frame donde eliminamos el clon
+          logoTarget.style.visibility = "visible";
           if (preloader) preloader.remove();
-          setTimeout(iniciarPopupPromocion, 300);
+          setTimeout(iniciarPopupPromocion, 200);
         }
       });
 
-      // 1. Animar usando transformOrigin 0% 0% para coincidencia píxel por píxel
-      tl.to(logoPreload, {
+      // Animar el clon desde su origen top-left hacia las coordenadas exactas de destino
+      tl.to(clone, {
         x: deltaX,
         y: deltaY,
-        scale: scale,
+        scaleX: scaleX,
+        scaleY: scaleY,
+        transformOrigin: "0% 0%",
         duration: 0.85,
-        ease: "power2.inOut",
-        transformOrigin: "0% 0%"
+        ease: "power2.inOut"
       })
-      // 2. Revelar logo target y desvanecer la capa de fondo (sin ocultar bruscamente el logo animado)
-      .set(logoTarget, { opacity: 1 })
+      // Desvanecer la capa de preloader manteniendo la imagen sólida en destino
       .to(preloader, {
         opacity: 0,
-        duration: 0.3,
+        duration: 0.25,
         ease: "power1.out"
-      });
+      }, "-=0.15");
     });
   };
 
