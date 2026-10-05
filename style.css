@@ -106,13 +106,13 @@ body {
   font-family: "Fraunces", serif; 
 } 
 
-/* Quitar fondo blanco del contenedor del carrusel */
+/* Limpieza de fondos del carrusel Swiper */
 .swiper,
 .swiper-wrapper {
   background: transparent !important;
 }
 
-/* Fondo transparente o personalizado para las tarjetas del carrusel */
+/* Tarjetas del carrusel Swiper */
 .swiper-slide {
   position: relative;
   width: 280px; 
@@ -120,27 +120,13 @@ body {
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  background-color: transparent !important; /* Quita el fondo blanco de cada slide */
+  background-color: #000000 !important; /* Fondo negro para cada tarjeta */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Ajuste opcional: Si quieres que el modal completo del carrusel sea transparente */
-dialog#modalCarrusel {
-  background: transparent !important;
-  box-shadow: none !important; /* Elimina la sombra del cuadro contenedor si solo quieres ver las tarjetas */
-}
-
-
-/* Estilos para las tarjetas del carrusel Swiper */
-.swiper-slide {
-  position: relative;
-  width: 280px; 
-  height: 380px; 
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  background-color: #000000!important;
-}
-
+/* Imagen estándar de producto */
 .swiper-slide img {
   width: 100%;
   height: 100%;
@@ -150,6 +136,14 @@ dialog#modalCarrusel {
   display: block;
 }
 
+/* Imagen por defecto (Placeholder/Logo) */
+.swiper-slide img.img-placeholder {
+  object-fit: contain !important;
+  width: 75% !important;
+  height: 75% !important;
+  margin: auto;
+}
+
 .swiper-txt {
   position: absolute;
   bottom: 0;
@@ -157,7 +151,7 @@ dialog#modalCarrusel {
   right: 0;
   padding: 20px;
   z-index: 10;
-  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
   text-align: center;
 }
 
@@ -170,7 +164,7 @@ dialog#modalCarrusel {
   font-family: "Fraunces", serif;
 }
 
-/* Capa de difuminado general para la pantalla */
+/* Capa de desenfoque/blur para el fondo */
 #blur-overlay {
   position: fixed;
   inset: 0;
@@ -200,21 +194,24 @@ dialog#modalPromociones {
   max-height: 90vh;
   padding: 0;
   border: none;
-  border-radius: 24px; /* O el radio de tu preferencia, ej. 20px o 24px */
+  border-radius: 24px;
   background: #ffffff;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   z-index: 100;
-  
-  /* REGLA CLAVE: Recorta cualquier contenido interno que sobresalga de las esquinas */
-  overflow: hidden; 
+  overflow: hidden; /* Recorta el contenido interno para mantener las esquinas redondeadas */
 }
 
-/* Opcional: Si el primer elemento dentro del modal tiene un background propio */
-dialog#modalPromociones > *:first-child {
-  border-top-left-radius: inherit;
-  border-top-right-radius: inherit;
+/* Fondo transparente para el modal del carrusel */
+dialog#modalCarrusel {
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 dialog::backdrop {
   background: transparent;
+}
+
+dialog#modalPromociones > *:first-child {
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
 }
