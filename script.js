@@ -1,42 +1,29 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Registrar el plugin Flip de GSAP
-  gsap.registerPlugin(Flip);
+  // 1. Inicializar iconos de Lucide
+  if (window.lucide) {
+    lucide.createIcons();
+  }
 
-  // 1. Inicializar iconos
-  lucide.createIcons();
-
+  // 2. Preloader con animación GSAP + Flip
   const preloader = document.getElementById("preloader");
   const logoPreload = document.getElementById("logo-preload");
   const logoTarget = document.getElementById("logo-target");
-  const modalPromo = document.getElementById("modalPromociones");
-  const btnCerrarPromo = document.getElementById("btnCerrarPromo");
 
-  let isModalOpen = false;
-
-  // Función para abrir el modal de promociones al terminar la animación
-  const triggerPromoModal = () => {
-    if (modalPromo) {
-      isModalOpen = true;
-      modalPromo.showModal();
-    }
-  };
-
-  // Lógica de la animación GSAP
   const runGsapPreloader = () => {
     if (!preloader || !logoPreload || !logoTarget) return;
 
     // Capturar el estado inicial del logo en pantalla completa
     const state = Flip.getState(logoPreload);
 
-    // Ocultar la imagen de destino temporalmente y mover la del preloader a la posición de la cabecera
+    // Mover visualmente el elemento del preloader hacia el contenedor final
     logoTarget.style.visibility = "hidden";
     logoTarget.parentNode.appendChild(logoPreload);
 
-    // Ajustar clases CSS para que adopte el tamaño final del header
+    // Ajustar clases
     logoPreload.classList.remove("max-w-[85vw]", "max-h-[85vh]", "w-auto", "h-auto");
     logoPreload.classList.add("w-60", "max-w-full");
 
-    // Timeline de GSAP
+    // Secuencia GSAP
     const tl = gsap.timeline();
 
     tl.add(
@@ -55,23 +42,19 @@ document.addEventListener("DOMContentLoaded", () => {
           preloader.remove();
           logoTarget.style.visibility = "visible";
           logoPreload.remove();
-          
-          // Lanzar el popup de promociones únicamente después del loader
-          triggerPromoModal();
-        },
+        }
       },
       "-=0.4"
     );
   };
 
-  // Ejecutar el preloader según el estado de carga del documento
   if (document.readyState === "complete") {
     runGsapPreloader();
   } else {
     window.addEventListener("load", runGsapPreloader);
   }
 
-  // 2. Barra de navegación pegajosa (Sticky)
+  // 3. Fondo difuminado en Navegación al hacer scroll
   const categoryNav = document.querySelector(".category-nav");
   if (categoryNav) {
     const handleStickyNav = () => {
@@ -83,11 +66,16 @@ document.addEventListener("DOMContentLoaded", () => {
     handleStickyNav();
   }
 
-  // 3. Navegación por Categorías
-  const navButtons = [...document.querySelectorAll(".nav-pill")];
-  const sections = navButtons.map((btn) => document.getElementById(btn.dataset.target));
+  // Variable para controlar el observador de scroll cuando hay modales abiertos
+  let isModalOpen = false;
 
-  navButtons.forEach((button) => {
+  // 4. Navegación por Categorías e Intersection Observer
+  const navButtons = [...document.querySelectorAll(".nav-pill")];
+  const sections = navButtons.map(btn => document.getElementById(btn.dataset.target));
+  const modalPromo = document.getElementById('modalPromociones');
+  const btnCerrarPromo = document.getElementById('btnCerrarPromo');
+
+  navButtons.forEach(button => {
     button.addEventListener("click", () => {
       const section = document.getElementById(button.dataset.target);
       if (section) {
@@ -97,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   const activateButton = (targetId) => {
-    navButtons.forEach((btn) => {
+    navButtons.forEach(btn => {
       const isTarget = btn.dataset.target === targetId;
       btn.classList.toggle("is-active", isTarget);
 
@@ -105,38 +93,39 @@ document.addEventListener("DOMContentLoaded", () => {
         btn.scrollIntoView({
           behavior: "smooth",
           inline: "center",
-          block: "nearest",
+          block: "nearest"
         });
       }
     });
   };
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      if (isModalOpen) return;
+  const observer = new IntersectionObserver((entries) => {
+    if (isModalOpen) return;
 
-      const isAtBottom =
-        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 10;
-      if (isAtBottom) return;
+    const isAtBottom = (window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight - 10;
+    if (isAtBottom) return;
 
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          activateButton(entry.target.id);
-        }
-      });
-    },
-    { rootMargin: "-20% 0px -40% 0px", threshold: 0.1 }
-  );
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        activateButton(entry.target.id);
+      }
+    });
+  }, { rootMargin: "-20% 0px -40% 0px", threshold: 0.1 });
 
-  sections.forEach((section) => {
+  sections.forEach(section => {
     if (section) observer.observe(section);
   });
 
-  // Eventos del Modal Promoción
+  // 5. Modal Promoción Inicial
   if (modalPromo) {
-    btnCerrarPromo?.addEventListener("click", () => modalPromo.close());
+    setTimeout(() => {
+      isModalOpen = true;
+      modalPromo.showModal();
+    }, 500);
 
-    modalPromo.addEventListener("click", (e) => {
+    btnCerrarPromo?.addEventListener('click', () => modalPromo.close());
+
+    modalPromo.addEventListener('click', (e) => {
       const dialogBounds = modalPromo.getBoundingClientRect();
       if (
         e.clientX < dialogBounds.left ||
@@ -148,22 +137,22 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    modalPromo.addEventListener("close", () => {
+    modalPromo.addEventListener('close', () => {
       isModalOpen = false;
     });
   }
 
-  // 4. Carrusel Swiper
-  const modalCarrusel = document.getElementById("modalCarrusel");
-  const btnCerrarCarrusel = document.getElementById("btnCerrarCarrusel");
-  const swiperWrapper = document.getElementById("swiperWrapper");
+  // 6. Carrusel Swiper (Modal Dinámico)
+  const modalCarrusel = document.getElementById('modalCarrusel');
+  const btnCerrarCarrusel = document.getElementById('btnCerrarCarrusel');
+  const swiperWrapper = document.getElementById('swiperWrapper');
   let swiperInstance = null;
 
   const setupFlavorGroup = (buttonSelector) => {
     const buttons = [...document.querySelectorAll(buttonSelector)];
 
     buttons.forEach((btn, index) => {
-      btn.addEventListener("click", (e) => {
+      btn.addEventListener('click', (e) => {
         e.preventDefault();
         isModalOpen = true;
 
@@ -171,11 +160,10 @@ document.addEventListener("DOMContentLoaded", () => {
           swiperInstance.destroy(true, true);
         }
 
-        swiperWrapper.innerHTML = buttons
-          .map((b) => {
-            const name = b.dataset.flavorName;
-            const imgSrc = b.dataset.flavorImg || "logo_bolis.png";
-            return `
+        swiperWrapper.innerHTML = buttons.map((b) => {
+          const name = b.dataset.flavorName;
+          const imgSrc = b.dataset.flavorImg || 'logo_bolisv2.png';
+          return `
             <div class="swiper-slide">
               <img src="${imgSrc}" alt="${name}" />
               <div class="swiper-txt">
@@ -183,8 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
               </div>
             </div>
           `;
-          })
-          .join("");
+        }).join('');
 
         modalCarrusel?.showModal();
 
@@ -193,7 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
           grabCursor: true,
           loop: true,
           centeredSlides: true,
-          slidesPerView: "auto",
+          slidesPerView: "auto"
         });
 
         swiperInstance.slideToLoop(index, 0);
@@ -205,17 +192,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  setupFlavorGroup(".flavor-btn");
-  setupFlavorGroup(".frappe-flavor-btn");
-  setupFlavorGroup(".congelados-flavor-btn");
+  setupFlavorGroup('.flavor-btn');
+  setupFlavorGroup('.frappe-flavor-btn');
+  setupFlavorGroup('.congelados-flavor-btn');
 
   const cerrarCarrusel = () => {
     modalCarrusel?.close();
   };
 
-  btnCerrarCarrusel?.addEventListener("click", cerrarCarrusel);
+  btnCerrarCarrusel?.addEventListener('click', cerrarCarrusel);
 
-  modalCarrusel?.addEventListener("click", (e) => {
+  modalCarrusel?.addEventListener('click', (e) => {
     const dialogBounds = modalCarrusel.getBoundingClientRect();
     if (
       e.clientX < dialogBounds.left ||
@@ -227,7 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  modalCarrusel?.addEventListener("close", () => {
+  modalCarrusel?.addEventListener('close', () => {
     isModalOpen = false;
   });
 });
