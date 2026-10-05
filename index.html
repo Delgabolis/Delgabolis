@@ -22,21 +22,21 @@
 </head> 
 <body class="antialiased"> 
   
-<!-- Capa del Preloader al inicio del body -->
-<div id="preloader" class="fixed inset-0 z-50 flex items-center justify-center bg-[#fec2de]">
+<!-- Capa del Preloader -->
+<div id="preloader" class="fixed inset-0 z-50 flex items-center justify-center bg-[#fec2de] pointer-events-auto">
   <img 
     id="logo-preload" 
     src="logo_bolisv2.png" 
     alt="Cargando Delgabolis Delicius" 
-    class="max-w-[85vw] max-h-[85vh] w-auto h-auto object-contain"
+    class="w-64 max-w-[80vw] h-auto object-contain transition-transform"
   />
 </div>
 
 <div class="max-w-md mx-auto min-h-screen pb-12"> 
   
-  <!-- Contenedor destino del logo con id="logo-target" -->
+  <!-- Logo principal del menú -->
   <div class="flex justify-center w-full mt-2 mb-2 px-4">
-    <img id="logo-target" src="logo_bolisv2.png" alt="Logo Delgabolis Delicius" class="w-60 h-auto max-w-full object-contain">
+    <img id="logo-target" src="logo_bolisv2.png" alt="Logo Delgabolis Delicius" class="w-60 h-auto max-w-full object-contain opacity-0">
   </div>
      
     <header class="relative m-2 overflow-hidden rounded-3xl text-white shadow-xl min-h-[240px] flex justify-center items-center text-center"> 
@@ -286,7 +286,6 @@
             </div> 
           </div> 
 
-          <!-- Botones interactivos para los sabores de Frappés -->
           <div class="flex flex-wrap gap-2 pt-2 pb-4 border-b border-dashed border-slate-200" id="frappe-flavor-container"> 
             <button class="frappe-flavor-btn px-3 py-1.5 rounded-full bg-purple-50 text-[#6253a7] hover:bg-[#6253a7] hover:text-white transition-colors text-sm font-semibold border border-purple-200 cursor-pointer" data-flavor-name="Taro" data-flavor-img="img/frappe-taro.jpg">Taro</button>
             <button class="frappe-flavor-btn px-3 py-1.5 rounded-full bg-purple-50 text-[#6253a7] hover:bg-[#6253a7] hover:text-white transition-colors text-sm font-semibold border border-purple-200 cursor-pointer" data-flavor-name="Moka" data-flavor-img="img/frappe-moka.jpg">Moka</button>
@@ -358,9 +357,8 @@
   <!-- Swiper JS CDN -->
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-  <!-- CDNs de GSAP e inclusión obligatoria del plugin Flip -->
+  <!-- GSAP CDN -->
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/Flip.min.js"></script>
 
   <!-- Script personalizado -->
   <script src="script.js"></script>
