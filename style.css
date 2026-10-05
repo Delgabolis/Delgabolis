@@ -17,10 +17,12 @@ body {
   background-color: #fca5a5; 
 } 
 
-/* Difuminado suave del fondo de la app al abrir el popup */
-body.modal-blur-active > *:not(dialog) {
-  filter: blur(6px);
-  -webkit-filter: blur(6px);
+/* Difuminado exclusivo para el contenido principal detrás de la capa top-layer */
+body.modal-blur-active main,
+body.modal-blur-active header,
+body.modal-blur-active .category-nav {
+  filter: blur(8px);
+  -webkit-filter: blur(8px);
   transition: filter 0.3s ease, -webkit-filter 0.3s ease;
 }
 
@@ -159,11 +161,14 @@ dialog#modalPromociones {
   position: fixed;
   inset: 0;
   margin: auto;
+  max-width: 90vw;
   max-height: 90vh;
-  outline: none;
-  z-index: 100;
+  padding: 0;
   border: none;
-  background: transparent;
+  border-radius: 24px;
+  background: #ffffff;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  z-index: 100;
 }
 
 dialog::backdrop {
