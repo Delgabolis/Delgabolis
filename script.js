@@ -46,12 +46,10 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Asegurar el renderizado preciso de dimensiones antes de calcular coordenadas
     requestAnimationFrame(() => {
       const targetRect = logoTarget.getBoundingClientRect();
       const currentRect = logoPreload.getBoundingClientRect();
 
-      // Resguardo por si la imagen aún no se ha renderizado completamente
       if (currentRect.width === 0 || targetRect.width === 0) {
         if (preloader) preloader.remove();
         logoTarget.classList.remove("opacity-0");
@@ -65,33 +63,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const tl = gsap.timeline({
         onComplete: () => {
-          // Asegurar visibilidad con GSAP y remover la capa
+          // Intercambio invisible del logo de apoyo al logo definitivo del DOM
           gsap.set(logoTarget, { opacity: 1 });
           logoTarget.classList.remove("opacity-0");
           if (preloader) preloader.remove();
 
-          // Lanzar popup
-          setTimeout(iniciarPopupPromocion, 200);
+          // Pausa deliberada de 650ms para apreciar la interfaz antes del popup
+          setTimeout(iniciarPopupPromocion, 650);
         }
       });
 
-      // Mover el logo hacia la posición final y desaparecer el fondo
+      // Paso A: Mover y escalar el logo fluidamente hasta su destino exacto
       tl.to(logoPreload, {
         x: deltaX,
         y: deltaY,
         scale: scale,
-        duration: 0.9,
-        ease: "power2.inOut"
+        duration: 1.1,
+        ease: "power3.inOut"
       })
+      // Paso B: Desvanecer el fondo del preloader justo al encajar el logo
       .to(preloader, {
         opacity: 0,
-        duration: 0.3,
-        ease: "power1.out"
-      }, "-=0.3");
+        duration: 0.4,
+        ease: "power2.out"
+      }, "-=0.2");
     });
   };
 
-  // Ejecutar animación cuando la página y las imágenes estén completamente cargadas
+  // Ejecutar cuando la página y sus imágenes estén listas
   if (document.readyState === "complete") {
     runPreloaderAnimation();
   } else {
