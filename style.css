@@ -35,14 +35,10 @@ body {
   background-color: inherit !important;
 }
 
-#logo-preload {
-  will-change: transform, opacity;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-
+#logo-preload,
 #logo-target {
-  will-change: opacity;
+  will-change: transform, opacity;
+  transform-style: preserve-3d;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
