@@ -35,7 +35,12 @@ body {
   background-color: inherit !important;
 }
 
-/* Reglas anti-parpadeo y anti-aliasing GPU */
+/* Oculta el logo destino unicamente durante el arranque previo al JS */
+#logo-target {
+  visibility: hidden;
+}
+
+/* Reglas anti-parpadeo y optimización de renderizado GPU */
 #logo-preload,
 #logo-target,
 #logo-clone {
