@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-// 3. ANIMACIÓN GSAP DEL PRELOADER
+  // 3. ANIMACIÓN GSAP DEL PRELOADER
   const runPreloaderAnimation = () => {
     if (!preloader || !logoPreload || !logoTarget) {
       iniciarPopupPromocion();
@@ -64,41 +64,34 @@ document.addEventListener("DOMContentLoaded", () => {
       const tl = gsap.timeline({
         onComplete: () => {
           if (preloader) preloader.remove();
-          setTimeout(iniciarPopupPromocion, 650);
+          setTimeout(iniciarPopupPromocion, 500);
         }
       });
 
-      // Paso 1: Mover y escalar el logo sin desvanecer la capa rosada
+      // 1. Mover y escalar el logo desde el centro hasta la posición exacta en el header
       tl.to(logoPreload, {
         x: deltaX,
         y: deltaY,
         scale: scale,
-        duration: 0.95,
+        duration: 1.0,
         ease: "power3.inOut"
       })
-      // Paso 2: Intercambio fluido con el logo estático en la página
+      // 2. Revelar el logo estático en la página y ocultar el logo del preloader (intercambio invisible)
       .call(() => {
         gsap.set(logoTarget, { opacity: 1 });
         logoTarget.classList.remove("opacity-0");
         gsap.set(logoPreload, { opacity: 0 });
       })
-      // Paso 3: Desvanecer el fondo del preloader únicamente cuando el logo ya llegó a su destino
+      // 3. Desvanecer la capa de fondo del preloader para revelar la página limpia
       .to(preloader, {
         opacity: 0,
-        duration: 0.45,
+        duration: 0.5,
         ease: "power2.out"
       });
     });
   };
 
-  // Ejecutar cuando la página y sus imágenes estén totalmente cargadas
-  if (document.readyState === "complete") {
-    runPreloaderAnimation();
-  } else {
-    window.addEventListener("load", runPreloaderAnimation);
-  }
-
-  // Ejecutar cuando la página y sus imágenes estén totalmente cargadas
+  // Ejecutar cuando la página y sus recursos estén listos
   if (document.readyState === "complete") {
     runPreloaderAnimation();
   } else {
