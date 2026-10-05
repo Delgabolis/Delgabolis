@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  // 3. ANIMACIÓN GSAP DEL PRELOADER (TÉCNICA FLIP CORREGIDA)
+  // 3. ANIMACIÓN GSAP DEL PRELOADER (PAUSA INICIAL Y SIN PARPADEO)
   const runPreloaderAnimation = () => {
     if (!preloader || !logoPreload || !logoTarget) {
       if (logoTarget) {
@@ -57,7 +57,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (currentRect.width === 0 || targetRect.width === 0) {
         if (preloader) preloader.remove();
-        logoTarget.classList.remove("invisible", "opacity-0");
         logoTarget.style.visibility = "visible";
         logoTarget.style.opacity = "1";
         iniciarPopupPromocion();
@@ -76,10 +75,11 @@ document.addEventListener("DOMContentLoaded", () => {
       clone.style.transform = "none";
       clone.style.zIndex = "60";
 
-      // Reemplazar el logo del preloader con el clon
-      logoPreload.replaceWith(clone);
+      // Ocultar logo original del preloader y adjuntar el clon
+      logoPreload.style.opacity = "0";
+      document.body.appendChild(clone);
 
-      // 3. Ocultar la visibilidad del logo destino durante la transición
+      // 3. Ocultar el logo destino durante la transición
       logoTarget.style.visibility = "hidden";
 
       // 4. Calcular desplazamiento y escala exacta hacia el destino
@@ -90,8 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const tl = gsap.timeline({
         onComplete: () => {
-          // 5. HACER VISIBLE EL LOGO REAL EN SU POSICIÓN FINAL
-          logoTarget.classList.remove("invisible", "opacity-0");
+          // 5. Mostrar el logo real en su posición final sin parpadeo
           logoTarget.style.visibility = "visible";
           logoTarget.style.opacity = "1";
 
@@ -104,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
-      // Animar el clon desde su origen hacia el destino exacto
+      // Animar el clon con pausa inicial de 500ms (0.5s)
       tl.to(clone, {
         x: deltaX,
         y: deltaY,
@@ -112,14 +111,16 @@ document.addEventListener("DOMContentLoaded", () => {
         scaleY: scaleY,
         transformOrigin: "0% 0%",
         duration: 0.85,
-        ease: "power2.inOut"
+        delay: 0.5, // Retención inicial antes de iniciar el movimiento
+        ease: "power2.inOut",
+        force3D: true
       })
-      // Desvanecer el fondo del preloader manteniendo la imagen sólida
+      // Desvanecer el fondo del preloader justo antes de tocar el destino
       .to(preloader, {
         opacity: 0,
-        duration: 0.25,
+        duration: 0.2,
         ease: "power1.out"
-      }, "-=0.15");
+      }, "-=0.2");
     });
   };
 
