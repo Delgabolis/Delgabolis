@@ -17,14 +17,6 @@ body {
   background-color: #fca5a5; 
 } 
 
-/* Difuminado universal a todo el contenido de la página excepto los modales */
-body.modal-blur-active > *:not(dialog):not(#preloader):not(#logo-clone) {
-  filter: blur(8px) !important;
-  -webkit-filter: blur(8px) !important;
-  transition: filter 0.3s ease, -webkit-filter 0.3s ease;
-  pointer-events: none; /* Previene clicks accidentales en la página mientras el modal está abierto */
-}
-
 .heading-font { 
   font-family: "Fraunces", serif; 
 } 
@@ -154,6 +146,26 @@ body.modal-blur-active > *:not(dialog):not(#preloader):not(#logo-clone) {
   font-family: "Fraunces", serif;
 }
 
+/* Capa de difuminado general para la pantalla */
+#blur-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+#blur-overlay.is-active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
 /* Modales */
 dialog#modalCarrusel,
 dialog#modalPromociones {
@@ -168,8 +180,9 @@ dialog#modalPromociones {
   background: #ffffff;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   z-index: 100;
+  overflow: visible;
 }
 
 dialog::backdrop {
-  background-color: rgba(0, 0, 0, 0.4);
+  background: transparent;
 }
