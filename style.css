@@ -138,7 +138,7 @@ dialog#modalCarrusel {
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  background-color: #000000;
+  background-color: #000000!important;
 }
 
 .swiper-slide img {
