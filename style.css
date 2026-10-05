@@ -35,7 +35,7 @@ body {
   background-color: inherit !important;
 }
 
-/* Oculta el logo destino unicamente durante el arranque previo al JS */
+/* Oculta el logo destino únicamente durante el arranque previo al JS */
 #logo-target {
   visibility: hidden;
 }
@@ -47,6 +47,7 @@ body {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   transform-style: flat;
+  transform: translateZ(0);
   image-rendering: -webkit-optimize-contrast;
 }
 
