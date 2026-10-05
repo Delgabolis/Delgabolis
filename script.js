@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.classList.add("modal-blur-active");
     modalPromo.showModal();
 
-    // Animación de entrada: Opacidad, Escala y Desplazamiento elástico
+    // Animación de entrada
     gsap.fromTo(
       modalPromo,
       {
@@ -228,6 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
       btn.addEventListener("click", (e) => {
         e.preventDefault();
         isModalOpen = true;
+        document.body.classList.add("modal-blur-active");
 
         if (swiperInstance) {
           swiperInstance.destroy(true, true);
@@ -272,6 +273,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupFlavorGroup(".congelados-flavor-btn");
 
   const cerrarCarrusel = () => {
+    document.body.classList.remove("modal-blur-active");
     modalCarrusel?.close();
   };
 
@@ -290,6 +292,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   modalCarrusel?.addEventListener("close", () => {
+    document.body.classList.remove("modal-blur-active");
     isModalOpen = false;
   });
 });
