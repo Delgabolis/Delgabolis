@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let isModalOpen = false;
 
-  // 2. ABRIR EL POPUP DE PROMOCIÓN CON ANIMACIÓN Y BLUR DE FONDO
+  // 2. ABRIR EL POPUP DE PROMOCIÓN CON ANIMACIÓN Y BLUR EN EL FONDO
   const iniciarPopupPromocion = () => {
     if (!modalPromo) return;
 
@@ -85,7 +85,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     requestAnimationFrame(() => {
-      // Obtener dimensiones y posiciones exactas
       const targetRect = logoTarget.getBoundingClientRect();
       const currentRect = logoPreload.getBoundingClientRect();
 
@@ -97,7 +96,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // Crear clon flotante alineado en pantalla
       const clone = logoPreload.cloneNode(true);
       clone.id = "logo-clone";
       clone.style.position = "fixed";
@@ -109,14 +107,11 @@ document.addEventListener("DOMContentLoaded", () => {
       clone.style.transform = "none";
       clone.style.zIndex = "60";
 
-      // Reemplazar visualmente el logo original
       logoPreload.style.opacity = "0";
       document.body.appendChild(clone);
 
-      // Mantener oculto el logo de destino mientras ocurre la transición
       logoTarget.style.visibility = "hidden";
 
-      // Calcular distancia y escala
       const scaleX = targetRect.width / currentRect.width;
       const scaleY = targetRect.height / currentRect.height;
       const deltaX = targetRect.left - currentRect.left;
@@ -135,7 +130,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
-      // Secuencia: Pausa -> Desplazamiento -> Desvanecido
       tl.to(clone, {
         x: deltaX,
         y: deltaY,
