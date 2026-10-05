@@ -106,6 +106,30 @@ body {
   font-family: "Fraunces", serif; 
 } 
 
+/* Quitar fondo blanco del contenedor del carrusel */
+.swiper,
+.swiper-wrapper {
+  background: transparent !important;
+}
+
+/* Fondo transparente o personalizado para las tarjetas del carrusel */
+.swiper-slide {
+  position: relative;
+  width: 280px; 
+  height: 380px; 
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  background-color: transparent !important; /* Quita el fondo blanco de cada slide */
+}
+
+/* Ajuste opcional: Si quieres que el modal completo del carrusel sea transparente */
+dialog#modalCarrusel {
+  background: transparent !important;
+  box-shadow: none !important; /* Elimina la sombra del cuadro contenedor si solo quieres ver las tarjetas */
+}
+
+
 /* Estilos para las tarjetas del carrusel Swiper */
 .swiper-slide {
   position: relative;
@@ -114,7 +138,7 @@ body {
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  background-color: #000;
+  background-color: transparent;
 }
 
 .swiper-slide img {
