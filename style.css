@@ -21,24 +21,22 @@ body {
   font-family: "Fraunces", serif; 
 } 
 
-/* Preloader capas */
+/* Preloader con el mismo fondo que el body */
 #preloader {
   will-change: opacity;
   z-index: 50;
+  background-image: url('fondo-helados.jpg'); 
+  background-repeat: repeat; 
+  background-size: 300px auto; 
+  background-attachment: fixed; 
+  background-color: #fca5a5; 
 }
 
 #logo-preload {
   will-change: transform, opacity;
 }
-#preloader {
-  will-change: background-color, opacity;
-  z-index: 50;
-  transition: background-color 0.1s linear; /* Asegura suavidad en la transición del fondo */
-}
-
 
 #logo-target {
-  /* Se remueve transition: opacity para evitar interferencias con GSAP */
   will-change: opacity;
 }
 
