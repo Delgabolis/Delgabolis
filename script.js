@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     lucide.createIcons();
   }
 
-  // Elementos
+  // Elementos principales
   const preloader = document.getElementById("preloader");
   const logoPreload = document.getElementById("logo-preload");
   const logoTarget = document.getElementById("logo-target");
@@ -18,13 +18,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let isModalOpen = false;
 
-  // 2. Función para abrir el modal de promoción
-  const mostrarModalPromocion = () => {
+  // 2. FUNCIÓN EXCLUSIVA PARA MOSTRAR EL POPUP (Solo se llama al finalizar el preloader)
+  const iniciarPopupPromocion = () => {
     if (!modalPromo) return;
 
+    // Abrir modal
     isModalOpen = true;
     modalPromo.showModal();
 
+    // Eventos de cierre
     btnCerrarPromo?.addEventListener("click", () => modalPromo.close());
 
     modalPromo.addEventListener("click", (e) => {
@@ -44,33 +46,30 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  // 3. Preloader con animación GSAP + Flip
+  // 3. ANIMACIÓN GSAP PRELOADER
   const runGsapPreloader = () => {
     if (!preloader || !logoPreload || !logoTarget) return;
 
-    // Guardar estado inicial del logo en el preloader
-    const state = Flip.getState(logoPreload);
-
-    // Ocultar la imágen target destino mientras se mueve el nodo
+    // Asegurar ocultar target visualmente durante la transición
     logoTarget.style.visibility = "hidden";
 
-    // Mover el logo al contenedor destino dentro del DOM
+    // Mover nodo de logo al contenedor destino dentro del DOM
+    const state = Flip.getState(logoPreload);
     logoTarget.parentNode.appendChild(logoPreload);
 
-    // Ajustar clases CSS para que tome las dimensiones del destino
+    // Reasignar clases de tamaño
     logoPreload.classList.remove("max-w-[85vw]", "max-h-[85vh]", "w-auto", "h-auto");
     logoPreload.classList.add("w-60", "max-w-full");
 
-    // Crear la animación
+    // Construir la línea de tiempo GSAP
     const tl = gsap.timeline({
       onComplete: () => {
-        // Al terminar toda la animación:
-        preloader.style.display = "none";
+        // Limpieza final del preloader
+        preloader.remove();
         logoTarget.style.visibility = "visible";
-        logoPreload.remove();
 
-        // RECIÉN AQUÍ SE ABRE EL MODAL DE PROMOCIÓN
-        setTimeout(mostrarModalPromocion, 400);
+        // AHORA SÍ: Disparar el popup únicamente después de remover el preloader
+        setTimeout(iniciarPopupPromocion, 300);
       }
     });
 
@@ -91,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   };
 
-  // IMPORTANTE: Garantizar que todas las imágenes e imágen de logo estén totalmente cargadas
+  // Esperar a la carga total de imágenes antes de ejecutar el preloader
   if (document.readyState === "complete") {
     runGsapPreloader();
   } else {
