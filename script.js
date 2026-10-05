@@ -4,7 +4,10 @@ document.addEventListener("DOMContentLoaded", () => {
     lucide.createIcons();
   }
 
-  // Crear capa de Blur Overlay dinámicamente si no existe
+  // Ruta de imagen por defecto / placeholder
+  const DEFAULT_IMAGE = "logo_bolisv2.png";
+
+  // Crear capa de Blur Overlay dinámicamente si no existe en la página
   let blurOverlay = document.getElementById("blur-overlay");
   if (!blurOverlay) {
     blurOverlay = document.createElement("div");
@@ -235,7 +238,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (section) observer.observe(section);
   });
 
-    // 6. Carrusel Swiper (Modal Dinámico)
+  // 6. Carrusel Swiper (Modal Dinámico)
   const modalCarrusel = document.getElementById("modalCarrusel");
   const btnCerrarCarrusel = document.getElementById("btnCerrarCarrusel");
   const swiperWrapper = document.getElementById("swiperWrapper");
@@ -258,14 +261,19 @@ document.addEventListener("DOMContentLoaded", () => {
           .map((b) => {
             const name = b.dataset.flavorName || "Sabor";
             
-            // Si data-flavor-img está vacío, no existe o solo tiene espacios, usa la imagen por defecto
-            const imgSrc = (b.dataset.flavorImg && b.dataset.flavorImg.trim() !== "")
-              ? b.dataset.flavorImg
-              : "logo_bolisv2.png"; // <-- Imagen por defecto / placeholder
+            // Verificar si el botón tiene una ruta asignada en data-flavor-img
+            const hasCustomImg = b.dataset.flavorImg && b.dataset.flavorImg.trim() !== "";
+            const imgSrc = hasCustomImg ? b.dataset.flavorImg : DEFAULT_IMAGE;
+            const imgClass = hasCustomImg ? "" : "img-placeholder";
 
             return `
             <div class="swiper-slide">
-              <img src="${imgSrc}" alt="${name}" onerror="this.src='logo_bolisv2.png';" />
+              <img 
+                src="${imgSrc}" 
+                alt="${name}" 
+                class="${imgClass}" 
+                onerror="this.src='${DEFAULT_IMAGE}'; this.classList.add('img-placeholder');" 
+              />
               <div class="swiper-txt">
                 <h3>${name}</h3>
               </div>
@@ -292,7 +300,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   };
-
 
   setupFlavorGroup(".flavor-btn");
   setupFlavorGroup(".frappe-flavor-btn");
