@@ -32,7 +32,8 @@ body {
 }
 
 #logo-target {
-  transition: opacity 0.2s ease;
+  /* Se remueve transition: opacity para evitar interferencias con GSAP */
+  will-change: opacity;
 }
 
 /* Barra de navegación sticky */ 
