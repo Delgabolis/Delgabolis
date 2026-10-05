@@ -21,14 +21,18 @@ body {
   font-family: "Fraunces", serif; 
 } 
 
-/* Transición fluida para preloader */
+/* Preloader capas */
 #preloader {
   will-change: opacity;
   z-index: 50;
 }
 
 #logo-preload {
-  will-change: transform;
+  will-change: transform, opacity;
+}
+
+#logo-target {
+  transition: opacity 0.2s ease;
 }
 
 /* Barra de navegación sticky */ 
@@ -131,7 +135,7 @@ body {
   font-family: "Fraunces", serif;
 }
 
-/* Alineación central para diálogos nativos */
+/* Modal / Dialog */
 dialog#modalCarrusel,
 dialog#modalPromociones {
   position: fixed;
