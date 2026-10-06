@@ -32,7 +32,7 @@
   />
 </div>
 
-<div class="max-w-md mx-auto min-h-screen pb-12"> 
+<div class="max-w-md mx-auto min-h-screen pb-28"> 
   
   <!-- Logo principal del menú -->
   <div class="flex justify-center w-full mt-2 mb-2 px-4">
@@ -55,14 +55,32 @@
       </div>
     </header>
 
-    <nav class="category-nav" aria-label="Categorías del menú">
-      <button class="nav-pill is-active" data-target="promociones">Promociones</button>
-      <button class="nav-pill" data-target="bolis">Bolis</button> 
-      <button class="nav-pill" data-target="congelados">Congelados</button> 
-      <button class="nav-pill" data-target="raspados">Raspados</button> 
-      <button class="nav-pill" data-target="frappes">Frappes</button> 
-      <button class="nav-pill" data-target="omnilife">OmniLife</button> 
-    </nav> 
+    <nav id="categoryNav" class="category-nav" aria-label="Categorías del menú">
+  <button class="nav-pill is-active" data-target="promociones">
+    <i data-lucide="badge-percent" class="w-4 h-4 inline-block md:hidden"></i>
+    <span>Promos</span>
+  </button>
+  <button class="nav-pill" data-target="bolis">
+    <i data-lucide="popsicle" class="w-4 h-4 inline-block md:hidden"></i>
+    <span>Bolis</span>
+  </button> 
+  <button class="nav-pill" data-target="congelados">
+    <i data-lucide="snowflake" class="w-4 h-4 inline-block md:hidden"></i>
+    <span>Congelados</span>
+  </button> 
+  <button class="nav-pill" data-target="raspados">
+    <i data-lucide="coffee" class="w-4 h-4 inline-block md:hidden"></i>
+    <span>Raspados</span>
+  </button> 
+  <button class="nav-pill" data-target="frappes">
+    <i data-lucide="cup-soda" class="w-4 h-4 inline-block md:hidden"></i>
+    <span>Frappés</span>
+  </button> 
+  <button class="nav-pill" data-target="omnilife">
+    <i data-lucide="heart-pulse" class="w-4 h-4 inline-block md:hidden"></i>
+    <span>OmniLife</span>
+  </button> 
+</nav> 
 
     <div class="px-4 space-y-6 mt-4"> 
     
