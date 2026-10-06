@@ -188,10 +188,11 @@ document.addEventListener("DOMContentLoaded", () => {
     handleStickyNav();
   }
 
-  // 5. Navegación por Categorías e Intersection Observer
+  // // LÓGICA DE NAVEGACIÓN Y SINCRONIZACIÓN INTEGRADA
   const navButtons = [...document.querySelectorAll(".nav-pill")];
   const sections = navButtons.map((btn) => document.getElementById(btn.dataset.target));
 
+  // 1. Desplazamiento suave al hacer clic en una pestaña
   navButtons.forEach((button) => {
     button.addEventListener("click", () => {
       const section = document.getElementById(button.dataset.target);
@@ -201,6 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // 2. Activa el botón correspondiente y lo centra visiblemente en el contenedor
   const activateButton = (targetId) => {
     navButtons.forEach((btn) => {
       const isTarget = btn.dataset.target === targetId;
@@ -216,22 +218,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  // Ajuste dinámico de márgenes de observación para móvil y escritorio
-  const getRootMargin = () => {
-    return window.innerWidth < 768 ? "-15% 0px -45% 0px" : "-20% 0px -40% 0px";
-  };
-
+  // 3. Detección automática de la sección visible mediante IntersectionObserver
   const observer = new IntersectionObserver(
     (entries) => {
-      if (isModalOpen) return;
+      // Evita cambiar el estado activo si hay un modal abierto
+      if (typeof isModalOpen !== "undefined" && isModalOpen) return;
 
-      const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 20;
-      
-      // Si estamos hasta abajo, activa la última sección (Omnilife) automáticamente
-      if (isAtBottom) {
-        activateButton("omnilife");
-        return;
-      }
+      // Evita saltos al llegar al final de la página
+      const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 10;
+      if (isAtBottom) return;
 
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
@@ -239,9 +234,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
     },
-    { rootMargin: getRootMargin(), threshold: 0.15 }
+    { rootMargin: "-20% 0px -40% 0px", threshold: 0.1 }
   );
 
+  // Observar cada sección del menú
   sections.forEach((section) => {
     if (section) observer.observe(section);
   });
