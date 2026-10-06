@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
     blurOverlay.addEventListener("click", cerrarConAnimacion);
   };
 
-  // 3. ANIMACIÓN GSAP DEL PRELOADER (CORREGIDA)
+  // 3. ANIMACIÓN GSAP DEL PRELOADER
   const executePreloader = () => {
     if (!preloader || !logoPreload || !logoTarget) {
       if (logoTarget) {
@@ -107,14 +107,12 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Aseguramos visibilidad previa para calcular posiciones
     logoTarget.style.visibility = "hidden";
     logoTarget.style.opacity = "1";
 
     const targetRect = logoTarget.getBoundingClientRect();
     const currentRect = logoPreload.getBoundingClientRect();
 
-    // Si la imagen aún no tiene dimensiones en el DOM, forzamos un frame de espera
     if (currentRect.width === 0 || targetRect.width === 0) {
       setTimeout(executePreloader, 50);
       return;
@@ -170,7 +168,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }, "-=0.2");
   };
 
-  // Disparar el preloader inmediatamente si la ventana ya cargó o cuando termine de cargar
   if (document.readyState === "complete") {
     setTimeout(executePreloader, 100);
   } else {
@@ -237,7 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (section) observer.observe(section);
   });
 
-  // 6. Carrusel Swiper (Modal Dinámico con Animaciones GSAP Corregidas)
+  // 6. Carrusel Swiper (Modal Dinámico)
   const modalCarrusel = document.getElementById("modalCarrusel");
   const btnCerrarCarrusel = document.getElementById("btnCerrarCarrusel");
   const swiperWrapper = document.getElementById("swiperWrapper");
@@ -308,7 +305,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         modalCarrusel?.showModal();
 
-        // Lanzar animación de entrada
+        // Animación de entrada
         gsap.to(modalCarrusel, {
           opacity: 1,
           scale: 1,
@@ -319,7 +316,7 @@ document.addEventListener("DOMContentLoaded", () => {
           clearProps: "transform"
         });
 
-        // Inicializar Swiper
+        // Inicialización de Swiper
         swiperInstance = new Swiper(".mySwiper", {
           effect: "cards",
           grabCursor: true,
@@ -361,20 +358,28 @@ document.addEventListener("DOMContentLoaded", () => {
   setupFlavorGroup(".frappe-flavor-btn");
   setupFlavorGroup(".congelados-flavor-btn");
 
-  // Eventos de cierre
+  // EVENTOS DE CIERRE DEL CARRUSEL
+
+  // 1. Botón de cerrar
   btnCerrarCarrusel?.addEventListener("click", (e) => {
     e.preventDefault();
     cerrarCarruselConAnimacion();
   });
 
+  // 2. Clic fuera de las tarjetas dentro del área del modal
   modalCarrusel?.addEventListener("click", (e) => {
-    const dialogBounds = modalCarrusel.getBoundingClientRect();
     if (
-      e.clientX < dialogBounds.left ||
-      e.clientX > dialogBounds.right ||
-      e.clientY < dialogBounds.top ||
-      e.clientY > dialogBounds.bottom
+      e.target === modalCarrusel || 
+      e.target.classList.contains("swiper-wrapper") || 
+      e.target.classList.contains("mySwiper")
     ) {
+      cerrarCarruselConAnimacion();
+    }
+  });
+
+  // 3. Clic en el fondo difuminado (Blur Overlay)
+  blurOverlay?.addEventListener("click", () => {
+    if (modalCarrusel && modalCarrusel.open) {
       cerrarCarruselConAnimacion();
     }
   });
