@@ -174,12 +174,14 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("load", () => setTimeout(executePreloader, 100));
   }
 
-  // 4. Fondo difuminado en Navegación al hacer scroll
+  // 4. Fondo difuminado en Navegación al hacer scroll (Para Desktop / Sticky)
   const categoryNav = document.querySelector(".category-nav");
   if (categoryNav) {
     const handleStickyNav = () => {
-      const navTop = categoryNav.getBoundingClientRect().top;
-      categoryNav.classList.toggle("is-stuck", navTop <= 0);
+      if (window.innerWidth >= 768) {
+        const navTop = categoryNav.getBoundingClientRect().top;
+        categoryNav.classList.toggle("is-stuck", navTop <= 0);
+      }
     };
 
     window.addEventListener("scroll", handleStickyNav, { passive: true });
@@ -214,6 +216,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
+  // Se ajusta el margin según la posición de la barra en Móvil vs Desktop
+  const isMobile = window.innerWidth < 768;
+  const rootMarginValue = isMobile ? "-10% 0px -50% 0px" : "-20% 0px -40% 0px";
+
   const observer = new IntersectionObserver(
     (entries) => {
       if (isModalOpen) return;
@@ -227,7 +233,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
     },
-    { rootMargin: "-20% 0px -40% 0px", threshold: 0.1 }
+    { rootMargin: rootMarginValue, threshold: 0.1 }
   );
 
   sections.forEach((section) => {
