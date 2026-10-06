@@ -96,95 +96,89 @@ document.addEventListener("DOMContentLoaded", () => {
     blurOverlay.addEventListener("click", cerrarConAnimacion);
   };
 
-  // 3. ANIMACIÓN GSAP DEL PRELOADER (FLUIDA Y SIN SALTOS)
+  // 3. ANIMACIÓN GSAP DEL PRELOADER (FLIP 1:1 CERO SALTOS)
   const executePreloader = () => {
     if (!preloader || !logoPreload || !logoTarget) {
-      if (logoTarget) {
-        logoTarget.style.visibility = "visible";
-        logoTarget.style.opacity = "1";
-      }
+      if (logoTarget) logoTarget.style.opacity = "1";
       iniciarPopupPromocion();
       return;
     }
 
-    const currentRect = logoPreload.getBoundingClientRect();
-    const targetRect = logoTarget.getBoundingClientRect();
+    // Esperar decodificación completa de ambas imágenes para evitar saltos por cálculo erróneo
+    Promise.all([
+      logoPreload.complete ? Promise.resolve() : new Promise((res) => (logoPreload.onload = res)),
+      logoTarget.complete ? Promise.resolve() : new Promise((res) => (logoTarget.onload = res))
+    ]).then(() => {
+      const currentRect = logoPreload.getBoundingClientRect();
+      const targetRect = logoTarget.getBoundingClientRect();
 
-    if (currentRect.width === 0 || targetRect.width === 0) {
-      setTimeout(executePreloader, 50);
-      return;
-    }
-
-    // Preparar logo de destino oculto en su lugar exacto
-    logoTarget.style.visibility = "visible";
-    logoTarget.style.opacity = "0";
-
-    // Crear clon para la animación
-    const clone = logoPreload.cloneNode(true);
-    clone.id = "logo-clone";
-    clone.style.position = "fixed";
-    clone.style.left = `${currentRect.left}px`;
-    clone.style.top = `${currentRect.top}px`;
-    clone.style.width = `${currentRect.width}px`;
-    clone.style.height = `${currentRect.height}px`;
-    clone.style.margin = "0";
-    clone.style.zIndex = "60";
-    clone.style.transformOrigin = "center center";
-
-    // Ocultar logo inicial del preloader
-    logoPreload.style.opacity = "0";
-    document.body.appendChild(clone);
-
-    // Cálculos de centros exactos para evitar desviación por padding/márgenes
-    const currentCenterX = currentRect.left + currentRect.width / 2;
-    const currentCenterY = currentRect.top + currentRect.height / 2;
-    const targetCenterX = targetRect.left + targetRect.width / 2;
-    const targetCenterY = targetRect.top + targetRect.height / 2;
-
-    const deltaX = targetCenterX - currentCenterX;
-    const deltaY = targetCenterY - currentCenterY;
-
-    const scaleX = targetRect.width / currentRect.width;
-    const scaleY = targetRect.height / currentRect.height;
-
-    const tl = gsap.timeline({
-      onComplete: () => {
-        const activeClone = document.getElementById("logo-clone");
-        if (activeClone) activeClone.remove();
-        if (preloader) preloader.remove();
-
-        setTimeout(iniciarPopupPromocion, 100);
+      if (currentRect.width === 0 || targetRect.width === 0) {
+        setTimeout(executePreloader, 50);
+        return;
       }
-    });
 
-    // 1. Animación del movimiento y escalado uniforme mediante matriz transform (GPU acelerada)
-    tl.to(clone, {
-      x: deltaX,
-      y: deltaY,
-      scaleX: scaleX,
-      scaleY: scaleY,
-      duration: 0.85,
-      delay: 0.3,
-      ease: "power2.inOut",
-      force3D: true
-    })
-    // 2. Ocultar el fondo del preloader paulatinamente al acercarse al final
-    .to(preloader, {
-      opacity: 0,
-      duration: 0.35,
-      ease: "power1.out"
-    }, "-=0.35")
-    // 3. Transición cruzada limpia: aparece el original mientras desaparece el clon
-    .to(logoTarget, {
-      opacity: 1,
-      duration: 0.1,
-      ease: "none"
-    })
-    .to(clone, {
-      opacity: 0,
-      duration: 0.1,
-      ease: "none"
-    }, "<");
+      // Crear clon flotante
+      const clone = logoPreload.cloneNode(true);
+      clone.id = "logo-clone";
+
+      Object.assign(clone.style, {
+        position: "fixed",
+        left: `${currentRect.left}px`,
+        top: `${currentRect.top}px`,
+        width: `${currentRect.width}px`,
+        height: `${currentRect.height}px`,
+        margin: "0",
+        padding: "0",
+        zIndex: "60",
+        transformOrigin: "top left",
+        pointerEvents: "none"
+      });
+
+      // Ocultar original del preloader y agregar clon
+      logoPreload.style.opacity = "0";
+      document.body.appendChild(clone);
+
+      // Calcular diferencias exactas desde la esquina superior izquierda
+      const deltaX = targetRect.left - currentRect.left;
+      const deltaY = targetRect.top - currentRect.top;
+      const scaleX = targetRect.width / currentRect.width;
+      const scaleY = targetRect.height / currentRect.height;
+
+      // Mantener logo destino listo pero transparente
+      logoTarget.style.opacity = "0";
+      logoTarget.style.visibility = "visible";
+
+      const tl = gsap.timeline({
+        onComplete: () => {
+          // Intercambio instantáneo sin cross-fade para eliminar el brinco final
+          logoTarget.style.opacity = "1";
+          clone.remove();
+          if (preloader) preloader.remove();
+
+          setTimeout(iniciarPopupPromocion, 50);
+        }
+      });
+
+      // Animación acelerada por GPU
+      tl.to(clone, {
+        x: deltaX,
+        y: deltaY,
+        scaleX: scaleX,
+        scaleY: scaleY,
+        duration: 0.8,
+        delay: 0.2,
+        ease: "power2.inOut",
+        force3D: true
+      }).to(
+        preloader,
+        {
+          opacity: 0,
+          duration: 0.3,
+          ease: "power1.out"
+        },
+        "-=0.3"
+      );
+    });
   };
 
   if (document.readyState === "complete") {
@@ -227,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
         btn.scrollIntoView({
           behavior: "smooth",
           inline: "center",
-          block: "nearest",
+          block: "nearest"
         });
       }
     });
@@ -385,8 +379,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   modalCarrusel?.addEventListener("click", (e) => {
     if (
-      e.target === modalCarrusel || 
-      e.target.classList.contains("swiper-wrapper") || 
+      e.target === modalCarrusel ||
+      e.target.classList.contains("swiper-wrapper") ||
       e.target.classList.contains("mySwiper")
     ) {
       cerrarCarruselConAnimacion();
