@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
     blurOverlay.addEventListener("click", cerrarConAnimacion);
   };
 
-  // 3. ANIMACIÓN GSAP DEL PRELOADER
+  // 3. ANIMACIÓN GSAP DEL PRELOADER (CORREGIDA SIN SALTO VISUAL)
   const executePreloader = () => {
     if (!preloader || !logoPreload || !logoTarget) {
       if (logoTarget) {
@@ -107,9 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    logoTarget.style.visibility = "hidden";
-    logoTarget.style.opacity = "1";
-
+    // Medir dimensiones reales en viewport de ambos logos
     const targetRect = logoTarget.getBoundingClientRect();
     const currentRect = logoPreload.getBoundingClientRect();
 
@@ -117,6 +115,10 @@ document.addEventListener("DOMContentLoaded", () => {
       setTimeout(executePreloader, 50);
       return;
     }
+
+    // Ocultar objetivo nativo durante la transición del clon
+    logoTarget.style.visibility = "hidden";
+    logoTarget.style.opacity = "0";
 
     const clone = logoPreload.cloneNode(true);
     clone.id = "logo-clone";
@@ -132,13 +134,14 @@ document.addEventListener("DOMContentLoaded", () => {
     logoPreload.style.opacity = "0";
     document.body.appendChild(clone);
 
-    const scaleX = targetRect.width / currentRect.width;
-    const scaleY = targetRect.height / currentRect.height;
     const deltaX = targetRect.left - currentRect.left;
     const deltaY = targetRect.top - currentRect.top;
+    const targetWidth = targetRect.width;
+    const targetHeight = targetRect.height;
 
     const tl = gsap.timeline({
       onComplete: () => {
+        // Transición directa al logo HTML
         logoTarget.style.visibility = "visible";
         logoTarget.style.opacity = "1";
 
@@ -150,12 +153,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
+    // Animación fluida transformando dimensiones físicas
     tl.to(clone, {
       x: deltaX,
       y: deltaY,
-      scaleX: scaleX,
-      scaleY: scaleY,
-      transformOrigin: "0% 0%",
+      width: targetWidth,
+      height: targetHeight,
       duration: 0.85,
       delay: 0.6,
       ease: "power2.inOut",
