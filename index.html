@@ -5,24 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
   <title>Menú Delgabolis Delicius</title> 
 
-  <!-- Swiper CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
    
-  <!-- Tailwind CSS CDN --> 
   <script src="https://cdn.tailwindcss.com/3.4.17"></script> 
-  <!-- Lucide Icons --> 
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script> 
-  <!-- Google Fonts --> 
   <link rel="preconnect" href="https://fonts.googleapis.com"> 
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Sniglet:wght@400;800&display=swap" rel="stylesheet">
 
-  <!-- Hoja de estilos personalizada -->
   <link rel="stylesheet" href="style.css">
 </head> 
 <body class="antialiased"> 
   
-<!-- Capa del Preloader -->
 <div id="preloader" class="fixed inset-0 z-50 flex items-center justify-center bg-[#fec2de] pointer-events-auto">
   <img 
     id="logo-preload" 
@@ -34,9 +28,8 @@
 
 <div class="max-w-md mx-auto min-h-screen pb-12"> 
   
-  <!-- Logo principal del menú -->
   <div class="flex justify-center w-full mt-2 mb-2 px-4">
-    <img id="logo-target" src="logo_bolisv2.png" alt="Logo Delgabolis Delicius" class="w-60 h-auto max-w-full object-contain">
+    <img id="logo-target" src="logo_bolisv2.png" alt="Logo Delgabolis Delicius" class="w-60 h-auto max-w-full object-contain invisible opacity-0">
   </div>
      
     <header class="relative m-2 overflow-hidden rounded-3xl text-white shadow-xl min-h-[240px] flex justify-center items-center text-center"> 
@@ -122,7 +115,6 @@
         </div> 
       </dialog>
 
-      <!-- Modal Carrusel estilo Swiper -->
       <dialog id="modalCarrusel" class="rounded-3xl overflow-hidden shadow-2xl bg-transparent p-0 border-0 max-w-sm w-11/12">
         <button id="btnCerrarCarrusel" class="absolute top-3 right-3 z-30 w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 text-white grid place-items-center transition-colors cursor-pointer" aria-label="Cerrar">
           ✕
@@ -130,12 +122,10 @@
 
         <div class="swiper mySwiper w-full py-4">
           <div class="swiper-wrapper" id="swiperWrapper">
-            <!-- Los slides se cargan dinámicamente -->
-          </div>
+            </div>
         </div>
       </dialog>
 
-      <!-- Sección 1: Bolis --> 
       <section id="bolis" class="menu-section rounded-3xl overflow-hidden shadow-md bg-white"> 
         <div class="p-5 flex justify-between items-center bg-[#ee5d83] text-white"> 
           <div> 
@@ -176,7 +166,6 @@
         </div> 
       </section>
 
-      <!-- Sección 2: Congelados --> 
       <section id="congelados" class="menu-section rounded-3xl overflow-hidden shadow-md bg-white"> 
         <div class="p-5 flex justify-between items-center bg-[#27bcc3] text-white"> 
           <div> 
@@ -229,7 +218,6 @@
         </div> 
       </section> 
 
-      <!-- Sección 3: Raspados --> 
       <section id="raspados" class="menu-section rounded-3xl overflow-hidden shadow-md bg-white"> 
         <div class="p-5 flex justify-between items-center bg-[#ffc952] text-slate-900"> 
           <div> 
@@ -262,7 +250,6 @@
         </div> 
       </section> 
 
-      <!-- Sección 4: Frappes --> 
       <section id="frappes" class="menu-section rounded-3xl overflow-hidden shadow-md bg-white"> 
         <div class="p-5 flex justify-between items-center bg-[#6253a7] text-white"> 
           <div> 
@@ -306,7 +293,6 @@
         </div> 
       </section> 
 
-      <!-- Sección 5: OmniLife --> 
       <section id="omnilife" class="menu-section rounded-3xl overflow-hidden shadow-md bg-white"> 
         <div class="p-5 flex justify-between items-center bg-[#243047] text-white"> 
           <div> 
@@ -354,13 +340,10 @@
 
   </div> 
 
-  <!-- Swiper JS CDN -->
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-  <!-- GSAP CDN -->
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 
-  <!-- Script personalizado -->
   <script src="script.js"></script>
 </body> 
 </html>
