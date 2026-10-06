@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. Inicializar iconos de Lucide si existen
+  // 1. Inicializar iconos de Lucide
   if (window.lucide) {
     lucide.createIcons();
   }
@@ -50,6 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     modalPromo.showModal();
 
+    // Animación de entrada
     gsap.to(modalPromo, {
       opacity: 1,
       scale: 1,
@@ -59,6 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
       force3D: true
     });
 
+    // Animación de salida al cerrar
     const cerrarConAnimacion = () => {
       activarBlurFondo(false);
       gsap.to(modalPromo, {
@@ -77,6 +79,18 @@ document.addEventListener("DOMContentLoaded", () => {
     btnCerrarPromo?.addEventListener("click", (e) => {
       e.preventDefault();
       cerrarConAnimacion();
+    });
+
+    modalPromo.addEventListener("click", (e) => {
+      const dialogBounds = modalPromo.getBoundingClientRect();
+      if (
+        e.clientX < dialogBounds.left ||
+        e.clientX > dialogBounds.right ||
+        e.clientY < dialogBounds.top ||
+        e.clientY > dialogBounds.bottom
+      ) {
+        cerrarConAnimacion();
+      }
     });
 
     blurOverlay.addEventListener("click", cerrarConAnimacion);
@@ -160,7 +174,19 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("load", () => setTimeout(executePreloader, 100));
   }
 
-  // 4. Navegación por Categorías e Intersection Observer
+  // 4. Fondo difuminado en Navegación al hacer scroll
+  const categoryNav = document.querySelector(".category-nav");
+  if (categoryNav) {
+    const handleStickyNav = () => {
+      const navTop = categoryNav.getBoundingClientRect().top;
+      categoryNav.classList.toggle("is-stuck", navTop <= 0);
+    };
+
+    window.addEventListener("scroll", handleStickyNav, { passive: true });
+    handleStickyNav();
+  }
+
+  // 5. Navegación por Categorías e Intersection Observer
   const navButtons = [...document.querySelectorAll(".nav-pill")];
   const sections = navButtons.map((btn) => document.getElementById(btn.dataset.target));
 
@@ -208,7 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (section) observer.observe(section);
   });
 
-  // 5. Carrusel Swiper Dinámico
+  // 6. Carrusel Swiper (Modal Dinámico)
   const modalCarrusel = document.getElementById("modalCarrusel");
   const btnCerrarCarrusel = document.getElementById("btnCerrarCarrusel");
   const swiperWrapper = document.getElementById("swiperWrapper");
@@ -268,6 +294,7 @@ document.addEventListener("DOMContentLoaded", () => {
           })
           .join("");
 
+        // Estado inicial de animación para el modal
         gsap.killTweensOf(modalCarrusel);
         gsap.set(modalCarrusel, {
           opacity: 0,
@@ -278,6 +305,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         modalCarrusel?.showModal();
 
+        // Animación de entrada
         gsap.to(modalCarrusel, {
           opacity: 1,
           scale: 1,
@@ -288,6 +316,7 @@ document.addEventListener("DOMContentLoaded", () => {
           clearProps: "transform"
         });
 
+        // Inicialización de Swiper
         swiperInstance = new Swiper(".mySwiper", {
           effect: "cards",
           grabCursor: true,
@@ -329,12 +358,15 @@ document.addEventListener("DOMContentLoaded", () => {
   setupFlavorGroup(".frappe-flavor-btn");
   setupFlavorGroup(".congelados-flavor-btn");
 
-  // Eventos de Cierre
+  // EVENTOS DE CIERRE DEL CARRUSEL
+
+  // 1. Botón de cerrar
   btnCerrarCarrusel?.addEventListener("click", (e) => {
     e.preventDefault();
     cerrarCarruselConAnimacion();
   });
 
+  // 2. Clic fuera de las tarjetas dentro del área del modal
   modalCarrusel?.addEventListener("click", (e) => {
     if (
       e.target === modalCarrusel || 
@@ -345,6 +377,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // 3. Clic en el fondo difuminado (Blur Overlay)
   blurOverlay?.addEventListener("click", () => {
     if (modalCarrusel && modalCarrusel.open) {
       cerrarCarruselConAnimacion();
