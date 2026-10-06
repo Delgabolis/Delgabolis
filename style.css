@@ -63,7 +63,7 @@ body {
 } 
 
 .category-nav .nav-container {
-  max-width: 28rem; /* Equivalente a max-w-md */
+  max-width: 28rem; /* Max width compatible con max-w-md */
   margin: 0 auto;
   display: flex;
   gap: 8px;
@@ -118,6 +118,7 @@ body {
   box-shadow: 0 2px 8px rgba(244, 119, 177, 0.4);
 } 
 
+/* Márgenes de scroll ajustados para evitar ser solapados por la barra inferior */
 .menu-section { 
   scroll-margin-top: 20px; 
   scroll-margin-bottom: 90px;
@@ -155,7 +156,7 @@ body {
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  background-color: #000000 !important; /* Fondo negro para cada tarjeta */
+  background-color: #000000 !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -233,7 +234,7 @@ dialog#modalPromociones {
   background: #ffffff;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   z-index: 100;
-  overflow: hidden; /* Recorta el contenido interno para mantener las esquinas redondeadas */
+  overflow: hidden;
 }
 
 /* Fondo transparente para el modal del carrusel */
