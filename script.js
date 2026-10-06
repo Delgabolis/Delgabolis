@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
     blurOverlay.addEventListener("click", cerrarConAnimacion);
   };
 
-  // 3. ANIMACIÓN DE PRELOADER SIN SALTO DE POSICIÓN
+  // 3. ANIMACIÓN DE PRELOADER (100% Fluida con aceleración GPU sin saltos)
   const executePreloader = () => {
     if (!preloader || !logoPreload || !logoTarget) {
       if (logoTarget) logoTarget.style.visibility = "visible";
@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
       logoPreload.complete ? Promise.resolve() : new Promise((res) => (logoPreload.onload = res)),
       logoTarget.complete ? Promise.resolve() : new Promise((res) => (logoTarget.onload = res))
     ]).then(() => {
-      // Forzar que el destino ocupe su espacio real en el layout antes de medir
+      // 1. Asegurar que el target ocupe su espacio real en el layout antes de medir
       logoTarget.style.visibility = "hidden";
       logoTarget.style.opacity = "1";
 
@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // Crear un clon independiente fuera de cualquier contenedor de Flexbox/Grid
+      // 2. Crear un clon fijado exactamente en las coordenadas absolutas iniciales
       const clone = logoPreload.cloneNode(true);
       clone.id = "logo-clone";
 
@@ -120,17 +120,24 @@ document.addEventListener("DOMContentLoaded", () => {
         padding: "0",
         zIndex: "9999",
         pointerEvents: "none",
-        transform: "none"
+        transformOrigin: "top left",
+        willChange: "transform, opacity"
       });
 
-      // Ocultar original del preloader y agregar clon al body
+      // Ocultar logo del preloader y agregar el clon al DOM
       logoPreload.style.opacity = "0";
       document.body.appendChild(clone);
 
-      // Animación GSAP directa a dimensiones físicas objetivo
+      // 3. Calcular la diferencia matemática exacta (FLIP Animation)
+      const deltaX = endRect.left - startRect.left;
+      const deltaY = endRect.top - startRect.top;
+      const scaleX = endRect.width / startRect.width;
+      const scaleY = endRect.height / startRect.height;
+
+      // 4. Animación GSAP procesada por la tarjeta gráfica
       const tl = gsap.timeline({
         onComplete: () => {
-          // Revelar target y eliminar clon de inmediato
+          // Revelar target y destruir clon instantáneamente en el mismo pixel
           logoTarget.style.visibility = "visible";
           clone.remove();
           if (preloader) preloader.remove();
@@ -140,13 +147,14 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       tl.to(clone, {
-        top: endRect.top,
-        left: endRect.left,
-        width: endRect.width,
-        height: endRect.height,
+        x: deltaX,
+        y: deltaY,
+        scaleX: scaleX,
+        scaleY: scaleY,
         duration: 0.85,
         delay: 0.1,
-        ease: "power2.inOut"
+        ease: "power2.inOut",
+        force3D: true
       }).to(
         preloader,
         {
