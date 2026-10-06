@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
     blurOverlay.addEventListener("click", cerrarConAnimacion);
   };
 
-  // 3. ANIMACIÓN DE PRELOADER (100% Fluida con aceleración GPU sin saltos)
+  // 3. ANIMACIÓN DE PRELOADER (SOLUCIÓN DEFINITIVA SIN BRINCO EN DESPLAZAMIENTO)
   const executePreloader = () => {
     if (!preloader || !logoPreload || !logoTarget) {
       if (logoTarget) logoTarget.style.visibility = "visible";
@@ -90,11 +90,15 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    // A. Forzar posición arriba y bloquear scroll para evitar brincos
+    window.scrollTo(0, 0);
+    document.body.style.overflow = "hidden";
+
     Promise.all([
       logoPreload.complete ? Promise.resolve() : new Promise((res) => (logoPreload.onload = res)),
       logoTarget.complete ? Promise.resolve() : new Promise((res) => (logoTarget.onload = res))
     ]).then(() => {
-      // 1. Asegurar que el target ocupe su espacio real en el layout antes de medir
+      // B. Revelación simulada en DOM para obtener dimensiones de maquetación reales
       logoTarget.style.visibility = "hidden";
       logoTarget.style.opacity = "1";
 
@@ -106,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // 2. Crear un clon fijado exactamente en las coordenadas absolutas iniciales
+      // C. Crear elemento flotante absoluto e inmune al scroll
       const clone = logoPreload.cloneNode(true);
       clone.id = "logo-clone";
 
@@ -120,27 +124,35 @@ document.addEventListener("DOMContentLoaded", () => {
         padding: "0",
         zIndex: "9999",
         pointerEvents: "none",
-        transformOrigin: "top left",
+        transformOrigin: "center center",
         willChange: "transform, opacity"
       });
 
-      // Ocultar logo del preloader y agregar el clon al DOM
+      // Ocultar preloader estático y añadir el clon animado
       logoPreload.style.opacity = "0";
       document.body.appendChild(clone);
 
-      // 3. Calcular la diferencia matemática exacta (FLIP Animation)
-      const deltaX = endRect.left - startRect.left;
-      const deltaY = endRect.top - startRect.top;
+      // D. Cálculo de centro a centro para evitar descalibres por origin
+      const startCenterX = startRect.left + startRect.width / 2;
+      const startCenterY = startRect.top + startRect.height / 2;
+      const endCenterX = endRect.left + endRect.width / 2;
+      const endCenterY = endRect.top + endRect.height / 2;
+
+      const deltaX = endCenterX - startCenterX;
+      const deltaY = endCenterY - startCenterY;
       const scaleX = endRect.width / startRect.width;
       const scaleY = endRect.height / startRect.height;
 
-      // 4. Animación GSAP procesada por la tarjeta gráfica
+      // E. Animación GSAP por GPU
       const tl = gsap.timeline({
         onComplete: () => {
-          // Revelar target y destruir clon instantáneamente en el mismo pixel
+          // Relevo perfecto en el píxel exacto
           logoTarget.style.visibility = "visible";
           clone.remove();
           if (preloader) preloader.remove();
+
+          // Restablecer el scroll del documento
+          document.body.style.overflow = "";
 
           setTimeout(iniciarPopupPromocion, 50);
         }
