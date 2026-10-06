@@ -82,100 +82,111 @@ document.addEventListener("DOMContentLoaded", () => {
     blurOverlay.addEventListener("click", cerrarConAnimacion);
   };
 
-  // 3. ANIMACIÓN DE PRELOADER (SOLUCIÓN DEFINITIVA SIN BRINCO EN DESPLAZAMIENTO)
+  // 3. ANIMACIÓN DE PRELOADER (SOLUCIÓN DEFINITIVA CON CROSS-FADE IMPERCEPTIBLE)
   const executePreloader = () => {
     if (!preloader || !logoPreload || !logoTarget) {
-      if (logoTarget) logoTarget.style.visibility = "visible";
+      if (logoTarget) logoTarget.style.opacity = "1";
       iniciarPopupPromocion();
       return;
     }
 
-    // A. Forzar posición arriba y bloquear scroll para evitar brincos
-    window.scrollTo(0, 0);
-    document.body.style.overflow = "hidden";
+    // Bloquear scroll al inicio
+    document.body.classList.add("no-scroll");
 
     Promise.all([
       logoPreload.complete ? Promise.resolve() : new Promise((res) => (logoPreload.onload = res)),
       logoTarget.complete ? Promise.resolve() : new Promise((res) => (logoTarget.onload = res))
     ]).then(() => {
-      // B. Revelación simulada en DOM para obtener dimensiones de maquetación reales
-      logoTarget.style.visibility = "hidden";
-      logoTarget.style.opacity = "1";
+      // Forzar renderizado previo para lecturas de pantalla exactas
+      logoTarget.style.opacity = "0";
+      logoTarget.style.visibility = "visible";
 
-      const startRect = logoPreload.getBoundingClientRect();
-      const endRect = logoTarget.getBoundingClientRect();
+      // Esperar dos frames de renderizado (RAF) para asegurar dimensiones estables
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const startRect = logoPreload.getBoundingClientRect();
+          const endRect = logoTarget.getBoundingClientRect();
 
-      if (startRect.width === 0 || endRect.width === 0) {
-        setTimeout(executePreloader, 50);
-        return;
-      }
+          if (startRect.width === 0 || endRect.width === 0) {
+            setTimeout(executePreloader, 50);
+            return;
+          }
 
-      // C. Crear elemento flotante absoluto e inmune al scroll
-      const clone = logoPreload.cloneNode(true);
-      clone.id = "logo-clone";
+          // Crear clon en capa aislada
+          const clone = logoPreload.cloneNode(true);
+          clone.id = "logo-clone";
 
-      Object.assign(clone.style, {
-        position: "fixed",
-        top: `${startRect.top}px`,
-        left: `${startRect.left}px`,
-        width: `${startRect.width}px`,
-        height: `${startRect.height}px`,
-        margin: "0",
-        padding: "0",
-        zIndex: "9999",
-        pointerEvents: "none",
-        transformOrigin: "center center",
-        willChange: "transform, opacity"
+          Object.assign(clone.style, {
+            position: "fixed",
+            top: `${startRect.top}px`,
+            left: `${startRect.left}px`,
+            width: `${startRect.width}px`,
+            height: `${startRect.height}px`,
+            margin: "0",
+            padding: "0",
+            zIndex: "10000",
+            pointerEvents: "none",
+            transformOrigin: "top left",
+            willChange: "transform, opacity"
+          });
+
+          logoPreload.style.opacity = "0";
+          document.body.appendChild(clone);
+
+          const deltaX = endRect.left - startRect.left;
+          const deltaY = endRect.top - startRect.top;
+          const scaleX = endRect.width / startRect.width;
+          const scaleY = endRect.height / startRect.height;
+
+          const tl = gsap.timeline({
+            onComplete: () => {
+              clone.remove();
+              if (preloader) preloader.remove();
+              document.body.classList.remove("no-scroll");
+              setTimeout(iniciarPopupPromocion, 50);
+            }
+          });
+
+          // Animación de desplazamiento y escala por hardware
+          tl.to(clone, {
+            x: deltaX,
+            y: deltaY,
+            scaleX: scaleX,
+            scaleY: scaleY,
+            duration: 0.8,
+            ease: "power3.inOut",
+            force3D: true
+          })
+          // Transición suave (cross-fade) entre el clon y el target real para 0 saltos
+          .to(
+            logoTarget,
+            {
+              opacity: 1,
+              duration: 0.15,
+              ease: "none"
+            },
+            "-=0.15"
+          )
+          .to(
+            clone,
+            {
+              opacity: 0,
+              duration: 0.15,
+              ease: "none"
+            },
+            "<"
+          )
+          .to(
+            preloader,
+            {
+              opacity: 0,
+              duration: 0.25,
+              ease: "power1.out"
+            },
+            "-=0.2"
+          );
+        });
       });
-
-      // Ocultar preloader estático y añadir el clon animado
-      logoPreload.style.opacity = "0";
-      document.body.appendChild(clone);
-
-      // D. Cálculo de centro a centro para evitar descalibres por origin
-      const startCenterX = startRect.left + startRect.width / 2;
-      const startCenterY = startRect.top + startRect.height / 2;
-      const endCenterX = endRect.left + endRect.width / 2;
-      const endCenterY = endRect.top + endRect.height / 2;
-
-      const deltaX = endCenterX - startCenterX;
-      const deltaY = endCenterY - startCenterY;
-      const scaleX = endRect.width / startRect.width;
-      const scaleY = endRect.height / startRect.height;
-
-      // E. Animación GSAP por GPU
-      const tl = gsap.timeline({
-        onComplete: () => {
-          // Relevo perfecto en el píxel exacto
-          logoTarget.style.visibility = "visible";
-          clone.remove();
-          if (preloader) preloader.remove();
-
-          // Restablecer el scroll del documento
-          document.body.style.overflow = "";
-
-          setTimeout(iniciarPopupPromocion, 50);
-        }
-      });
-
-      tl.to(clone, {
-        x: deltaX,
-        y: deltaY,
-        scaleX: scaleX,
-        scaleY: scaleY,
-        duration: 0.85,
-        delay: 0.1,
-        ease: "power2.inOut",
-        force3D: true
-      }).to(
-        preloader,
-        {
-          opacity: 0,
-          duration: 0.3,
-          ease: "power1.out"
-        },
-        "-=0.3"
-      );
     });
   };
 
