@@ -82,11 +82,11 @@ document.addEventListener("DOMContentLoaded", () => {
     blurOverlay.addEventListener("click", cerrarConAnimacion);
   };
 
-  // 3. ANIMACIÓN DE PRELOADER (SOLUCIÓN DEFINITIVA CON CROSS-FADE IMPERCEPTIBLE)
+  // 3. ANIMACIÓN DE PRELOADER (FLUIDA Y SIN SALTOS BRUSCOS)
   const executePreloader = () => {
     if (!preloader || !logoPreload || !logoTarget) {
       if (logoTarget) logoTarget.style.opacity = "1";
-      iniciarPopupPromocion();
+      setTimeout(iniciarPopupPromocion, 500);
       return;
     }
 
@@ -140,10 +140,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
           const tl = gsap.timeline({
             onComplete: () => {
+              // Limpiar clon y preloader del DOM
               clone.remove();
               if (preloader) preloader.remove();
               document.body.classList.remove("no-scroll");
-              setTimeout(iniciarPopupPromocion, 50);
+
+              // DELAY PARA EL POPUP:
+              // Espera a que la animación termine totalmente al 100% y el layout se estabilice
+              setTimeout(iniciarPopupPromocion, 450);
             }
           });
 
@@ -157,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ease: "power3.inOut",
             force3D: true
           })
-          // Transición suave (cross-fade) entre el clon y el target real para 0 saltos
+          // Transición suave (cross-fade) entre el clon y el target real
           .to(
             logoTarget,
             {
@@ -180,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
             preloader,
             {
               opacity: 0,
-              duration: 0.25,
+              duration: 0.3,
               ease: "power1.out"
             },
             "-=0.2"
