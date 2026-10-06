@@ -4,8 +4,6 @@
   --aqua: #27bcc3; 
   --cream: #fae4ec; 
   --sun: #ffc952; 
-  --purple: #6253a7;
-  --dark-navy: #243047;
 } 
 
 html, body {
@@ -24,7 +22,7 @@ body {
   background-color: #fca5a5; 
 } 
 
-/* Bloqueo limpio de scroll */
+/* Clase para bloquear scroll de forma limpia */
 body.no-scroll {
   overflow: hidden !important;
   touch-action: none !important;
@@ -47,7 +45,7 @@ body.no-scroll {
   background-color: inherit !important;
 }
 
-/* Neutralización de transiciones para animaciones GSAP */
+/* Neutralización de transiciones CSS para evitar conflictos de cálculo */
 #logo-preload,
 #logo-target,
 #logo-clone {
@@ -65,21 +63,11 @@ body.no-scroll {
   flex-shrink: 0;
 }
 
-/* EFECTO GLASSMORPHISM REFINADO EN TARJETAS */
-.menu-section { 
-  scroll-margin-top: 70px; 
-  background: rgba(255, 255, 255, 0.85) !important;
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08);
-} 
-
-/* CATEGORÍAS Y NAVEGACIÓN (Escritorio Sticky / Móvil App Bar) */
+/* Categorías y Navegación Sticky */ 
 .category-nav { 
   position: sticky; 
   top: -1px; 
-  z-index: 40; 
+  z-index: 20; 
   display: flex; 
   gap: 8px; 
   overflow-x: auto; 
@@ -87,7 +75,7 @@ body.no-scroll {
   background: transparent; 
   backdrop-filter: blur(0px);
   -webkit-backdrop-filter: blur(0px);
-  transition: background 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease; 
+  transition: background 0.3s ease, backdrop-filter 0.3s ease, -webkit-backdrop-filter 0.3s ease, box-shadow 0.3s ease; 
   scrollbar-width: none; 
 } 
 
@@ -96,110 +84,33 @@ body.no-scroll {
 } 
 
 .category-nav.is-stuck {
-  background: rgba(255, 255, 255, 0.8); 
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); 
-}
-
-.nav-pill-icon {
-  display: none;
-  width: 18px;
-  height: 18px;
+  background: rgba(255, 255, 255, 0.75); 
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
 }
 
 .nav-pill { 
   flex: 0 0 auto; 
   padding: 8px 18px; 
-  border: 1px solid rgba(255, 255, 255, 0.8); 
+  border: 2px solid #dce6ec; 
   border-radius: 999px; 
-  background: rgba(255, 255, 255, 0.7); 
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: #ffffff; 
   color: #526176; 
   font-size: 0.88rem; 
   font-weight: 700; 
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
-  cursor: pointer;
+  transition: all 0.2s ease; 
 } 
 
 .nav-pill.is-active { 
   background: var(--ink); 
   border-color: var(--ink); 
   color: #ffffff; 
-  box-shadow: 0 4px 14px rgba(244, 119, 177, 0.4);
 } 
 
-/* BARRA DE NAVEGACIÓN INFERIOR TIPO APP EN MÓVILES */
-@media (max-width: 639px) {
-  .category-nav {
-    position: fixed;
-    top: auto;
-    bottom: 12px;
-    left: 12px;
-    right: 12px;
-    border-radius: 24px;
-    background: rgba(255, 255, 255, 0.85) !important;
-    backdrop-filter: blur(20px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
-    padding: 8px 10px;
-    justify-content: space-between;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .nav-pill {
-    padding: 6px 10px;
-    border: none;
-    background: transparent;
-    border-radius: 16px;
-    font-size: 0.72rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-    flex: 1;
-    color: #64748b;
-  }
-
-  .nav-pill-icon {
-    display: block;
-  }
-
-  .nav-pill.is-active {
-    background: rgba(244, 119, 177, 0.15);
-    color: var(--coral);
-    box-shadow: none;
-  }
-}
-
-/* SOFT GLOW (RESPLANDOR Y SOMBRAS DINÁMICAS EN BOTONES) */
-.flavor-btn,
-.frappe-flavor-btn,
-.congelados-flavor-btn,
-.raspado-btn {
-  transition: all 0.25s ease;
-}
-
-.flavor-btn:hover,
-.flavor-btn:active {
-  box-shadow: 0 0 16px rgba(238, 93, 131, 0.5);
-  transform: translateY(-2px) scale(1.03);
-}
-
-.frappe-flavor-btn:hover,
-.frappe-flavor-btn:active {
-  box-shadow: 0 0 16px rgba(98, 83, 167, 0.5);
-  transform: translateY(-2px) scale(1.03);
-}
-
-.congelados-flavor-btn:hover,
-.congelados-flavor-btn:active {
-  text-shadow: 0 0 12px rgba(39, 188, 195, 0.6);
-}
+.menu-section { 
+  scroll-margin-top: 70px; 
+} 
 
 .price-stamp { 
   display: grid; 
@@ -212,19 +123,20 @@ body.no-scroll {
   font-family: "Fraunces", serif; 
 } 
 
-/* SWIPER CARRUSEL Y BORDES SQUIRCLES (28px) */
+/* Limpieza de fondos Swiper */
 .swiper,
 .swiper-wrapper {
   background: transparent !important;
 }
 
+/* Tarjetas Swiper */
 .swiper-slide {
   position: relative;
   width: 280px; 
   height: 380px; 
-  border-radius: 28px !important; /* Squircles tipo iOS */
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
   background-color: #000000 !important;
   display: flex;
   align-items: center;
@@ -236,7 +148,7 @@ body.no-scroll {
   height: 100%;
   object-fit: cover; 
   object-position: center; 
-  border-radius: 28px !important;
+  border-radius: 20px;
   display: block;
 }
 
@@ -254,7 +166,7 @@ body.no-scroll {
   right: 0;
   padding: 20px;
   z-index: 10;
-  background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
   text-align: center;
 }
 
@@ -263,54 +175,8 @@ body.no-scroll {
   font-size: 1.5rem;
   font-weight: 800;
   margin: 0;
-  text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
   font-family: "Fraunces", serif;
-}
-
-/* INDICADOR TÁCTIL PISTA VISUAL DE DESLIZAMIENTO */
-.swipe-hint-badge {
-  position: absolute;
-  top: -6px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 40;
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  color: #ffffff;
-  padding: 6px 14px;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  pointer-events: none;
-  transition: opacity 0.4s ease, transform 0.4s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-}
-
-.swipe-hint-badge.is-hidden {
-  opacity: 0;
-  transform: translate(-50%, -10px);
-}
-
-@keyframes bounceLeft {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(-4px); }
-}
-
-@keyframes bounceRight {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(4px); }
-}
-
-.animate-bounce-left {
-  animation: bounceLeft 1.2s infinite;
-}
-
-.animate-bounce-right {
-  animation: bounceRight 1.2s infinite;
 }
 
 /* Blur overlay */
@@ -318,9 +184,9 @@ body.no-scroll {
   position: fixed;
   inset: 0;
   z-index: 90;
-  background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   opacity: 0;
   pointer-events: none;
   visibility: hidden;
@@ -343,7 +209,7 @@ dialog#modalPromociones {
   max-height: 90vh;
   padding: 0;
   border: none;
-  border-radius: 28px;
+  border-radius: 24px;
   background: #ffffff;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   z-index: 100;

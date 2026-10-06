@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // 2. ABRIR POPUP DE PROMOCIÓN
+  // 2. ABRIR POPUP DE PROMOCIÓN (FLUIDO Y SIN INTERRUMPIR RENDERIZADO)
   const iniciarPopupPromocion = () => {
     if (!modalPromo) return;
 
@@ -37,8 +37,10 @@ document.addEventListener("DOMContentLoaded", () => {
     gsap.killTweensOf(modalPromo);
     gsap.set(modalPromo, { opacity: 0, scale: 0.7, y: 40 });
 
+    // Se abre en la capa superior nativa
     modalPromo.showModal();
 
+    // Se fuerza un frame de render para garantizar fluidez total en la entrada
     requestAnimationFrame(() => {
       gsap.to(modalPromo, {
         opacity: 1,
@@ -85,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
     blurOverlay?.addEventListener("click", cerrarConAnimacion);
   };
 
-  // 3. ANIMACIÓN DE PRELOADER (CÁLCULO DE COORDENADAS)
+  // 3. ANIMACIÓN DE PRELOADER (CÁLCULO DE COORDENADAS FIJAS SIN BRINCOS)
   const executePreloader = () => {
     if (!preloader || !logoPreload || !logoTarget) {
       if (logoTarget) logoTarget.style.opacity = "1";
@@ -93,6 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    // Bloquear scroll mientras el preloader está activo
     document.body.classList.add("no-scroll");
 
     Promise.all([
@@ -112,9 +115,11 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
           }
 
+          // Crear clon
           const clone = logoPreload.cloneNode(true);
           clone.id = "logo-clone";
 
+          // Posicionamiento absoluto exacto inicial (sin transformaciones de escala)
           Object.assign(clone.style, {
             position: "fixed",
             top: `${startRect.top}px`,
@@ -131,6 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
           logoPreload.style.opacity = "0";
           document.body.appendChild(clone);
 
+          // Animar dimensiones absolutas directas para evitar deformaciones
           gsap.to(clone, {
             top: endRect.top,
             left: endRect.left,
@@ -139,9 +145,11 @@ document.addEventListener("DOMContentLoaded", () => {
             duration: 0.95,
             ease: "power2.inOut",
             onComplete: () => {
+              // PASO A: Mostrar el logo de destino y quitar el clon
               logoTarget.style.opacity = "1";
               clone.remove();
 
+              // PASO B: Desvanecer el fondo del preloader
               gsap.to(preloader, {
                 opacity: 0,
                 duration: 0.35,
@@ -149,6 +157,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 onComplete: () => {
                   preloader.remove();
                   document.body.classList.remove("no-scroll");
+
+                  // PASO C: Abrir el popup de promociones
                   setTimeout(iniciarPopupPromocion, 400);
                 }
               });
@@ -225,11 +235,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (section) observer.observe(section);
   });
 
-  // 6. CARRUSEL SWIPER EN MODAL CON INDICADOR TÁCTIL
+  // 6. CARRUSEL SWIPER EN MODAL
   const modalCarrusel = document.getElementById("modalCarrusel");
   const btnCerrarCarrusel = document.getElementById("btnCerrarCarrusel");
   const swiperWrapper = document.getElementById("swiperWrapper");
-  const swipeHint = document.getElementById("swipeHint");
   let swiperInstance = null;
 
   const cerrarCarruselConAnimacion = () => {
@@ -258,11 +267,6 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         isModalOpen = true;
         activarBlurFondo(true);
-
-        // Resetear la visibilidad de la pista táctil al abrir
-        if (swipeHint) {
-          swipeHint.classList.remove("is-hidden");
-        }
 
         if (swiperInstance) {
           swiperInstance.destroy(true, true);
@@ -318,12 +322,7 @@ document.addEventListener("DOMContentLoaded", () => {
             slideShadows: false
           },
           on: {
-            // Ocultar pista táctil al deslizar o tocar por primera vez
-            touchStart: function () {
-              if (swipeHint) swipeHint.classList.add("is-hidden");
-            },
             slideChangeTransitionStart: function () {
-              if (swipeHint) swipeHint.classList.add("is-hidden");
               const activeSlide = this.slides[this.activeIndex];
               if (activeSlide) {
                 const title = activeSlide.querySelector(".swiper-txt h3");
