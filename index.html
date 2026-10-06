@@ -124,15 +124,21 @@
 
       <!-- Modal Carrusel estilo Swiper -->
       <dialog id="modalCarrusel" class="rounded-3xl overflow-hidden shadow-2xl bg-transparent p-0 border-0 max-w-sm w-11/12">
-        <button id="btnCerrarCarrusel" class="absolute top-3 right-3 z-30 w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 text-white grid place-items-center transition-colors cursor-pointer" aria-label="Cerrar">
-          ✕
-        </button>
+  <button id="btnCerrarCarrusel" class="absolute top-3 right-3 z-30 w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 text-white grid place-items-center transition-colors cursor-pointer" aria-label="Cerrar">
+    ✕
+  </button>
 
-        <div class="swiper mySwiper w-full py-4">
-          <div class="swiper-wrapper" id="swiperWrapper">
-            <!-- Los slides se cargan dinámicamente -->
-          </div>
-        </div>
+  <div class="swiper mySwiper w-full py-4 relative">
+    <div class="swiper-wrapper" id="swiperWrapper">
+      <!-- Los slides se cargan dinámicamente -->
+    </div>
+
+    <!-- Indicador táctil de deslizamiento -->
+    <div id="swipeHint" class="swipe-hint pointer-events-none">
+      <i data-lucide="chevrons-left-right" class="w-4 h-4 animate-pulse"></i>
+      <span>Desliza para ver más</span>
+    </div>
+  </div>
       </dialog>
 
       <!-- Sección 1: Bolis --> 
