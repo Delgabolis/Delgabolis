@@ -238,11 +238,33 @@ document.addEventListener("DOMContentLoaded", () => {
     if (section) observer.observe(section);
   });
 
-  // 6. Carrusel Swiper (Modal Dinámico)
+    // 6. Carrusel Swiper (Modal Dinámico con Animaciones GSAP)
   const modalCarrusel = document.getElementById("modalCarrusel");
   const btnCerrarCarrusel = document.getElementById("btnCerrarCarrusel");
   const swiperWrapper = document.getElementById("swiperWrapper");
   let swiperInstance = null;
+
+  // Ruta de imagen por defecto / placeholder
+  const DEFAULT_IMAGE = "logo_bolisv2.png";
+
+  // Función para cerrar el carrusel con animación GSAP
+  const cerrarCarruselConAnimacion = () => {
+    if (!modalCarrusel || !modalCarrusel.open) return;
+
+    // Animación de salida: se encoge levemente y cae con fade out
+    gsap.to(modalCarrusel, {
+      opacity: 0,
+      scale: 0.85,
+      y: 20,
+      duration: 0.25,
+      ease: "power2.in",
+      onComplete: () => {
+        modalCarrusel.close();
+        activarBlurFondo(false);
+        isModalOpen = false;
+      }
+    });
+  };
 
   const setupFlavorGroup = (buttonSelector) => {
     const buttons = [...document.querySelectorAll(buttonSelector)];
@@ -260,8 +282,6 @@ document.addEventListener("DOMContentLoaded", () => {
         swiperWrapper.innerHTML = buttons
           .map((b) => {
             const name = b.dataset.flavorName || "Sabor";
-            
-            // Verificar si el botón tiene una ruta asignada en data-flavor-img
             const hasCustomImg = b.dataset.flavorImg && b.dataset.flavorImg.trim() !== "";
             const imgSrc = hasCustomImg ? b.dataset.flavorImg : DEFAULT_IMAGE;
             const imgClass = hasCustomImg ? "" : "img-placeholder";
@@ -282,14 +302,54 @@ document.addEventListener("DOMContentLoaded", () => {
           })
           .join("");
 
+        // Mostrar modal nativo
         modalCarrusel?.showModal();
 
+        // 1. ANIMACIÓN GSAP DE ENTRADA AL ABRIR
+        gsap.fromTo(
+          modalCarrusel,
+          {
+            opacity: 0,
+            scale: 0.6,
+            y: 50,
+            rotation: -3
+          },
+          {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            rotation: 0,
+            duration: 0.6,
+            ease: "back.out(1.5)",
+            force3D: true
+          }
+        );
+
+        // Inicializar Swiper después de montar las diapositivas
         swiperInstance = new Swiper(".mySwiper", {
           effect: "cards",
           grabCursor: true,
           loop: true,
           centeredSlides: true,
           slidesPerView: "auto",
+          cardsEffect: {
+            perSlideRotate: 4,
+            perSlideOffset: 8,
+            slideShadows: false
+          },
+          on: {
+            // 2. ANIMACIÓN GSAP EN CADA CAMBIO DE SLIDE
+            slideChangeTransitionStart: function () {
+              const activeSlide = this.slides[this.activeIndex];
+              if (activeSlide) {
+                gsap.fromTo(
+                  activeSlide.querySelector(".swiper-txt h3"),
+                  { opacity: 0, y: 15 },
+                  { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }
+                );
+              }
+            }
+          }
         });
 
         swiperInstance.slideToLoop(index, 0);
@@ -300,6 +360,34 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   };
+
+  setupFlavorGroup(".flavor-btn");
+  setupFlavorGroup(".frappe-flavor-btn");
+  setupFlavorGroup(".congelados-flavor-btn");
+
+  // Eventos de cierre con animación
+  btnCerrarCarrusel?.addEventListener("click", (e) => {
+    e.preventDefault();
+    cerrarCarruselConAnimacion();
+  });
+
+  modalCarrusel?.addEventListener("click", (e) => {
+    const dialogBounds = modalCarrusel.getBoundingClientRect();
+    if (
+      e.clientX < dialogBounds.left ||
+      e.clientX > dialogBounds.right ||
+      e.clientY < dialogBounds.top ||
+      e.clientY > dialogBounds.bottom
+    ) {
+      cerrarCarruselConAnimacion();
+    }
+  });
+
+  modalCarrusel?.addEventListener("close", () => {
+    activarBlurFondo(false);
+    isModalOpen = false;
+  });
+
 
   setupFlavorGroup(".flavor-btn");
   setupFlavorGroup(".frappe-flavor-btn");
