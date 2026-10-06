@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
     blurOverlay.addEventListener("click", cerrarConAnimacion);
   };
 
-  // 3. ANIMACIÓN GSAP DEL PRELOADER (CORREGIDA SIN SALTO VISUAL)
+  // 3. ANIMACIÓN GSAP DEL PRELOADER (CORREGIDA)
   const executePreloader = () => {
     if (!preloader || !logoPreload || !logoTarget) {
       if (logoTarget) {
@@ -107,7 +107,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Medir dimensiones reales en viewport de ambos logos
     const targetRect = logoTarget.getBoundingClientRect();
     const currentRect = logoPreload.getBoundingClientRect();
 
@@ -116,10 +115,11 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Ocultar objetivo nativo durante la transición del clon
-    logoTarget.style.visibility = "hidden";
+    // Preparar target
+    logoTarget.style.visibility = "visible";
     logoTarget.style.opacity = "0";
 
+    // Crear clon para la animación
     const clone = logoPreload.cloneNode(true);
     clone.id = "logo-clone";
     clone.style.position = "fixed";
@@ -136,39 +136,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const deltaX = targetRect.left - currentRect.left;
     const deltaY = targetRect.top - currentRect.top;
-    const targetWidth = targetRect.width;
-    const targetHeight = targetRect.height;
 
     const tl = gsap.timeline({
       onComplete: () => {
-        // Transición directa al logo HTML
-        logoTarget.style.visibility = "visible";
-        logoTarget.style.opacity = "1";
-
         const activeClone = document.getElementById("logo-clone");
         if (activeClone) activeClone.remove();
         if (preloader) preloader.remove();
 
-        setTimeout(iniciarPopupPromocion, 150);
+        setTimeout(iniciarPopupPromocion, 100);
       }
     });
 
-    // Animación fluida transformando dimensiones físicas
+    // Traslación y escala unificada
     tl.to(clone, {
       x: deltaX,
       y: deltaY,
-      width: targetWidth,
-      height: targetHeight,
+      width: targetRect.width,
+      height: targetRect.height,
       duration: 0.85,
-      delay: 0.6,
-      ease: "power2.inOut",
+      delay: 0.4,
+      ease: "power3.inOut",
       force3D: true
     })
     .to(preloader, {
       opacity: 0,
-      duration: 0.3,
+      duration: 0.4,
+      ease: "power2.out"
+    }, "-=0.6")
+    // Transición suave entre el clon y el logo objetivo
+    .to(clone, {
+      opacity: 0,
+      duration: 0.15,
       ease: "power1.out"
-    }, "-=0.2");
+    }, "-=0.15")
+    .to(logoTarget, {
+      opacity: 1,
+      duration: 0.15,
+      ease: "power1.in"
+    }, "<");
   };
 
   if (document.readyState === "complete") {
@@ -362,14 +367,11 @@ document.addEventListener("DOMContentLoaded", () => {
   setupFlavorGroup(".congelados-flavor-btn");
 
   // EVENTOS DE CIERRE DEL CARRUSEL
-
-  // 1. Botón de cerrar
   btnCerrarCarrusel?.addEventListener("click", (e) => {
     e.preventDefault();
     cerrarCarruselConAnimacion();
   });
 
-  // 2. Clic fuera de las tarjetas dentro del área del modal
   modalCarrusel?.addEventListener("click", (e) => {
     if (
       e.target === modalCarrusel || 
@@ -380,7 +382,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // 3. Clic en el fondo difuminado (Blur Overlay)
   blurOverlay?.addEventListener("click", () => {
     if (modalCarrusel && modalCarrusel.open) {
       cerrarCarruselConAnimacion();
