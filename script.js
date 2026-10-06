@@ -174,7 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("load", () => setTimeout(executePreloader, 100));
   }
 
-  // 4. Fondo difuminado en Navegación al hacer scroll (Para Desktop / Sticky)
+  // 4. Fondo difuminado en Navegación al hacer scroll (Aplica en modo Sticky Desktop)
   const categoryNav = document.querySelector(".category-nav");
   if (categoryNav) {
     const handleStickyNav = () => {
@@ -216,16 +216,22 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  // Se ajusta el margin según la posición de la barra en Móvil vs Desktop
-  const isMobile = window.innerWidth < 768;
-  const rootMarginValue = isMobile ? "-10% 0px -50% 0px" : "-20% 0px -40% 0px";
+  // Ajuste dinámico de márgenes de observación para móvil y escritorio
+  const getRootMargin = () => {
+    return window.innerWidth < 768 ? "-15% 0px -45% 0px" : "-20% 0px -40% 0px";
+  };
 
   const observer = new IntersectionObserver(
     (entries) => {
       if (isModalOpen) return;
 
-      const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 10;
-      if (isAtBottom) return;
+      const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 20;
+      
+      // Si estamos hasta abajo, activa la última sección (Omnilife) automáticamente
+      if (isAtBottom) {
+        activateButton("omnilife");
+        return;
+      }
 
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
@@ -233,7 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
     },
-    { rootMargin: rootMarginValue, threshold: 0.1 }
+    { rootMargin: getRootMargin(), threshold: 0.15 }
   );
 
   sections.forEach((section) => {
@@ -365,14 +371,11 @@ document.addEventListener("DOMContentLoaded", () => {
   setupFlavorGroup(".congelados-flavor-btn");
 
   // EVENTOS DE CIERRE DEL CARRUSEL
-
-  // 1. Botón de cerrar
   btnCerrarCarrusel?.addEventListener("click", (e) => {
     e.preventDefault();
     cerrarCarruselConAnimacion();
   });
 
-  // 2. Clic fuera de las tarjetas dentro del área del modal
   modalCarrusel?.addEventListener("click", (e) => {
     if (
       e.target === modalCarrusel || 
@@ -383,7 +386,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // 3. Clic en el fondo difuminado (Blur Overlay)
   blurOverlay?.addEventListener("click", () => {
     if (modalCarrusel && modalCarrusel.open) {
       cerrarCarruselConAnimacion();
