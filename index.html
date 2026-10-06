@@ -32,7 +32,7 @@
   />
 </div>
 
-<div class="max-w-md mx-auto min-h-screen pb-12"> 
+<div class="max-w-md mx-auto min-h-screen pb-24 sm:pb-12"> 
   
   <!-- Contenedor del Logo principal en el Menú con dimensiones idénticas -->
   <div class="flex justify-center w-full mt-2 mb-2 px-4 h-24 items-center">
@@ -55,24 +55,44 @@
       </div>
     </header>
 
+    <!-- Barra de Navegación de Categorías (Adaptativa: Sticky superior en PC / Barra Inferior tipo App en Móviles) -->
     <nav class="category-nav" aria-label="Categorías del menú">
-      <button class="nav-pill is-active" data-target="promociones">Promociones</button>
-      <button class="nav-pill" data-target="bolis">Bolis</button> 
-      <button class="nav-pill" data-target="congelados">Congelados</button> 
-      <button class="nav-pill" data-target="raspados">Raspados</button> 
-      <button class="nav-pill" data-target="frappes">Frappes</button> 
-      <button class="nav-pill" data-target="omnilife">OmniLife</button> 
+      <button class="nav-pill is-active" data-target="promociones">
+        <i data-lucide="badge-percent" class="nav-pill-icon"></i>
+        <span>Promociones</span>
+      </button>
+      <button class="nav-pill" data-target="bolis">
+        <i data-lucide="popsicle" class="nav-pill-icon"></i>
+        <span>Bolis</span>
+      </button> 
+      <button class="nav-pill" data-target="congelados">
+        <i data-lucide="snowflake" class="nav-pill-icon"></i>
+        <span>Congelados</span>
+      </button> 
+      <button class="nav-pill" data-target="raspados">
+        <i data-lucide="coffee" class="nav-pill-icon"></i>
+        <span>Raspados</span>
+      </button> 
+      <button class="nav-pill" data-target="frappes">
+        <i data-lucide="cup-soda" class="nav-pill-icon"></i>
+        <span>Frappes</span>
+      </button> 
+      <button class="nav-pill" data-target="omnilife">
+        <i data-lucide="heart-pulse" class="nav-pill-icon"></i>
+        <span>OmniLife</span>
+      </button> 
     </nav> 
 
     <div class="px-4 space-y-6 mt-4"> 
     
+      <!-- Sección Promociones -->
       <section id="promociones" class="menu-section rounded-3xl overflow-hidden shadow-md bg-white"> 
-        <div class="p-5 flex justify-between items-center bg-[#fc424e] text-white"> 
+        <div class="p-5 flex justify-between items-center bg-gradient-to-r from-[#fc424e] to-[#ff6b6b] text-white"> 
           <div> 
             <p class="text-xs font-bold uppercase tracking-widest text-white/90">¡El combo perfecto para tu antojo!</p> 
             <h2 class="heading-font text-2xl font-extrabold m-0">PROMOCIÓN DEL DÍA</h2> 
           </div> 
-          <div class="w-10 h-10 rounded-2xl bg-white/20 grid place-items-center"> 
+          <div class="w-10 h-10 rounded-2xl bg-white/20 grid place-items-center backdrop-blur-sm"> 
             <i data-lucide="badge-percent" class="w-6 h-6"></i> 
           </div> 
         </div> 
@@ -94,7 +114,7 @@
       </section> 
 
       <dialog id="modalPromociones" class="rounded-3xl overflow-hidden shadow-2xl bg-white p-0 border-0 max-w-md w-11/12">
-        <div class="p-5 flex justify-between items-center text-center bg-[#fc424e] text-white relative"> 
+        <div class="p-5 flex justify-between items-center text-center bg-gradient-to-r from-[#fc424e] to-[#ff6b6b] text-white relative"> 
           <div> 
             <p class="text-xs font-bold uppercase tracking-widest text-white/90">¡El combo perfecto para tu antojo!</p> 
             <h2 class="heading-font text-2xl font-extrabold m-0">PROMOCIÓN DEL DÍA</h2> 
@@ -122,13 +142,20 @@
         </div> 
       </dialog>
 
-      <!-- Modal Carrusel estilo Swiper -->
+      <!-- Modal Carrusel estilo Swiper con Indicador Táctil -->
       <dialog id="modalCarrusel" class="rounded-3xl overflow-hidden shadow-2xl bg-transparent p-0 border-0 max-w-sm w-11/12">
         <button id="btnCerrarCarrusel" class="absolute top-3 right-3 z-30 w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 text-white grid place-items-center transition-colors cursor-pointer" aria-label="Cerrar">
           ✕
         </button>
 
-        <div class="swiper mySwiper w-full py-4">
+        <div class="swiper mySwiper w-full py-4 relative">
+          <!-- Indicador Táctil Animado -->
+          <div id="swipeHint" class="swipe-hint-badge">
+            <i data-lucide="chevron-left" class="w-4 h-4 animate-bounce-left"></i>
+            <span>Desliza para ver más</span>
+            <i data-lucide="chevron-right" class="w-4 h-4 animate-bounce-right"></i>
+          </div>
+
           <div class="swiper-wrapper" id="swiperWrapper">
             <!-- Slides dinámicos -->
           </div>
@@ -137,12 +164,12 @@
 
       <!-- Sección 1: Bolis --> 
       <section id="bolis" class="menu-section rounded-3xl overflow-hidden shadow-md bg-white"> 
-        <div class="p-5 flex justify-between items-center bg-[#ee5d83] text-white"> 
+        <div class="p-5 flex justify-between items-center bg-gradient-to-r from-[#f477b1] to-[#ee5d83] text-white"> 
           <div> 
             <p class="text-xs font-bold uppercase tracking-widest text-white/90">Favoritos de la casa</p> 
             <h2 class="heading-font text-2xl font-extrabold m-0">Bolis de Sabores</h2> 
           </div> 
-          <div class="w-10 h-10 rounded-2xl bg-white/20 grid place-items-center"> 
+          <div class="w-10 h-10 rounded-2xl bg-white/20 grid place-items-center backdrop-blur-sm"> 
             <i data-lucide="popsicle" class="w-6 h-6"></i> 
           </div> 
         </div> 
@@ -178,12 +205,12 @@
 
       <!-- Sección 2: Congelados --> 
       <section id="congelados" class="menu-section rounded-3xl overflow-hidden shadow-md bg-white"> 
-        <div class="p-5 flex justify-between items-center bg-[#27bcc3] text-white"> 
+        <div class="p-5 flex justify-between items-center bg-gradient-to-r from-[#27bcc3] to-[#1da1a7] text-white"> 
           <div> 
             <p class="text-xs font-bold uppercase tracking-widest text-white/90">Para el calor</p> 
             <h2 class="heading-font text-2xl font-extrabold m-0">Congelados</h2> 
           </div> 
-          <div class="w-10 h-10 rounded-2xl bg-white/20 grid place-items-center"> 
+          <div class="w-10 h-10 rounded-2xl bg-white/20 grid place-items-center backdrop-blur-sm"> 
             <i data-lucide="snowflake" class="w-6 h-6"></i> 
           </div> 
         </div> 
@@ -231,12 +258,12 @@
 
       <!-- Sección 3: Raspados --> 
       <section id="raspados" class="menu-section rounded-3xl overflow-hidden shadow-md bg-white"> 
-        <div class="p-5 flex justify-between items-center bg-[#ffc952] text-slate-900"> 
+        <div class="p-5 flex justify-between items-center bg-gradient-to-r from-[#ffc952] to-[#ffb319] text-slate-900"> 
           <div> 
             <p class="text-xs font-bold uppercase tracking-widest text-slate-800">Bien fresquitos</p> 
             <h2 class="heading-font text-2xl font-extrabold m-0">Raspados</h2> 
           </div> 
-          <div class="w-10 h-10 rounded-2xl bg-black/10 grid place-items-center"> 
+          <div class="w-10 h-10 rounded-2xl bg-black/10 grid place-items-center backdrop-blur-sm"> 
             <i data-lucide="coffee" class="w-6 h-6"></i> 
           </div> 
         </div> 
@@ -253,23 +280,23 @@
           </div> 
 
           <div class="flex flex-wrap gap-2 pt-2"> 
-            <span class="px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 text-sm font-semibold">Mango</span> 
-            <span class="px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 text-sm font-semibold">Piña</span> 
-            <span class="px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 text-sm font-semibold">Fresa</span> 
-            <span class="px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 text-sm font-semibold">Chicle</span> 
-            <span class="px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 text-sm font-semibold">Limón</span> 
+            <span class="raspado-btn px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 text-sm font-semibold border border-amber-200">Mango</span> 
+            <span class="raspado-btn px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 text-sm font-semibold border border-amber-200">Piña</span> 
+            <span class="raspado-btn px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 text-sm font-semibold border border-amber-200">Fresa</span> 
+            <span class="raspado-btn px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 text-sm font-semibold border border-amber-200">Chicle</span> 
+            <span class="raspado-btn px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 text-sm font-semibold border border-amber-200">Limón</span> 
           </div> 
         </div> 
       </section> 
 
       <!-- Sección 4: Frappes --> 
       <section id="frappes" class="menu-section rounded-3xl overflow-hidden shadow-md bg-white"> 
-        <div class="p-5 flex justify-between items-center bg-[#6253a7] text-white"> 
+        <div class="p-5 flex justify-between items-center bg-gradient-to-r from-[#7c69d6] to-[#6253a7] text-white"> 
           <div> 
             <p class="text-xs font-bold uppercase tracking-widest text-white/90">Una pausa dulce</p> 
             <h2 class="heading-font text-2xl font-extrabold m-0">Frappes</h2> 
           </div> 
-          <div class="w-10 h-10 rounded-2xl bg-white/20 grid place-items-center"> 
+          <div class="w-10 h-10 rounded-2xl bg-white/20 grid place-items-center backdrop-blur-sm"> 
             <i data-lucide="cup-soda" class="w-6 h-6"></i> 
           </div> 
         </div> 
@@ -308,12 +335,12 @@
 
       <!-- Sección 5: OmniLife --> 
       <section id="omnilife" class="menu-section rounded-3xl overflow-hidden shadow-md bg-white"> 
-        <div class="p-5 flex justify-between items-center bg-[#243047] text-white"> 
+        <div class="p-5 flex justify-between items-center bg-gradient-to-r from-[#243047] to-[#1a2334] text-white"> 
           <div> 
             <p class="text-xs font-bold uppercase tracking-widest text-teal-300">Energía para tu día</p> 
             <h2 class="heading-font text-2xl font-extrabold m-0">OmniLife</h2> 
           </div> 
-          <div class="w-10 h-10 rounded-2xl bg-white/20 grid place-items-center"> 
+          <div class="w-10 h-10 rounded-2xl bg-white/20 grid place-items-center backdrop-blur-sm"> 
             <i data-lucide="heart-pulse" class="w-6 h-6"></i> 
           </div> 
         </div> 
