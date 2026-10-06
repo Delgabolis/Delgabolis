@@ -35,16 +35,20 @@ body {
   background-color: inherit !important;
 }
 
-/* Optimización GPU y prevención de temblores durante animación */
+/* Reglas estrictas para evitar interferencias de CSS transitions y saltos de layout */
 #logo-preload,
 #logo-target,
 #logo-clone {
+  transition: none !important;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  transform-style: flat;
-  transform: translateZ(0);
-  image-rendering: -webkit-optimize-contrast;
+  transform-style: preserve-3d;
   will-change: transform, opacity;
+}
+
+#logo-target {
+  display: block;
+  max-width: 100%;
 }
 
 /* Barra de navegación sticky */ 
