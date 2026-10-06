@@ -35,7 +35,7 @@ body {
   background-color: inherit !important;
 }
 
-/* Reglas anti-parpadeo y optimización GPU */
+/* Optimización GPU y prevención de temblores durante animación */
 #logo-preload,
 #logo-target,
 #logo-clone {
@@ -44,7 +44,7 @@ body {
   transform-style: flat;
   transform: translateZ(0);
   image-rendering: -webkit-optimize-contrast;
-  will-change: transform, opacity, width, height;
+  will-change: transform, opacity;
 }
 
 /* Barra de navegación sticky */ 
@@ -121,7 +121,7 @@ body {
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  background-color: #000000 !important; /* Fondo negro para cada tarjeta */
+  background-color: #000000 !important;
   display: flex;
   align-items: center;
   justify-content: center;
