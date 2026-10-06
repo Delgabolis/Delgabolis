@@ -1,12 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. Inicializar iconos de Lucide
+  // 1. Inicializar iconos de Lucide si existen
   if (window.lucide) {
     lucide.createIcons();
   }
 
+  // Ruta de imagen por defecto / placeholder
   const DEFAULT_IMAGE = "logo_bolisv2.png";
 
-  // Crear capa de Blur Overlay dinámicamente si no existe
+  // Crear capa de Blur Overlay dinámicamente si no existe en la página
   let blurOverlay = document.getElementById("blur-overlay");
   if (!blurOverlay) {
     blurOverlay = document.createElement("div");
