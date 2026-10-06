@@ -4,8 +4,10 @@ document.addEventListener("DOMContentLoaded", () => {
     lucide.createIcons();
   }
 
+  // Ruta de imagen por defecto / placeholder
   const DEFAULT_IMAGE = "logo_bolisv2.png";
 
+  // Crear capa de Blur Overlay dinámicamente si no existe en la página
   let blurOverlay = document.getElementById("blur-overlay");
   if (!blurOverlay) {
     blurOverlay = document.createElement("div");
@@ -13,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.appendChild(blurOverlay);
   }
 
+  // Elementos principales
   const preloader = document.getElementById("preloader");
   const logoPreload = document.getElementById("logo-preload");
   const logoTarget = document.getElementById("logo-target");
@@ -23,11 +26,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const activarBlurFondo = (activar) => {
     if (blurOverlay) {
-      blurOverlay.classList.toggle("is-active", activar);
+      if (activar) {
+        blurOverlay.classList.add("is-active");
+      } else {
+        blurOverlay.classList.remove("is-active");
+      }
     }
   };
 
-  // 2. ABRIR POPUP DE PROMOCIÓN (FLUIDO Y SIN INTERRUMPIR RENDERIZADO)
+  // 2. ABRIR EL POPUP DE PROMOCIÓN
   const iniciarPopupPromocion = () => {
     if (!modalPromo) return;
 
@@ -35,23 +42,25 @@ document.addEventListener("DOMContentLoaded", () => {
     activarBlurFondo(true);
 
     gsap.killTweensOf(modalPromo);
-    gsap.set(modalPromo, { opacity: 0, scale: 0.7, y: 40 });
-
-    // Se abre en la capa superior nativa
-    modalPromo.showModal();
-
-    // Se fuerza un frame de render para garantizar fluidez total en la entrada
-    requestAnimationFrame(() => {
-      gsap.to(modalPromo, {
-        opacity: 1,
-        scale: 1,
-        y: 0,
-        duration: 0.65,
-        ease: "back.out(1.5)",
-        force3D: true
-      });
+    gsap.set(modalPromo, {
+      opacity: 0,
+      scale: 0.7,
+      y: 40
     });
 
+    modalPromo.showModal();
+
+    // Animación de entrada
+    gsap.to(modalPromo, {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      duration: 0.75,
+      ease: "back.out(1.7)",
+      force3D: true
+    });
+
+    // Animación de salida al cerrar
     const cerrarConAnimacion = () => {
       activarBlurFondo(false);
       gsap.to(modalPromo, {
@@ -73,106 +82,90 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     modalPromo.addEventListener("click", (e) => {
-      const bounds = modalPromo.getBoundingClientRect();
+      const dialogBounds = modalPromo.getBoundingClientRect();
       if (
-        e.clientX < bounds.left ||
-        e.clientX > bounds.right ||
-        e.clientY < bounds.top ||
-        e.clientY > bounds.bottom
+        e.clientX < dialogBounds.left ||
+        e.clientX > dialogBounds.right ||
+        e.clientY < dialogBounds.top ||
+        e.clientY > dialogBounds.bottom
       ) {
         cerrarConAnimacion();
       }
     });
 
-    blurOverlay?.addEventListener("click", cerrarConAnimacion);
+    blurOverlay.addEventListener("click", cerrarConAnimacion);
   };
 
-  // 3. ANIMACIÓN DE PRELOADER (TRAYECTO 100% SUAVE, PROGRESIVO Y SIN TIRONES)
+  // 3. ANIMACIÓN GSAP DEL PRELOADER
   const executePreloader = () => {
     if (!preloader || !logoPreload || !logoTarget) {
-      if (logoTarget) logoTarget.style.opacity = "1";
-      setTimeout(iniciarPopupPromocion, 500);
+      if (logoTarget) {
+        logoTarget.style.visibility = "visible";
+        logoTarget.style.opacity = "1";
+      }
+      iniciarPopupPromocion();
       return;
     }
 
-    // Bloquear scroll mientras el preloader está activo
-    document.body.classList.add("no-scroll");
+    logoTarget.style.visibility = "hidden";
+    logoTarget.style.opacity = "1";
 
-    Promise.all([
-      logoPreload.complete ? Promise.resolve() : new Promise((res) => (logoPreload.onload = res)),
-      logoTarget.complete ? Promise.resolve() : new Promise((res) => (logoTarget.onload = res))
-    ]).then(() => {
-      logoTarget.style.opacity = "0";
-      logoTarget.style.visibility = "visible";
+    const targetRect = logoTarget.getBoundingClientRect();
+    const currentRect = logoPreload.getBoundingClientRect();
 
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          const startRect = logoPreload.getBoundingClientRect();
-          const endRect = logoTarget.getBoundingClientRect();
+    if (currentRect.width === 0 || targetRect.width === 0) {
+      setTimeout(executePreloader, 50);
+      return;
+    }
 
-          if (startRect.width === 0 || endRect.width === 0) {
-            setTimeout(executePreloader, 50);
-            return;
-          }
+    const clone = logoPreload.cloneNode(true);
+    clone.id = "logo-clone";
+    clone.style.position = "fixed";
+    clone.style.left = `${currentRect.left}px`;
+    clone.style.top = `${currentRect.top}px`;
+    clone.style.width = `${currentRect.width}px`;
+    clone.style.height = `${currentRect.height}px`;
+    clone.style.margin = "0";
+    clone.style.transform = "none";
+    clone.style.zIndex = "60";
 
-          // Crear clon sobre capa aislada
-          const clone = logoPreload.cloneNode(true);
-          clone.id = "logo-clone";
+    logoPreload.style.opacity = "0";
+    document.body.appendChild(clone);
 
-          Object.assign(clone.style, {
-            position: "fixed",
-            top: `${startRect.top}px`,
-            left: `${startRect.left}px`,
-            width: `${startRect.width}px`,
-            height: `${startRect.height}px`,
-            margin: "0",
-            padding: "0",
-            zIndex: "10000",
-            pointerEvents: "none",
-            transformOrigin: "top left",
-            willChange: "transform, opacity"
-          });
+    const scaleX = targetRect.width / currentRect.width;
+    const scaleY = targetRect.height / currentRect.height;
+    const deltaX = targetRect.left - currentRect.left;
+    const deltaY = targetRect.top - currentRect.top;
 
-          logoPreload.style.opacity = "0";
-          document.body.appendChild(clone);
+    const tl = gsap.timeline({
+      onComplete: () => {
+        logoTarget.style.visibility = "visible";
+        logoTarget.style.opacity = "1";
 
-          const deltaX = endRect.left - startRect.left;
-          const deltaY = endRect.top - startRect.top;
-          const scaleX = endRect.width / startRect.width;
-          const scaleY = endRect.height / startRect.height;
+        const activeClone = document.getElementById("logo-clone");
+        if (activeClone) activeClone.remove();
+        if (preloader) preloader.remove();
 
-          // Animación optimizada: ease 'power2.out' y 1.1s para desaceleración perfecta sin brincos
-          gsap.to(clone, {
-            x: deltaX,
-            y: deltaY,
-            scaleX: scaleX,
-            scaleY: scaleY,
-            duration: 1.1,
-            ease: "power2.out",
-            force3D: true,
-            onComplete: () => {
-              // PASO A: Mostrar logo destino exacto y remover el clon
-              logoTarget.style.opacity = "1";
-              clone.remove();
-
-              // PASO B: Desvanecer suavemente el fondo del preloader
-              gsap.to(preloader, {
-                opacity: 0,
-                duration: 0.4,
-                ease: "power1.out",
-                onComplete: () => {
-                  preloader.remove();
-                  document.body.classList.remove("no-scroll");
-
-                  // PASO C: Espera previa a la apertura del popup
-                  setTimeout(iniciarPopupPromocion, 400);
-                }
-              });
-            }
-          });
-        });
-      });
+        setTimeout(iniciarPopupPromocion, 150);
+      }
     });
+
+    tl.to(clone, {
+      x: deltaX,
+      y: deltaY,
+      scaleX: scaleX,
+      scaleY: scaleY,
+      transformOrigin: "0% 0%",
+      duration: 0.85,
+      delay: 0.6,
+      ease: "power2.inOut",
+      force3D: true
+    })
+    .to(preloader, {
+      opacity: 0,
+      duration: 0.3,
+      ease: "power1.out"
+    }, "-=0.2");
   };
 
   if (document.readyState === "complete") {
@@ -181,7 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("load", () => setTimeout(executePreloader, 100));
   }
 
-  // 4. NAVEGACIÓN STICKY CON BLUR
+  // 4. Fondo difuminado en Navegación al hacer scroll
   const categoryNav = document.querySelector(".category-nav");
   if (categoryNav) {
     const handleStickyNav = () => {
@@ -193,7 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
     handleStickyNav();
   }
 
-  // 5. NAVEGACIÓN E INTERSECTION OBSERVER
+  // 5. Navegación por Categorías e Intersection Observer
   const navButtons = [...document.querySelectorAll(".nav-pill")];
   const sections = navButtons.map((btn) => document.getElementById(btn.dataset.target));
 
@@ -215,7 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
         btn.scrollIntoView({
           behavior: "smooth",
           inline: "center",
-          block: "nearest"
+          block: "nearest",
         });
       }
     });
@@ -241,7 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (section) observer.observe(section);
   });
 
-  // 6. CARRUSEL SWIPER EN MODAL
+  // 6. Carrusel Swiper (Modal Dinámico)
   const modalCarrusel = document.getElementById("modalCarrusel");
   const btnCerrarCarrusel = document.getElementById("btnCerrarCarrusel");
   const swiperWrapper = document.getElementById("swiperWrapper");
@@ -301,11 +294,18 @@ document.addEventListener("DOMContentLoaded", () => {
           })
           .join("");
 
+        // Estado inicial de animación para el modal
         gsap.killTweensOf(modalCarrusel);
-        gsap.set(modalCarrusel, { opacity: 0, scale: 0.6, y: 50, rotation: -3 });
+        gsap.set(modalCarrusel, {
+          opacity: 0,
+          scale: 0.6,
+          y: 50,
+          rotation: -3
+        });
 
         modalCarrusel?.showModal();
 
+        // Animación de entrada
         gsap.to(modalCarrusel, {
           opacity: 1,
           scale: 1,
@@ -316,6 +316,7 @@ document.addEventListener("DOMContentLoaded", () => {
           clearProps: "transform"
         });
 
+        // Inicialización de Swiper
         swiperInstance = new Swiper(".mySwiper", {
           effect: "cards",
           grabCursor: true,
@@ -357,17 +358,28 @@ document.addEventListener("DOMContentLoaded", () => {
   setupFlavorGroup(".frappe-flavor-btn");
   setupFlavorGroup(".congelados-flavor-btn");
 
+  // EVENTOS DE CIERRE DEL CARRUSEL
+
+  // 1. Botón de cerrar
   btnCerrarCarrusel?.addEventListener("click", (e) => {
     e.preventDefault();
     cerrarCarruselConAnimacion();
   });
 
+  // 2. Clic fuera de las tarjetas dentro del área del modal
   modalCarrusel?.addEventListener("click", (e) => {
     if (
-      e.target === modalCarrusel ||
-      e.target.classList.contains("swiper-wrapper") ||
+      e.target === modalCarrusel || 
+      e.target.classList.contains("swiper-wrapper") || 
       e.target.classList.contains("mySwiper")
     ) {
+      cerrarCarruselConAnimacion();
+    }
+  });
+
+  // 3. Clic en el fondo difuminado (Blur Overlay)
+  blurOverlay?.addEventListener("click", () => {
+    if (modalCarrusel && modalCarrusel.open) {
       cerrarCarruselConAnimacion();
     }
   });

@@ -6,13 +6,8 @@
   --sun: #ffc952; 
 } 
 
-html, body {
-  margin: 0; 
-  padding: 0;
-  width: 100%;
-}
-
 body { 
+  margin: 0; 
   color: var(--ink); 
   font-family: "DM Sans", sans-serif; 
   background-image: url('fondo-helados.jpg'); 
@@ -22,22 +17,17 @@ body {
   background-color: #fca5a5; 
 } 
 
-/* Clase para bloquear scroll de forma limpia */
-body.no-scroll {
-  overflow: hidden !important;
-  touch-action: none !important;
-}
-
 .heading-font { 
   font-family: "Fraunces", serif; 
 } 
 
-/* Preloader full screen */
+/* Preloader heredando el fondo exacto del body */
 #preloader {
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: 50;
   will-change: opacity;
+  
   background-image: inherit !important;
   background-repeat: inherit !important;
   background-size: inherit !important;
@@ -45,25 +35,18 @@ body.no-scroll {
   background-color: inherit !important;
 }
 
-/* Neutralización de transiciones CSS para evitar conflictos de cálculo */
+/* Reglas anti-parpadeo y optimización GPU */
 #logo-preload,
 #logo-target,
 #logo-clone {
-  transition: none !important;
-  animation: none !important;
-  box-sizing: border-box !important;
-  transform-style: flat !important;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  transform-style: flat;
+  transform: translateZ(0);
+  image-rendering: -webkit-optimize-contrast;
 }
 
-#logo-target {
-  display: block;
-  opacity: 0;
-  flex-shrink: 0;
-}
-
-/* Categorías y Navegación Sticky */ 
+/* Barra de navegación sticky */ 
 .category-nav { 
   position: sticky; 
   top: -1px; 
@@ -123,13 +106,13 @@ body.no-scroll {
   font-family: "Fraunces", serif; 
 } 
 
-/* Limpieza de fondos Swiper */
+/* Limpieza de fondos del carrusel Swiper */
 .swiper,
 .swiper-wrapper {
   background: transparent !important;
 }
 
-/* Tarjetas Swiper */
+/* Tarjetas del carrusel Swiper */
 .swiper-slide {
   position: relative;
   width: 280px; 
@@ -137,12 +120,13 @@ body.no-scroll {
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  background-color: #000000 !important;
+  background-color: #000000 !important; /* Fondo negro para cada tarjeta */
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+/* Imagen estándar de producto */
 .swiper-slide img {
   width: 100%;
   height: 100%;
@@ -152,6 +136,7 @@ body.no-scroll {
   display: block;
 }
 
+/* Imagen por defecto (Placeholder/Logo) */
 .swiper-slide img.img-placeholder {
   object-fit: contain !important;
   width: 75% !important;
@@ -179,7 +164,7 @@ body.no-scroll {
   font-family: "Fraunces", serif;
 }
 
-/* Blur overlay */
+/* Capa de desenfoque/blur para el fondo */
 #blur-overlay {
   position: fixed;
   inset: 0;
@@ -213,9 +198,10 @@ dialog#modalPromociones {
   background: #ffffff;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   z-index: 100;
-  overflow: hidden;
+  overflow: hidden; /* Recorta el contenido interno para mantener las esquinas redondeadas */
 }
 
+/* Fondo transparente para el modal del carrusel */
 dialog#modalCarrusel {
   background: transparent !important;
   box-shadow: none !important;
