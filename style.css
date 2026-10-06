@@ -1,230 +1,217 @@
-:root {
-  --primary-pink: #ec4899;
-  --primary-hover: #db2777;
-  --accent-purple: #8b5cf6;
-  --bg-gradient: linear-gradient(135deg, #fce7f3 0%, #f3e8ff 50%, #e0f2fe 100%);
-  --glass-bg: rgba(255, 255, 255, 0.75);
-  --glass-border: rgba(255, 255, 255, 0.6);
-  --text-dark: #1e293b;
-  --text-muted: #64748b;
-  --radius-card: 20px;
-  --shadow-soft: 0 10px 30px -10px rgba(236, 72, 153, 0.25);
-  --shadow-glow: 0 0 20px rgba(236, 72, 153, 0.35);
-}
+:root { 
+  --ink: #f477b1; 
+  --coral: #ee5d83; 
+  --aqua: #27bcc3; 
+  --cream: #fae4ec; 
+  --sun: #ffc952; 
+} 
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  -webkit-tap-highlight-color: transparent;
-}
+body { 
+  margin: 0; 
+  color: var(--ink); 
+  font-family: "DM Sans", sans-serif; 
+  background-image: url('fondo-helados.jpg'); 
+  background-repeat: repeat; 
+  background-size: 300px auto; 
+  background-attachment: fixed; 
+  background-color: #fca5a5; 
+} 
 
-body {
-  background: var(--bg-gradient);
-  background-attachment: fixed;
-  color: var(--text-dark);
-  min-height: 100vh;
-  padding-bottom: 40px;
-  overflow-x: hidden;
-}
+.heading-font { 
+  font-family: "Fraunces", serif; 
+} 
 
-/* Preloader */
+/* Preloader heredando el fondo exacto del body */
 #preloader {
   position: fixed;
   inset: 0;
-  background: #ffffff;
-  z-index: 100;
+  z-index: 50;
+  will-change: opacity;
+  
+  background-image: inherit !important;
+  background-repeat: inherit !important;
+  background-size: inherit !important;
+  background-attachment: inherit !important;
+  background-color: inherit !important;
+}
+
+/* Reglas anti-parpadeo y optimización GPU */
+#logo-preload,
+#logo-target,
+#logo-clone {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: flat;
+  transform: translateZ(0);
+  image-rendering: -webkit-optimize-contrast;
+}
+
+/* Barra de navegación sticky */ 
+.category-nav { 
+  position: sticky; 
+  top: -1px; 
+  z-index: 20; 
+  display: flex; 
+  gap: 8px; 
+  overflow-x: auto; 
+  padding: 12px 16px; 
+  background: transparent; 
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  transition: background 0.3s ease, backdrop-filter 0.3s ease, -webkit-backdrop-filter 0.3s ease, box-shadow 0.3s ease; 
+  scrollbar-width: none; 
+} 
+
+.category-nav::-webkit-scrollbar { 
+  display: none; 
+} 
+
+.category-nav.is-stuck {
+  background: rgba(255, 255, 255, 0.75); 
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
+}
+
+.nav-pill { 
+  flex: 0 0 auto; 
+  padding: 8px 18px; 
+  border: 2px solid #dce6ec; 
+  border-radius: 999px; 
+  background: #ffffff; 
+  color: #526176; 
+  font-size: 0.88rem; 
+  font-weight: 700; 
+  transition: all 0.2s ease; 
+} 
+
+.nav-pill.is-active { 
+  background: var(--ink); 
+  border-color: var(--ink); 
+  color: #ffffff; 
+} 
+
+.menu-section { 
+  scroll-margin-top: 70px; 
+} 
+
+.price-stamp { 
+  display: grid; 
+  place-items: center; 
+  width: 70px; 
+  height: 70px; 
+  border-radius: 50%; 
+  transform: rotate(5deg); 
+  border: 3px dashed currentColor; 
+  font-family: "Fraunces", serif; 
+} 
+
+/* Limpieza de fondos del carrusel Swiper */
+.swiper,
+.swiper-wrapper {
+  background: transparent !important;
+}
+
+/* Tarjetas del carrusel Swiper */
+.swiper-slide {
+  position: relative;
+  width: 280px; 
+  height: 380px; 
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  background-color: #000000 !important; /* Fondo negro para cada tarjeta */
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-#logo-preload {
-  width: 130px;
-  height: auto;
+/* Imagen estándar de producto */
+.swiper-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
+  object-position: center; 
+  border-radius: 20px;
+  display: block;
 }
 
-/* Blur Overlay Dinámico */
+/* Imagen por defecto (Placeholder/Logo) */
+.swiper-slide img.img-placeholder {
+  object-fit: contain !important;
+  width: 75% !important;
+  height: 75% !important;
+  margin: auto;
+}
+
+.swiper-txt {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  z-index: 10;
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+  text-align: center;
+}
+
+.swiper-txt h3 {
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+  font-family: "Fraunces", serif;
+}
+
+/* Capa de desenfoque/blur para el fondo */
 #blur-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.45);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  z-index: 40;
+  z-index: 90;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 #blur-overlay.is-active {
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
 }
 
-/* Header principal */
-.main-header, header {
-  padding: 24px 20px 16px;
-  text-align: center;
-}
-
-.brand-logo, #logo-target {
-  width: 90px;
-  height: auto;
-  object-fit: contain;
-  filter: drop-shadow(0 8px 16px rgba(236, 72, 153, 0.25));
-}
-
-/* Navegación Sticky con Glassmorphism */
-.category-nav {
-  position: sticky;
-  top: 12px;
-  z-index: 30;
-  margin: 10px 16px 24px;
-  padding: 8px;
-  background: var(--glass-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--glass-border);
-  border-radius: 50px;
-  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.08);
-}
-
-.nav-scroll, .category-nav div {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  padding: 2px;
-}
-
-.nav-scroll::-webkit-scrollbar, .category-nav div::-webkit-scrollbar {
-  display: none;
-}
-
-.nav-pill {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  border: none;
-  background: transparent;
-  color: var(--text-muted);
-  font-weight: 700;
-  font-size: 0.9rem;
-  border-radius: 30px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.3s ease;
-}
-
-.nav-pill.is-active {
-  background: var(--primary-pink);
-  color: #ffffff;
-  box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
-}
-
-/* Botones de Productos / Sabores con Efecto Glow */
-.flavor-btn, .frappe-flavor-btn, .congelados-flavor-btn {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 18px;
-  background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-card);
-  color: var(--text-dark);
-  font-weight: 700;
-  font-size: 0.92rem;
-  cursor: pointer;
-  text-align: left;
-  overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.flavor-btn:hover, .flavor-btn:active,
-.frappe-flavor-btn:hover, .frappe-flavor-btn:active,
-.congelados-flavor-btn:hover, .congelados-flavor-btn:active {
-  transform: translateY(-2px) scale(1.02);
-  border-color: var(--primary-pink);
-  box-shadow: var(--shadow-soft);
-}
-
-/* Modales Personalizados */
-dialog {
-  border: none;
-  background: transparent;
-  padding: 0;
+/* Modales */
+dialog#modalCarrusel,
+dialog#modalPromociones {
+  position: fixed;
+  inset: 0;
   margin: auto;
-  max-width: 380px;
-  width: 90%;
-  overflow: visible;
+  max-width: 90vw;
+  max-height: 90vh;
+  padding: 0;
+  border: none;
+  border-radius: 24px;
+  background: #ffffff;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+  overflow: hidden; /* Recorta el contenido interno para mantener las esquinas redondeadas */
+}
+
+/* Fondo transparente para el modal del carrusel */
+dialog#modalCarrusel {
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 dialog::backdrop {
   background: transparent;
 }
 
-.modal-content-wrapper, dialog > div {
-  position: relative;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  border-radius: 28px;
-  padding: 24px 16px 16px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-}
-
-.btn-close-modal, #btnCerrarCarrusel, #btnCerrarPromo {
-  position: absolute;
-  top: -12px;
-  right: -12px;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  color: var(--text-dark);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 50;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s ease;
-}
-
-.btn-close-modal:active, #btnCerrarCarrusel:active, #btnCerrarPromo:active {
-  transform: scale(0.9);
-}
-
-/* Tarjetas del Swiper */
-.swiper-slide {
-  background: #ffffff;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 16px;
-}
-
-.swiper-slide img {
-  width: 100%;
-  height: 220px;
-  object-fit: contain;
-  border-radius: 14px;
-}
-
-.swiper-txt h3 {
-  color: var(--primary-pink);
-  font-size: 1.2rem;
-  margin-top: 12px;
+dialog#modalPromociones > *:first-child {
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
 }
