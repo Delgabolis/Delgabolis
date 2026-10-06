@@ -34,18 +34,20 @@ body {
   background-color: inherit !important;
 }
 
-/* Reglas estrictas para neutralizar saltos de CSS o re-layouts */
+/* Bloqueo estricto de transiciones CSS para evitar interferencias en las medidas GSAP */
 #logo-preload,
 #logo-target,
 #logo-clone {
   transition: none !important;
+  animation: none !important;
   box-sizing: border-box !important;
 }
 
-/* El logo target mantiene su lugar reservado en el DOM siempre */
+/* El logo objetivo mantiene su espacio en el layout pero permanece invisible */
 #logo-target {
   display: block;
   visibility: hidden;
+  flex-shrink: 0;
 }
 
 /* Categorías y Navegación Sticky */ 
