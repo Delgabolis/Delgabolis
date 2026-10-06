@@ -21,13 +21,12 @@ body {
   font-family: "Fraunces", serif; 
 } 
 
-/* Preloader heredando el fondo exacto del body */
+/* Preloader heredando el fondo del body */
 #preloader {
   position: fixed;
   inset: 0;
   z-index: 50;
   will-change: opacity;
-  
   background-image: inherit !important;
   background-repeat: inherit !important;
   background-size: inherit !important;
@@ -35,23 +34,21 @@ body {
   background-color: inherit !important;
 }
 
-/* Reglas estrictas para evitar interferencias de CSS transitions y saltos de layout */
+/* Reglas estrictas para neutralizar saltos de CSS o re-layouts */
 #logo-preload,
 #logo-target,
 #logo-clone {
   transition: none !important;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform-style: preserve-3d;
-  will-change: transform, opacity;
+  box-sizing: border-box !important;
 }
 
+/* El logo target mantiene su lugar reservado en el DOM siempre */
 #logo-target {
   display: block;
-  max-width: 100%;
+  visibility: hidden;
 }
 
-/* Barra de navegación sticky */ 
+/* Categorías y Navegación Sticky */ 
 .category-nav { 
   position: sticky; 
   top: -1px; 
@@ -117,7 +114,7 @@ body {
   background: transparent !important;
 }
 
-/* Tarjetas del carrusel Swiper */
+/* Tarjetas Swiper */
 .swiper-slide {
   position: relative;
   width: 280px; 
@@ -131,7 +128,6 @@ body {
   justify-content: center;
 }
 
-/* Imagen estándar de producto */
 .swiper-slide img {
   width: 100%;
   height: 100%;
@@ -141,7 +137,6 @@ body {
   display: block;
 }
 
-/* Imagen por defecto (Placeholder/Logo) */
 .swiper-slide img.img-placeholder {
   object-fit: contain !important;
   width: 75% !important;
@@ -169,7 +164,7 @@ body {
   font-family: "Fraunces", serif;
 }
 
-/* Capa de desenfoque/blur para el fondo */
+/* Blur overlay */
 #blur-overlay {
   position: fixed;
   inset: 0;
@@ -206,7 +201,6 @@ dialog#modalPromociones {
   overflow: hidden;
 }
 
-/* Fondo transparente para el modal del carrusel */
 dialog#modalCarrusel {
   background: transparent !important;
   box-shadow: none !important;
