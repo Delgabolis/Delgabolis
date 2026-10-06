@@ -1,217 +1,378 @@
-:root { 
-  --ink: #f477b1; 
-  --coral: #ee5d83; 
-  --aqua: #27bcc3; 
-  --cream: #fae4ec; 
-  --sun: #ffc952; 
-} 
+:root {
+  --primary-pink: #ec4899;
+  --primary-hover: #db2777;
+  --accent-purple: #8b5cf6;
+  --bg-gradient: linear-gradient(135deg, #fce7f3 0%, #f3e8ff 50%, #e0f2fe 100%);
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --text-dark: #1e293b;
+  --text-muted: #64748b;
+  --radius-card: 24px;
+  --shadow-soft: 0 10px 30px -10px rgba(236, 72, 153, 0.25);
+  --shadow-glow: 0 0 20px rgba(236, 72, 153, 0.35);
+}
 
-body { 
-  margin: 0; 
-  color: var(--ink); 
-  font-family: "DM Sans", sans-serif; 
-  background-image: url('fondo-helados.jpg'); 
-  background-repeat: repeat; 
-  background-size: 300px auto; 
-  background-attachment: fixed; 
-  background-color: #fca5a5; 
-} 
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
 
-.heading-font { 
-  font-family: "Fraunces", serif; 
-} 
+body {
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  color: var(--text-dark);
+  min-height: 100vh;
+  padding-bottom: 40px;
+  overflow-x: hidden;
+}
 
-/* Preloader heredando el fondo exacto del body */
+/* Preloader */
 #preloader {
   position: fixed;
   inset: 0;
-  z-index: 50;
-  will-change: opacity;
-  
-  background-image: inherit !important;
-  background-repeat: inherit !important;
-  background-size: inherit !important;
-  background-attachment: inherit !important;
-  background-color: inherit !important;
-}
-
-/* Reglas anti-parpadeo y optimización GPU */
-#logo-preload,
-#logo-target,
-#logo-clone {
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform-style: flat;
-  transform: translateZ(0);
-  image-rendering: -webkit-optimize-contrast;
-}
-
-/* Barra de navegación sticky */ 
-.category-nav { 
-  position: sticky; 
-  top: -1px; 
-  z-index: 20; 
-  display: flex; 
-  gap: 8px; 
-  overflow-x: auto; 
-  padding: 12px 16px; 
-  background: transparent; 
-  backdrop-filter: blur(0px);
-  -webkit-backdrop-filter: blur(0px);
-  transition: background 0.3s ease, backdrop-filter 0.3s ease, -webkit-backdrop-filter 0.3s ease, box-shadow 0.3s ease; 
-  scrollbar-width: none; 
-} 
-
-.category-nav::-webkit-scrollbar { 
-  display: none; 
-} 
-
-.category-nav.is-stuck {
-  background: rgba(255, 255, 255, 0.75); 
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
-}
-
-.nav-pill { 
-  flex: 0 0 auto; 
-  padding: 8px 18px; 
-  border: 2px solid #dce6ec; 
-  border-radius: 999px; 
-  background: #ffffff; 
-  color: #526176; 
-  font-size: 0.88rem; 
-  font-weight: 700; 
-  transition: all 0.2s ease; 
-} 
-
-.nav-pill.is-active { 
-  background: var(--ink); 
-  border-color: var(--ink); 
-  color: #ffffff; 
-} 
-
-.menu-section { 
-  scroll-margin-top: 70px; 
-} 
-
-.price-stamp { 
-  display: grid; 
-  place-items: center; 
-  width: 70px; 
-  height: 70px; 
-  border-radius: 50%; 
-  transform: rotate(5deg); 
-  border: 3px dashed currentColor; 
-  font-family: "Fraunces", serif; 
-} 
-
-/* Limpieza de fondos del carrusel Swiper */
-.swiper,
-.swiper-wrapper {
-  background: transparent !important;
-}
-
-/* Tarjetas del carrusel Swiper */
-.swiper-slide {
-  position: relative;
-  width: 280px; 
-  height: 380px; 
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  background-color: #000000 !important; /* Fondo negro para cada tarjeta */
+  background: #ffffff;
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Imagen estándar de producto */
-.swiper-slide img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; 
-  object-position: center; 
-  border-radius: 20px;
-  display: block;
+#logo-preload {
+  width: 130px;
+  height: auto;
 }
 
-/* Imagen por defecto (Placeholder/Logo) */
-.swiper-slide img.img-placeholder {
-  object-fit: contain !important;
-  width: 75% !important;
-  height: 75% !important;
-  margin: auto;
-}
-
-.swiper-txt {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 20px;
-  z-index: 10;
-  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
-  text-align: center;
-}
-
-.swiper-txt h3 {
-  color: #ffffff;
-  font-size: 1.5rem;
-  font-weight: 800;
-  margin: 0;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-  font-family: "Fraunces", serif;
-}
-
-/* Capa de desenfoque/blur para el fondo */
+/* Blur Overlay Dinámico */
 #blur-overlay {
   position: fixed;
   inset: 0;
-  z-index: 90;
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 40;
   opacity: 0;
   pointer-events: none;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+  transition: opacity 0.3s ease;
 }
 
 #blur-overlay.is-active {
   opacity: 1;
-  visibility: visible;
   pointer-events: auto;
 }
 
-/* Modales */
-dialog#modalCarrusel,
-dialog#modalPromociones {
-  position: fixed;
-  inset: 0;
-  margin: auto;
-  max-width: 90vw;
-  max-height: 90vh;
-  padding: 0;
+/* Header principal */
+.main-header {
+  padding: 30px 20px 20px;
+  text-align: center;
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-logo {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 16px rgba(236, 72, 153, 0.25));
+}
+
+.brand-info h1 {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 2.2rem;
+  color: var(--primary-pink);
+  letter-spacing: -0.5px;
+}
+
+.brand-info p {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* Navegación Sticky con Glassmorphism */
+.category-nav {
+  position: sticky;
+  top: 12px;
+  z-index: 30;
+  margin: 10px 16px 24px;
+  padding: 8px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 50px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.08);
+}
+
+.nav-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 2px;
+}
+
+.nav-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.nav-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
   border: none;
-  border-radius: 24px;
-  background: #ffffff;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-  z-index: 100;
-  overflow: hidden; /* Recorta el contenido interno para mantener las esquinas redondeadas */
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 0.9rem;
+  border-radius: 30px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Fondo transparente para el modal del carrusel */
-dialog#modalCarrusel {
-  background: transparent !important;
-  box-shadow: none !important;
+.nav-pill i {
+  width: 18px;
+  height: 18px;
 }
 
-dialog::backdrop {
+.nav-pill.is-active {
+  background: var(--primary-pink);
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+}
+
+/* Menú y Secciones */
+.menu-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.menu-section {
+  scroll-margin-top: 90px;
+}
+
+.section-header {
+  margin-bottom: 16px;
+}
+
+.section-header h2 {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-dark);
+}
+
+.badge-pop {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.75rem;
+  background: #fef08a;
+  color: #854d0e;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 800;
+  animation: pulse-badge 2s infinite ease-in-out;
+}
+
+@keyframes pulse-badge {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+.section-header p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Rejilla de Botones de Sabor (Glow Effect) */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+}
+
+.flavor-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
+  color: var(--text-dark);
+  font-weight: 700;
+  font-size: 0.92rem;
+  cursor: pointer;
+  text-align: left;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.flavor-btn i {
+  color: var(--primary-pink);
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.btn-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(236, 72, 153, 0.15), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.flavor-btn:hover, .flavor-btn:active {
+  transform: translateY(-3px) scale(1.02);
+  border-color: var(--primary-pink);
+  box-shadow: var(--shadow-soft);
+}
+
+.flavor-btn:hover .btn-glow, .flavor-btn:active .btn-glow {
+  opacity: 1;
+}
+
+/* Modales Personalizados */
+.custom-modal {
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: auto;
+  max-width: 380px;
+  width: 90%;
+  overflow: visible;
+}
+
+.custom-modal::backdrop {
   background: transparent;
 }
 
-dialog#modalPromociones > *:first-child {
-  border-top-left-radius: inherit;
-  border-top-right-radius: inherit;
+.modal-content-wrapper {
+  position: relative;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 32px;
+  padding: 24px 16px 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.btn-close-modal {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: var(--text-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 50;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease;
+}
+
+.btn-close-modal:active {
+  transform: scale(0.9);
+}
+
+/* Swiper Estilos */
+.swiper {
+  width: 100%;
+  padding-top: 10px;
+  padding-bottom: 20px;
+}
+
+.swiper-slide {
+  background: #ffffff;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+}
+
+.swiper-slide img {
+  width: 100%;
+  height: 220px;
+  object-fit: contain;
+  border-radius: 16px;
+}
+
+.swiper-txt {
+  margin-top: 14px;
+  text-align: center;
+}
+
+.swiper-txt h3 {
+  font-family: 'Fredoka', sans-serif;
+  color: var(--primary-pink);
+  font-size: 1.25rem;
+}
+
+.swipe-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+  font-weight: 600;
+}
+
+/* Promo Modal Special Styling */
+.promo-box {
+  background: linear-gradient(135deg, #ffffff 0%, #fdf2f8 100%);
+  text-align: center;
+  padding: 30px 20px;
+}
+
+.promo-tag {
+  display: inline-block;
+  background: #fbcfe8;
+  color: #be185d;
+  font-weight: 800;
+  font-size: 0.8rem;
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+}
+
+.promo-body h3 {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.4rem;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+}
+
+.promo-body p {
+  font-size: 0.88rem;
+  color: var(--text-muted);
 }
