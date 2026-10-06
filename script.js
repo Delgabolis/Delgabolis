@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
     blurOverlay?.addEventListener("click", cerrarConAnimacion);
   };
 
-  // 3. ANIMACIÓN DE PRELOADER (TRAYECTO 100% SUAVE, PROGRESIVO Y SIN TIRONES)
+  // 3. ANIMACIÓN DE PRELOADER (CÁLCULO DE COORDENADAS FIJAS SIN BRINCOS)
   const executePreloader = () => {
     if (!preloader || !logoPreload || !logoTarget) {
       if (logoTarget) logoTarget.style.opacity = "1";
@@ -115,10 +115,11 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
           }
 
-          // Crear clon sobre capa aislada
+          // Crear clon
           const clone = logoPreload.cloneNode(true);
           clone.id = "logo-clone";
 
+          // Posicionamiento absoluto exacto inicial (sin transformaciones de escala)
           Object.assign(clone.style, {
             position: "fixed",
             top: `${startRect.top}px`,
@@ -129,42 +130,35 @@ document.addEventListener("DOMContentLoaded", () => {
             padding: "0",
             zIndex: "10000",
             pointerEvents: "none",
-            transformOrigin: "top left",
-            willChange: "transform, opacity"
+            willChange: "top, left, width, height"
           });
 
           logoPreload.style.opacity = "0";
           document.body.appendChild(clone);
 
-          const deltaX = endRect.left - startRect.left;
-          const deltaY = endRect.top - startRect.top;
-          const scaleX = endRect.width / startRect.width;
-          const scaleY = endRect.height / startRect.height;
-
-          // Animación optimizada: ease 'power2.out' y 1.1s para desaceleración perfecta sin brincos
+          // Animar dimensiones absolutas directas para evitar deformaciones
           gsap.to(clone, {
-            x: deltaX,
-            y: deltaY,
-            scaleX: scaleX,
-            scaleY: scaleY,
-            duration: 1.1,
-            ease: "power2.out",
-            force3D: true,
+            top: endRect.top,
+            left: endRect.left,
+            width: endRect.width,
+            height: endRect.height,
+            duration: 0.95,
+            ease: "power2.inOut",
             onComplete: () => {
-              // PASO A: Mostrar logo destino exacto y remover el clon
+              // PASO A: Mostrar el logo de destino y quitar el clon
               logoTarget.style.opacity = "1";
               clone.remove();
 
-              // PASO B: Desvanecer suavemente el fondo del preloader
+              // PASO B: Desvanecer el fondo del preloader
               gsap.to(preloader, {
                 opacity: 0,
-                duration: 0.4,
+                duration: 0.35,
                 ease: "power1.out",
                 onComplete: () => {
                   preloader.remove();
                   document.body.classList.remove("no-scroll");
 
-                  // PASO C: Espera previa a la apertura del popup
+                  // PASO C: Abrir el popup de promociones
                   setTimeout(iniciarPopupPromocion, 400);
                 }
               });
