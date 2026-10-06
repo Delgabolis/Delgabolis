@@ -238,6 +238,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalCarrusel = document.getElementById("modalCarrusel");
   const btnCerrarCarrusel = document.getElementById("btnCerrarCarrusel");
   const swiperWrapper = document.getElementById("swiperWrapper");
+  const swipeHint = document.getElementById("swipeHint");
   let swiperInstance = null;
 
   const cerrarCarruselConAnimacion = () => {
@@ -294,6 +295,11 @@ document.addEventListener("DOMContentLoaded", () => {
           })
           .join("");
 
+        // Mostrar nuevamente la pista táctil al abrir el carrusel
+        if (swipeHint) {
+          swipeHint.classList.remove("is-hidden");
+        }
+
         // Estado inicial de animación para el modal
         gsap.killTweensOf(modalCarrusel);
         gsap.set(modalCarrusel, {
@@ -304,6 +310,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         modalCarrusel?.showModal();
+
+        // Re-inicializar iconos dentro del modal si es necesario
+        if (window.lucide) {
+          lucide.createIcons();
+        }
 
         // Animación de entrada
         gsap.to(modalCarrusel, {
@@ -329,7 +340,18 @@ document.addEventListener("DOMContentLoaded", () => {
             slideShadows: false
           },
           on: {
+            // Desaparecer la pista táctil al primer toque/deslizamiento
+            touchStart: function () {
+              if (swipeHint && !swipeHint.classList.contains("is-hidden")) {
+                swipeHint.classList.add("is-hidden");
+              }
+            },
             slideChangeTransitionStart: function () {
+              // Asegurar que también desaparezca si cambia el slide
+              if (swipeHint && !swipeHint.classList.contains("is-hidden")) {
+                swipeHint.classList.add("is-hidden");
+              }
+
               const activeSlide = this.slides[this.activeIndex];
               if (activeSlide) {
                 const title = activeSlide.querySelector(".swiper-txt h3");
