@@ -32,7 +32,7 @@
   />
 </div>
 
-<div class="max-w-md mx-auto min-h-screen pb-28"> 
+<div class="max-w-md mx-auto min-h-screen pb-12"> 
   
   <!-- Logo principal del menú -->
   <div class="flex justify-center w-full mt-2 mb-2 px-4">
@@ -55,32 +55,14 @@
       </div>
     </header>
 
-    <nav id="categoryNav" class="category-nav" aria-label="Categorías del menú">
-  <button class="nav-pill is-active" data-target="promociones">
-    <i data-lucide="badge-percent" class="w-4 h-4 inline-block md:hidden"></i>
-    <span>Promos</span>
-  </button>
-  <button class="nav-pill" data-target="bolis">
-    <i data-lucide="popsicle" class="w-4 h-4 inline-block md:hidden"></i>
-    <span>Bolis</span>
-  </button> 
-  <button class="nav-pill" data-target="congelados">
-    <i data-lucide="snowflake" class="w-4 h-4 inline-block md:hidden"></i>
-    <span>Congelados</span>
-  </button> 
-  <button class="nav-pill" data-target="raspados">
-    <i data-lucide="coffee" class="w-4 h-4 inline-block md:hidden"></i>
-    <span>Raspados</span>
-  </button> 
-  <button class="nav-pill" data-target="frappes">
-    <i data-lucide="cup-soda" class="w-4 h-4 inline-block md:hidden"></i>
-    <span>Frappés</span>
-  </button> 
-  <button class="nav-pill" data-target="omnilife">
-    <i data-lucide="heart-pulse" class="w-4 h-4 inline-block md:hidden"></i>
-    <span>OmniLife</span>
-  </button> 
-</nav> 
+    <nav class="category-nav" aria-label="Categorías del menú">
+      <button class="nav-pill is-active" data-target="promociones">Promociones</button>
+      <button class="nav-pill" data-target="bolis">Bolis</button> 
+      <button class="nav-pill" data-target="congelados">Congelados</button> 
+      <button class="nav-pill" data-target="raspados">Raspados</button> 
+      <button class="nav-pill" data-target="frappes">Frappes</button> 
+      <button class="nav-pill" data-target="omnilife">OmniLife</button> 
+    </nav> 
 
     <div class="px-4 space-y-6 mt-4"> 
     
@@ -142,21 +124,15 @@
 
       <!-- Modal Carrusel estilo Swiper -->
       <dialog id="modalCarrusel" class="rounded-3xl overflow-hidden shadow-2xl bg-transparent p-0 border-0 max-w-sm w-11/12">
-  <button id="btnCerrarCarrusel" class="absolute top-3 right-3 z-30 w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 text-white grid place-items-center transition-colors cursor-pointer" aria-label="Cerrar">
-    ✕
-  </button>
+        <button id="btnCerrarCarrusel" class="absolute top-3 right-3 z-30 w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 text-white grid place-items-center transition-colors cursor-pointer" aria-label="Cerrar">
+          ✕
+        </button>
 
-  <div class="swiper mySwiper w-full py-4 relative">
-    <div class="swiper-wrapper" id="swiperWrapper">
-      <!-- Los slides se cargan dinámicamente -->
-    </div>
-
-    <!-- Indicador táctil de deslizamiento -->
-    <div id="swipeHint" class="swipe-hint pointer-events-none">
-      <i data-lucide="chevrons-left-right" class="w-4 h-4 animate-pulse"></i>
-      <span>Desliza para ver más</span>
-    </div>
-  </div>
+        <div class="swiper mySwiper w-full py-4">
+          <div class="swiper-wrapper" id="swiperWrapper">
+            <!-- Los slides se cargan dinámicamente -->
+          </div>
+        </div>
       </dialog>
 
       <!-- Sección 1: Bolis --> 
