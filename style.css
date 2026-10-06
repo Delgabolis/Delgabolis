@@ -10,7 +10,6 @@ html, body {
   margin: 0; 
   padding: 0;
   width: 100%;
-  height: 100%;
 }
 
 body { 
@@ -23,15 +22,21 @@ body {
   background-color: #fca5a5; 
 } 
 
+/* Clase para bloquear scroll de forma limpia */
+body.no-scroll {
+  overflow: hidden !important;
+  touch-action: none !important;
+}
+
 .heading-font { 
   font-family: "Fraunces", serif; 
 } 
 
-/* Preloader ocupando la pantalla completa */
+/* Preloader full screen */
 #preloader {
   position: fixed;
   inset: 0;
-  z-index: 50;
+  z-index: 9999;
   will-change: opacity;
   background-image: inherit !important;
   background-repeat: inherit !important;
@@ -40,21 +45,21 @@ body {
   background-color: inherit !important;
 }
 
-/* Desactivación estricta de animaciones CSS que puedan alterar los cálculos de GSAP */
+/* Neutralización de transiciones CSS para evitar conflictos de cálculo */
 #logo-preload,
 #logo-target,
 #logo-clone {
   transition: none !important;
   animation: none !important;
   box-sizing: border-box !important;
+  transform-style: flat !important;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
 
-/* El logo destino reserva su espacio exacto en el DOM */
 #logo-target {
   display: block;
-  visibility: hidden;
+  opacity: 0;
   flex-shrink: 0;
 }
 
