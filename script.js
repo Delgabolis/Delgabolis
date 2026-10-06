@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
     blurOverlay?.addEventListener("click", cerrarConAnimacion);
   };
 
-  // 3. ANIMACIÓN DE PRELOADER (100% SECUENCIAL, SIN SALTOS BRUSCOS)
+  // 3. ANIMACIÓN DE PRELOADER (TRAYECTO 100% SUAVE, PROGRESIVO Y SIN TIRONES)
   const executePreloader = () => {
     if (!preloader || !logoPreload || !logoTarget) {
       if (logoTarget) logoTarget.style.opacity = "1";
@@ -141,31 +141,31 @@ document.addEventListener("DOMContentLoaded", () => {
           const scaleX = endRect.width / startRect.width;
           const scaleY = endRect.height / startRect.height;
 
-          // Animación del movimiento del logo
+          // Animación optimizada: ease 'power2.out' y 1.1s para desaceleración perfecta sin brincos
           gsap.to(clone, {
             x: deltaX,
             y: deltaY,
             scaleX: scaleX,
             scaleY: scaleY,
-            duration: 0.85,
-            ease: "power3.inOut",
+            duration: 1.1,
+            ease: "power2.out",
             force3D: true,
             onComplete: () => {
-              // PASO A: Mostrar logo destino exacto y quitar el clon
+              // PASO A: Mostrar logo destino exacto y remover el clon
               logoTarget.style.opacity = "1";
               clone.remove();
 
               // PASO B: Desvanecer suavemente el fondo del preloader
               gsap.to(preloader, {
                 opacity: 0,
-                duration: 0.35,
+                duration: 0.4,
                 ease: "power1.out",
                 onComplete: () => {
                   preloader.remove();
                   document.body.classList.remove("no-scroll");
 
-                  // PASO C: Esperar 500ms limpios antes de activar el popup
-                  setTimeout(iniciarPopupPromocion, 500);
+                  // PASO C: Espera previa a la apertura del popup
+                  setTimeout(iniciarPopupPromocion, 400);
                 }
               });
             }
