@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
     blurOverlay.addEventListener("click", cerrarConAnimacion);
   };
 
-  // 3. ANIMACIÓN GSAP DEL PRELOADER (CORREGIDA)
+  // 3. ANIMACIÓN GSAP DEL PRELOADER (FLUIDA Y SIN SALTOS)
   const executePreloader = () => {
     if (!preloader || !logoPreload || !logoTarget) {
       if (logoTarget) {
@@ -107,15 +107,15 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const targetRect = logoTarget.getBoundingClientRect();
     const currentRect = logoPreload.getBoundingClientRect();
+    const targetRect = logoTarget.getBoundingClientRect();
 
     if (currentRect.width === 0 || targetRect.width === 0) {
       setTimeout(executePreloader, 50);
       return;
     }
 
-    // Preparar target
+    // Preparar logo de destino oculto en su lugar exacto
     logoTarget.style.visibility = "visible";
     logoTarget.style.opacity = "0";
 
@@ -128,14 +128,24 @@ document.addEventListener("DOMContentLoaded", () => {
     clone.style.width = `${currentRect.width}px`;
     clone.style.height = `${currentRect.height}px`;
     clone.style.margin = "0";
-    clone.style.transform = "none";
     clone.style.zIndex = "60";
+    clone.style.transformOrigin = "center center";
 
+    // Ocultar logo inicial del preloader
     logoPreload.style.opacity = "0";
     document.body.appendChild(clone);
 
-    const deltaX = targetRect.left - currentRect.left;
-    const deltaY = targetRect.top - currentRect.top;
+    // Cálculos de centros exactos para evitar desviación por padding/márgenes
+    const currentCenterX = currentRect.left + currentRect.width / 2;
+    const currentCenterY = currentRect.top + currentRect.height / 2;
+    const targetCenterX = targetRect.left + targetRect.width / 2;
+    const targetCenterY = targetRect.top + targetRect.height / 2;
+
+    const deltaX = targetCenterX - currentCenterX;
+    const deltaY = targetCenterY - currentCenterY;
+
+    const scaleX = targetRect.width / currentRect.width;
+    const scaleY = targetRect.height / currentRect.height;
 
     const tl = gsap.timeline({
       onComplete: () => {
@@ -147,32 +157,33 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Traslación y escala unificada
+    // 1. Animación del movimiento y escalado uniforme mediante matriz transform (GPU acelerada)
     tl.to(clone, {
       x: deltaX,
       y: deltaY,
-      width: targetRect.width,
-      height: targetRect.height,
+      scaleX: scaleX,
+      scaleY: scaleY,
       duration: 0.85,
-      delay: 0.4,
-      ease: "power3.inOut",
+      delay: 0.3,
+      ease: "power2.inOut",
       force3D: true
     })
+    // 2. Ocultar el fondo del preloader paulatinamente al acercarse al final
     .to(preloader, {
       opacity: 0,
-      duration: 0.4,
-      ease: "power2.out"
-    }, "-=0.6")
-    // Transición suave entre el clon y el logo objetivo
-    .to(clone, {
-      opacity: 0,
-      duration: 0.15,
+      duration: 0.35,
       ease: "power1.out"
-    }, "-=0.15")
+    }, "-=0.35")
+    // 3. Transición cruzada limpia: aparece el original mientras desaparece el clon
     .to(logoTarget, {
       opacity: 1,
-      duration: 0.15,
-      ease: "power1.in"
+      duration: 0.1,
+      ease: "none"
+    })
+    .to(clone, {
+      opacity: 0,
+      duration: 0.1,
+      ease: "none"
     }, "<");
   };
 
