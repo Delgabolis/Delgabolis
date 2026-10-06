@@ -44,6 +44,7 @@ body {
   transform-style: flat;
   transform: translateZ(0);
   image-rendering: -webkit-optimize-contrast;
+  will-change: transform, opacity, width, height;
 }
 
 /* Barra de navegación sticky */ 
@@ -198,7 +199,7 @@ dialog#modalPromociones {
   background: #ffffff;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   z-index: 100;
-  overflow: hidden; /* Recorta el contenido interno para mantener las esquinas redondeadas */
+  overflow: hidden;
 }
 
 /* Fondo transparente para el modal del carrusel */
