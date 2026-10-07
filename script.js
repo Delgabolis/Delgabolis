@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
     blurOverlay.addEventListener("click", cerrarConAnimacion);
   };
 
-  // 3. ANIMACIÓN GSAP DEL PRELOADER (CORREGIDA)
+  // 3. ANIMACIÓN GSAP DEL PRELOADER
   const executePreloader = () => {
     if (!preloader || !logoPreload || !logoTarget) {
       if (logoTarget) {
@@ -107,14 +107,12 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Asegurar visibilidad limpia para tomar dimensiones
     logoTarget.style.visibility = "hidden";
     logoTarget.style.opacity = "1";
 
     const targetRect = logoTarget.getBoundingClientRect();
     const currentRect = logoPreload.getBoundingClientRect();
 
-    // Si aún no se ha renderizado en pantalla, reintentar en el siguiente frame
     if (currentRect.width === 0 || targetRect.width === 0) {
       requestAnimationFrame(executePreloader);
       return;
@@ -170,7 +168,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }, "-=0.2");
   };
 
-  // Disparo asegurado tras renderizado
   requestAnimationFrame(() => {
     setTimeout(executePreloader, 100);
   });
@@ -252,9 +249,10 @@ document.addEventListener("DOMContentLoaded", () => {
         activateButton(targetId);
         section.scrollIntoView({ behavior: "smooth", block: "start" });
 
+        // Margen aumentado para cubrir saltos de larga distancia (Frappe -> Omnilife)
         scrollTimeout = setTimeout(() => {
           isManualScroll = false;
-        }, 700);
+        }, 1000);
       }
     });
   });
