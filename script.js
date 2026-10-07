@@ -174,7 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("load", () => setTimeout(executePreloader, 100));
   }
 
-  // 4. Fondo difuminado en Navegación al hacer scroll (Aplica en modo Sticky Desktop)
+  // 4. Fondo difuminado en Navegación al hacer scroll
   const categoryNav = document.querySelector(".category-nav");
   if (categoryNav) {
     const handleStickyNav = () => {
@@ -188,24 +188,17 @@ document.addEventListener("DOMContentLoaded", () => {
     handleStickyNav();
   }
 
-  // // LÓGICA DE NAVEGACIÓN Y SINCRONIZACIÓN INTEGRADA
+  // 5. LÓGICA DE NAVEGACIÓN Y SINCRONIZACIÓN CORREGIDA
   const navButtons = [...document.querySelectorAll(".nav-pill")];
-  const sections = navButtons.map((btn) => document.getElementById(btn.dataset.target));
+  const sections = navButtons.map((btn) => document.getElementById(btn.dataset.target)).filter(Boolean);
 
-  // 1. Desplazamiento suave al hacer clic en una pestaña
-  navButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const section = document.getElementById(button.dataset.target);
-      if (section) {
-        section.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    });
-  });
+  let isManualScroll = false; // Flag para bloquear la detección automática durante el clic de un botón
 
-  // 2. Activa el botón correspondiente y lo centra visiblemente en el contenedor
+  // Activa el botón correspondiente y lo centra visiblemente en la barra horizontal
   const activateButton = (targetId) => {
     navButtons.forEach((btn) => {
       const isTarget = btn.dataset.target === targetId;
+      btn.classList.toggle("is-[#ee5d83]", false); // Limpieza de respaldo
       btn.classList.toggle("is-active", isTarget);
 
       if (isTarget) {
@@ -218,29 +211,55 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  // 3. Detección automática de la sección visible mediante IntersectionObserver
+  // Desplazamiento suave al hacer clic en una pestaña de categoría
+  navButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const targetId = button.dataset.target;
+      const section = document.getElementById(targetId);
+
+      if (section) {
+        isManualScroll = true;
+        activateButton(targetId);
+
+        section.scrollIntoView({ behavior: "smooth", block: "start" });
+
+        // Se vuelve a habilitar la detección por scroll una vez terminada la animación de la pantalla
+        setTimeout(() => {
+          isManualScroll = false;
+        }, 800);
+      }
+    });
+  });
+
+  // Detección automática mediante IntersectionObserver calibrado para secciones pequeñas
   const observer = new IntersectionObserver(
     (entries) => {
-      // Evita cambiar el estado activo si hay un modal abierto
-      if (typeof isModalOpen !== "undefined" && isModalOpen) return;
+      if ((typeof isModalOpen !== "undefined" && isModalOpen) || isManualScroll) return;
 
-      // Evita saltos al llegar al final de la página
-      const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 10;
-      if (isAtBottom) return;
+      const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 15;
+      if (isAtBottom) {
+        const lastSection = sections[sections.length - 1];
+        if (lastSection) activateButton(lastSection.id);
+        return;
+      }
 
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          activateButton(entry.target.id);
-        }
-      });
+      const visibleEntries = entries.filter((e) => e.isIntersecting);
+
+      if (visibleEntries.length > 0) {
+        // Selecciona la categoría que mayor presencia porcentual tenga en el viewport actual
+        const mostVisible = visibleEntries.reduce((prev, current) =>
+          prev.intersectionRatio > current.intersectionRatio ? prev : current
+        );
+        activateButton(mostVisible.target.id);
+      }
     },
-    { rootMargin: "-20% 0px -40% 0px", threshold: 0.1 }
+    {
+      rootMargin: "-10% 0px -25% 0px",
+      threshold: [0.1, 0.3, 0.5, 0.7, 0.9]
+    }
   );
 
-  // Observar cada sección del menú
-  sections.forEach((section) => {
-    if (section) observer.observe(section);
-  });
+  sections.forEach((section) => observer.observe(section));
 
   // 6. Carrusel Swiper (Modal Dinámico)
   const modalCarrusel = document.getElementById("modalCarrusel");
@@ -302,7 +321,6 @@ document.addEventListener("DOMContentLoaded", () => {
           })
           .join("");
 
-        // Estado inicial de animación para el modal
         gsap.killTweensOf(modalCarrusel);
         gsap.set(modalCarrusel, {
           opacity: 0,
@@ -313,7 +331,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         modalCarrusel?.showModal();
 
-        // Animación de entrada
         gsap.to(modalCarrusel, {
           opacity: 1,
           scale: 1,
@@ -324,7 +341,6 @@ document.addEventListener("DOMContentLoaded", () => {
           clearProps: "transform"
         });
 
-        // Inicialización de Swiper
         swiperInstance = new Swiper(".mySwiper", {
           effect: "cards",
           grabCursor: true,
