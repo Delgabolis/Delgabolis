@@ -1,291 +1,189 @@
-:root { 
-  --ink: #f477b1; 
-  --coral: #ee5d83; 
-  --aqua: #27bcc3; 
-  --cream: #fae4ec; 
-  --sun: #ffc952; 
+/* ==========================================
+   1. VARIABLES & RESET
+   ========================================== */
+html {
+  scroll-behavior: smooth;
+}
 
-  /* Variables para el nuevo diseño de la barra de navegación */
-  --primary-pink: #ec4899;
-  --glass-bg: rgba(255, 255, 255, 0.72);
-  --glass-border: rgba(255, 255, 255, 0.6);
-  --text-muted: #64748b;
-} 
+:root {
+  --ink: #f477b1;
+  --coral: #ee5d83;
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --shadow-color: rgba(0, 0, 0, 0.1);
+}
 
-body { 
-  margin: 0; 
-  color: var(--ink); 
-  font-family: "DM Sans", sans-serif; 
-  background-image: url('fondo-helados.jpg'); 
-  background-repeat: repeat; 
-  background-size: 300px auto; 
-  background-attachment: fixed; 
-  background-color: #fca5a5; 
-} 
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-.heading-font { 
-  font-family: "Fraunces", serif; 
-} 
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: #f8fafc;
+  color: #1e293b;
+  padding-bottom: 90px; /* Espacio inferior para no tapar contenido con la barra fija */
+}
 
-/* Preloader heredando el fondo exacto del body */
+/* ==========================================
+   2. BLUR OVERLAY & PRELOADER
+   ========================================== */
+#blur-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 50;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+#blur-overlay.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 #preloader {
   position: fixed;
   inset: 0;
-  z-index: 50;
-  will-change: opacity;
-  
-  background-image: inherit !important;
-  background-repeat: inherit !important;
-  background-size: inherit !important;
-  background-attachment: inherit !important;
-  background-color: inherit !important;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
 }
 
-/* Reglas anti-parpadeo y optimización GPU */
-#logo-preload,
-#logo-target,
-#logo-clone {
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform-style: flat;
-  transform: translateZ(0);
-  image-rendering: -webkit-optimize-contrast;
+.preloader-logo {
+  width: 120px;
+  height: auto;
 }
 
-/* =========================================================
-   EFECTO GLASSMORPHISM REFINADO PARA TARJETAS DEL MENÚ
-   ========================================================= */
-.menu-section { 
-  scroll-margin-top: 80px; 
-  scroll-margin-bottom: 90px;
-  
-  /* Cristal traslúcido y desenfoque */
-  background: rgba(255, 255, 255, 0.65) !important;
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  
-  /* Borde cristalino sutil */
-  border: 1px solid rgba(255, 255, 255, 0.7) !important;
-  
-  /* Sombra suave e higiénica */
-  box-shadow: 0 12px 32px 0 rgba(31, 38, 135, 0.08), 
-              inset 0 1px 1px 0 rgba(255, 255, 255, 0.8) !important;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* Cristales suavizados para los encabezados coloridos de las secciones */
-#promociones > div:first-child { background: rgba(252, 66, 78, 0.88) !important; backdrop-filter: blur(8px); }
-#bolis > div:first-child { background: rgba(238, 93, 131, 0.88) !important; backdrop-filter: blur(8px); }
-#congelados > div:first-child { background: rgba(39, 188, 195, 0.88) !important; backdrop-filter: blur(8px); }
-#raspados > div:first-child { background: rgba(255, 201, 82, 0.9) !important; backdrop-filter: blur(8px); }
-#frappes > div:first-child { background: rgba(98, 83, 167, 0.88) !important; backdrop-filter: blur(8px); }
-#omnilife > div:first-child { background: rgba(36, 48, 71, 0.88) !important; backdrop-filter: blur(8px); }
-
-/* Adaptación Glassmorphism para la Header Principal */
-header {
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 8px 32px 0 rgba(244, 119, 177, 0.2) !important;
-}
-
-header > div:first-child {
-  background: linear-gradient(135deg, rgba(254, 194, 222, 0.75), rgba(244, 119, 177, 0.85)) !important;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-/* =========================================================
-   BARRA DE NAVEGACIÓN FLOTANTE / STICKY CON SCROLL
-   ========================================================= */
-
-/* Contenedor Principal Sticky con Glassmorphism */
+/* ==========================================
+   3. BARRA DE NAVEGACIÓN FIJA EN PARTE INFERIOR
+   ========================================== */
 .category-nav {
-  position: -webkit-sticky;
-  position: sticky;
-  top: 12px;
+  position: fixed;
+  bottom: 12px;
+  left: 0;
+  right: 0;
   z-index: 40;
-  margin: 10px 16px 24px;
+  margin: 0 16px;
   padding: 8px;
   background: var(--glass-bg);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border);
   border-radius: 50px;
-  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.08);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
   overflow: hidden;
 }
 
-/* Contenedor con Scroll Horizontal Habilitado */
-.nav-scroll {
+.nav-container {
   display: flex;
   gap: 8px;
   overflow-x: auto;
-  overflow-y: hidden;
-  scrollbar-width: none;
+  scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
-  padding: 2px 4px;
-  width: 100%;
+  scrollbar-width: none;
 }
 
-.nav-scroll::-webkit-scrollbar {
+.nav-container::-webkit-scrollbar {
   display: none;
 }
 
-/* Estilo Base de las Píldoras de Navegación */
 .nav-pill {
   flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
+  padding: 10px 18px;
+  border-radius: 30px;
   border: none;
   background: transparent;
-  color: var(--text-muted);
-  font-weight: 700;
+  color: #64748b;
+  font-weight: 600;
   font-size: 0.9rem;
-  border-radius: 30px;
   cursor: pointer;
+  transition: all 0.25s ease;
   white-space: nowrap;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Tamaño para Iconos dentro de la Píldora */
-.nav-pill i,
-.nav-pill svg {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-}
-
-/* Estado Activo de la Píldora */
 .nav-pill.is-active {
-  background: var(--primary-pink);
+  background: var(--ink);
   color: #ffffff;
-  box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+  box-shadow: 0 4px 12px rgba(244, 119, 177, 0.35);
 }
 
-/* =========================================================
-   ELEMENTOS ADICIONALES Y CARRUSEL
-   ========================================================= */
-.price-stamp { 
-  display: grid; 
-  place-items: center; 
-  width: 70px; 
-  height: 70px; 
-  border-radius: 50%; 
-  transform: rotate(5deg); 
-  border: 3px dashed currentColor; 
-  font-family: "Fraunces", serif; 
-} 
-
-/* Limpieza de fondos del carrusel Swiper */
-.swiper,
-.swiper-wrapper {
-  background: transparent !important;
-}
-
-/* Tarjetas del carrusel Swiper */
-.swiper-slide {
-  position: relative;
-  width: 280px; 
-  height: 380px; 
+/* ==========================================
+   4. MODALES (PROMOCIONES Y CARRUSEL)
+   ========================================== */
+dialog {
+  border: none;
   border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  background-color: #000000 !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Imagen estándar de producto */
-.swiper-slide img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; 
-  object-position: center; 
-  border-radius: 20px;
-  display: block;
-}
-
-/* Imagen por defecto (Placeholder/Logo) */
-.swiper-slide img.img-placeholder {
-  object-fit: contain !important;
-  width: 75% !important;
-  height: 75% !important;
-  margin: auto;
-}
-
-.swiper-txt {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
   padding: 20px;
-  z-index: 10;
-  background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
-  text-align: center;
-}
-
-.swiper-txt h3 {
-  color: #ffffff;
-  font-size: 1.5rem;
-  font-weight: 800;
-  margin: 0;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-  font-family: "Fraunces", serif;
-}
-
-/* Capa de desenfoque/blur para el fondo general */
-#blur-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 90;
-  background: rgba(0, 0, 0, 0.25);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  opacity: 0;
-  pointer-events: none;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-
-#blur-overlay.is-active {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-}
-
-/* Modales con Glassmorphism */
-dialog#modalCarrusel,
-dialog#modalPromociones {
-  position: fixed;
-  inset: 0;
+  background: #ffffff;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
   margin: auto;
   max-width: 90vw;
-  max-height: 90vh;
-  padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
-  z-index: 100;
-  overflow: hidden;
-}
-
-/* Fondo transparente para el modal del carrusel */
-dialog#modalCarrusel {
-  background: transparent !important;
-  box-shadow: none !important;
-  border: none !important;
+  width: 400px;
 }
 
 dialog::backdrop {
   background: transparent;
 }
 
-dialog#modalPromociones > *:first-child {
-  border-top-left-radius: inherit;
-  border-top-right-radius: inherit;
+.modal-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #f1f5f9;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* ==========================================
+   5. SWIPER / CARRUSEL
+   ========================================== */
+.swiper {
+  width: 100%;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.swiper-slide {
+  background-position: center;
+  background-size: cover;
+  width: 260px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.swiper-slide img {
+  display: block;
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.swiper-slide img.img-placeholder {
+  object-fit: contain;
+  padding: 20px;
+}
+
+.swiper-txt {
+  padding: 14px;
+}
+
+.swiper-txt h3 {
+  font-size: 1.1rem;
+  color: #0f172a;
 }
