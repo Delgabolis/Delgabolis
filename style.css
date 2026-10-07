@@ -23,7 +23,7 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   background-color: #f8fafc;
   color: #1e293b;
-  padding-bottom: 90px; /* Espacio inferior para no tapar contenido con la barra fija */
+  padding-bottom: 90px; /* Margen inferior para que la barra fija no tape contenido */
 }
 
 /* ==========================================
