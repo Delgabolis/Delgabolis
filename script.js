@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
     blurOverlay.addEventListener("click", cerrarConAnimacion);
   };
 
-  // 3. ANIMACIÓN GSAP DEL PRELOADER
+  // 3. ANIMACIÓN GSAP DEL PRELOADER (CORREGIDA)
   const executePreloader = () => {
     if (!preloader || !logoPreload || !logoTarget) {
       if (logoTarget) {
@@ -107,14 +107,16 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    // Asegurar visibilidad limpia para tomar dimensiones
     logoTarget.style.visibility = "hidden";
     logoTarget.style.opacity = "1";
 
     const targetRect = logoTarget.getBoundingClientRect();
     const currentRect = logoPreload.getBoundingClientRect();
 
+    // Si aún no se ha renderizado en pantalla, reintentar en el siguiente frame
     if (currentRect.width === 0 || targetRect.width === 0) {
-      setTimeout(executePreloader, 50);
+      requestAnimationFrame(executePreloader);
       return;
     }
 
@@ -157,7 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
       scaleY: scaleY,
       transformOrigin: "0% 0%",
       duration: 0.85,
-      delay: 0.6,
+      delay: 0.4,
       ease: "power2.inOut",
       force3D: true
     })
@@ -168,11 +170,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }, "-=0.2");
   };
 
-  if (document.readyState === "complete") {
+  // Disparo asegurado tras renderizado
+  requestAnimationFrame(() => {
     setTimeout(executePreloader, 100);
-  } else {
-    window.addEventListener("load", () => setTimeout(executePreloader, 100));
-  }
+  });
 
   // 4. Fondo difuminado en Navegación al hacer scroll
   const categoryNav = document.querySelector(".category-nav");
@@ -195,7 +196,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let isManualScroll = false;
   let scrollTimeout = null;
 
-  // Activa el botón correspondiente sin conflicto
   const activateButton = (targetId) => {
     navButtons.forEach((btn) => {
       const isTarget = btn.dataset.target === targetId;
@@ -211,7 +211,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  // Detección automática mediante IntersectionObserver
   const observer = new IntersectionObserver(
     (entries) => {
       if ((typeof isModalOpen !== "undefined" && isModalOpen) || isManualScroll) return;
@@ -240,7 +239,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   sections.forEach((section) => observer.observe(section));
 
-  // Clic en la pestaña: Bloquea temporalmente el Observer para evitar saltos o glitches
   navButtons.forEach((button) => {
     button.addEventListener("click", (e) => {
       e.preventDefault();
@@ -248,20 +246,15 @@ document.addEventListener("DOMContentLoaded", () => {
       const section = document.getElementById(targetId);
 
       if (section) {
-        // Bloquear observer inmediatamente
         isManualScroll = true;
         if (scrollTimeout) clearTimeout(scrollTimeout);
 
-        // Seleccionar visualmente sin esperar
         activateButton(targetId);
-
-        // Desplazar la página
         section.scrollIntoView({ behavior: "smooth", block: "start" });
 
-        // Liberar bloqueo del observer tras completar la animación
         scrollTimeout = setTimeout(() => {
           isManualScroll = false;
-        }, 850);
+        }, 700);
       }
     });
   });
@@ -395,4 +388,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
   modalCarrusel?.addEventListener("click", (e) => {
     if (
-      
+      e.target === modalCarrusel || 
+      e.target.classList.contains("swiper-wrapper") || 
+      e.target.classList.contains("mySwiper")
+    ) {
+      cerrarCarruselConAnimacion();
+    }
+  });
+
+  blurOverlay?.addEventListener("click", () => {
+    if (modalCarrusel && modalCarrusel.open) {
+      cerrarCarruselConAnimacion();
+    }
+  });
+
+  modalCarrusel?.addEventListener("close", () => {
+    activarBlurFondo(false);
+    isModalOpen = false;
+  });
+});
