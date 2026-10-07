@@ -188,17 +188,17 @@ document.addEventListener("DOMContentLoaded", () => {
     handleStickyNav();
   }
 
-  // 5. LÓGICA DE NAVEGACIÓN Y SINCRONIZACIÓN CORREGIDA
+  // 5. LÓGICA DE NAVEGACIÓN Y SINCRONIZACIÓN SIN GLITCH
   const navButtons = [...document.querySelectorAll(".nav-pill")];
   const sections = navButtons.map((btn) => document.getElementById(btn.dataset.target)).filter(Boolean);
 
-  let isManualScroll = false; // Flag para bloquear la detección automática durante el clic de un botón
+  let isManualScroll = false;
+  let scrollTimeout = null;
 
-  // Activa el botón correspondiente y lo centra visiblemente en la barra horizontal
+  // Activa el botón correspondiente sin conflicto
   const activateButton = (targetId) => {
     navButtons.forEach((btn) => {
       const isTarget = btn.dataset.target === targetId;
-      btn.classList.toggle("is-[#ee5d83]", false); // Limpieza de respaldo
       btn.classList.toggle("is-active", isTarget);
 
       if (isTarget) {
@@ -211,27 +211,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  // Desplazamiento suave al hacer clic en una pestaña de categoría
-  navButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const targetId = button.dataset.target;
-      const section = document.getElementById(targetId);
-
-      if (section) {
-        isManualScroll = true;
-        activateButton(targetId);
-
-        section.scrollIntoView({ behavior: "smooth", block: "start" });
-
-        // Se vuelve a habilitar la detección por scroll una vez terminada la animación de la pantalla
-        setTimeout(() => {
-          isManualScroll = false;
-        }, 800);
-      }
-    });
-  });
-
-  // Detección automática mediante IntersectionObserver calibrado para secciones pequeñas
+  // Detección automática mediante IntersectionObserver
   const observer = new IntersectionObserver(
     (entries) => {
       if ((typeof isModalOpen !== "undefined" && isModalOpen) || isManualScroll) return;
@@ -246,7 +226,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const visibleEntries = entries.filter((e) => e.isIntersecting);
 
       if (visibleEntries.length > 0) {
-        // Selecciona la categoría que mayor presencia porcentual tenga en el viewport actual
         const mostVisible = visibleEntries.reduce((prev, current) =>
           prev.intersectionRatio > current.intersectionRatio ? prev : current
         );
@@ -260,6 +239,32 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
   sections.forEach((section) => observer.observe(section));
+
+  // Clic en la pestaña: Bloquea temporalmente el Observer para evitar saltos o glitches
+  navButtons.forEach((button) => {
+    button.addEventListener("click", (e) => {
+      e.preventDefault();
+      const targetId = button.dataset.target;
+      const section = document.getElementById(targetId);
+
+      if (section) {
+        // Bloquear observer inmediatamente
+        isManualScroll = true;
+        if (scrollTimeout) clearTimeout(scrollTimeout);
+
+        // Seleccionar visualmente sin esperar
+        activateButton(targetId);
+
+        // Desplazar la página
+        section.scrollIntoView({ behavior: "smooth", block: "start" });
+
+        // Liberar bloqueo del observer tras completar la animación
+        scrollTimeout = setTimeout(() => {
+          isManualScroll = false;
+        }, 850);
+      }
+    });
+  });
 
   // 6. Carrusel Swiper (Modal Dinámico)
   const modalCarrusel = document.getElementById("modalCarrusel");
@@ -390,22 +395,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   modalCarrusel?.addEventListener("click", (e) => {
     if (
-      e.target === modalCarrusel || 
-      e.target.classList.contains("swiper-wrapper") || 
-      e.target.classList.contains("mySwiper")
-    ) {
-      cerrarCarruselConAnimacion();
-    }
-  });
-
-  blurOverlay?.addEventListener("click", () => {
-    if (modalCarrusel && modalCarrusel.open) {
-      cerrarCarruselConAnimacion();
-    }
-  });
-
-  modalCarrusel?.addEventListener("close", () => {
-    activarBlurFondo(false);
-    isModalOpen = false;
-  });
-});
+      
