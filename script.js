@@ -223,16 +223,21 @@ document.addEventListener("DOMContentLoaded", () => {
   let isManualScroll = false;
   let scrollTimeout = null;
 
-  const activateButton = (targetId) => {
+  const navScroll = document.querySelector(".nav-scroll");
+
+  // Actualiza el resaltado sin desplazar la página. El desplazamiento horizontal
+  // de la barra solo se solicita al hacer clic, nunca desde el observer de scroll.
+  const activateButton = (targetId, centerInNav = false) => {
     navButtons.forEach((btn) => {
       const isTarget = btn.dataset.target === targetId;
       btn.classList.toggle("is-active", isTarget);
 
-      if (isTarget) {
-        btn.scrollIntoView({
+      if (isTarget && centerInNav && navScroll) {
+        const buttonCenter = btn.offsetLeft + (btn.offsetWidth / 2);
+        const targetLeft = buttonCenter - (navScroll.clientWidth / 2);
+        navScroll.scrollTo({
+          left: Math.max(0, targetLeft),
           behavior: "smooth",
-          inline: "center",
-          block: "nearest",
         });
       }
     });
@@ -285,7 +290,7 @@ document.addEventListener("DOMContentLoaded", () => {
         isManualScroll = true;
         if (scrollTimeout) clearTimeout(scrollTimeout);
 
-        activateButton(targetId);
+        activateButton(targetId, true);
         section.scrollIntoView({ behavior: "smooth", block: "start" });
 
         // Margen aumentado para cubrir saltos de larga distancia (Frappe -> Omnilife)
