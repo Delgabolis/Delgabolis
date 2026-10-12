@@ -103,8 +103,8 @@ header > div:first-child {
   position: sticky;
   top: 12px;
   z-index: 40;
-  margin: 10px 16px 24px;
-  padding: 8px;
+  margin: 10px 12px 20px;
+  padding: 6px;
   background: var(--glass-bg);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -114,12 +114,7 @@ header > div:first-child {
   overflow: hidden;
 }
 
-/* Contenedor con Scroll Horizontal Habilitado */
-/* Estado visual cuando la navegación queda fija en pantallas grandes. */
-.category-nav.is-stuck {
-  background: rgba(255, 255, 255, 0.88);
-  box-shadow: 0 10px 34px rgba(31, 38, 135, 0.12);
-}
+/* Contenedor con scroll horizontal habilitado; sin cambios de sombra al desplazarse. */
 
 .nav-scroll {
   display: flex;
@@ -128,6 +123,9 @@ header > div:first-child {
   overflow-y: hidden;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  touch-action: auto;
+  scroll-behavior: smooth;
   padding: 2px 4px;
   width: 100%;
 }
@@ -151,8 +149,9 @@ header > div:first-child {
   border-radius: 30px;
   cursor: pointer;
   white-space: nowrap;
-  /* Evita que propiedades no relacionadas provoquen microdesplazamientos. */
-  transition: background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+  /* Solo anima el color: la sombra no cambia de tamaño durante el scroll. */
+  transition: background-color 0.18s ease, color 0.18s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Tamaño para Iconos dentro de la Píldora */
@@ -167,7 +166,36 @@ header > div:first-child {
 .nav-pill.is-active {
   background: var(--primary-pink);
   color: #ffffff;
-  box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+  box-shadow: 0 3px 10px rgba(236, 72, 153, 0.28);
+}
+
+
+/* Ajustes táctiles para celular y tablet */
+@media (max-width: 767px) {
+  .category-nav {
+    top: max(8px, env(safe-area-inset-top));
+    margin-left: 10px;
+    margin-right: 10px;
+    padding: 5px;
+  }
+
+  .nav-scroll {
+    gap: 6px;
+  }
+
+  .nav-pill {
+    min-height: 42px;
+    padding: 10px 15px;
+    font-size: 0.88rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-pill,
+  .nav-scroll {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* =========================================================

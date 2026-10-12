@@ -199,107 +199,129 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(executePreloader, 100);
   });
 
-  // 4. Fondo difuminado en Navegación al hacer scroll
-  const categoryNav = document.querySelector(".category-nav");
-  if (categoryNav) {
-    const handleStickyNav = () => {
-      if (window.innerWidth >= 768) {
-        const navTop = categoryNav.getBoundingClientRect().top;
-        categoryNav.classList.toggle("is-stuck", navTop <= 12);
-      } else {
-        categoryNav.classList.remove("is-stuck");
-      }
-    };
-
-    window.addEventListener("scroll", handleStickyNav, { passive: true });
-    window.addEventListener("resize", handleStickyNav, { passive: true });
-    handleStickyNav();
-  }
-
-  // 5. LÓGICA DE NAVEGACIÓN Y SINCRONIZACIÓN SIN GLITCH
+  // 4. Navegación de categorías optimizada para móvil/tablet.
+  // El resaltado se calcula desde la posición real de las secciones y nunca
+  // desplaza verticalmente la página. La barra solo se mueve horizontalmente
+  // cuando la categoría activa está fuera de la zona visible.
   const navButtons = [...document.querySelectorAll(".nav-pill")];
-  const sections = navButtons.map((btn) => document.getElementById(btn.dataset.target)).filter(Boolean);
+  const navScroll = document.querySelector(".nav-scroll");
+  const sections = navButtons
+    .map((btn) => document.getElementById(btn.dataset.target))
+    .filter(Boolean);
 
   let isManualScroll = false;
-  let scrollTimeout = null;
+  let manualScrollTimer = null;
+  let scrollFramePending = false;
+  let activeTargetId = null;
 
-  const navScroll = document.querySelector(".nav-scroll");
+  const revealButtonHorizontally = (button, behavior = "smooth", forceCenter = false) => {
+    if (!navScroll || !button) return;
 
-  // Actualiza el resaltado sin desplazar la página. El desplazamiento horizontal
-  // de la barra solo se solicita al hacer clic, nunca desde el observer de scroll.
-  const activateButton = (targetId, centerInNav = false) => {
-    navButtons.forEach((btn) => {
-      const isTarget = btn.dataset.target === targetId;
-      btn.classList.toggle("is-active", isTarget);
+    const navRect = navScroll.getBoundingClientRect();
+    const buttonRect = button.getBoundingClientRect();
+    const isVisible =
+      buttonRect.left >= navRect.left + 2 &&
+      buttonRect.right <= navRect.right - 2;
 
-      if (isTarget && centerInNav && navScroll) {
-        const buttonCenter = btn.offsetLeft + (btn.offsetWidth / 2);
-        const targetLeft = buttonCenter - (navScroll.clientWidth / 2);
-        navScroll.scrollTo({
-          left: Math.max(0, targetLeft),
-          behavior: "smooth",
-        });
-      }
+    // En el scroll normal solo desplaza la barra si la categoría quedó fuera
+    // de vista; al tocar una categoría se centra para confirmar la selección.
+    if (isVisible && !forceCenter) return;
+
+    const currentLeft = navScroll.scrollLeft;
+    const relativeLeft = buttonRect.left - navRect.left;
+    const targetLeft = currentLeft + relativeLeft - (navScroll.clientWidth - buttonRect.width) / 2;
+    const maxLeft = Math.max(0, navScroll.scrollWidth - navScroll.clientWidth);
+
+    navScroll.scrollTo({
+      left: Math.max(0, Math.min(maxLeft, targetLeft)),
+      behavior
     });
   };
 
-  const observer = "IntersectionObserver" in window ? new IntersectionObserver(
-    (entries) => {
-      if ((typeof isModalOpen !== "undefined" && isModalOpen) || isManualScroll) return;
-
-      const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 15;
-      if (isAtBottom) {
-        const lastSection = sections[sections.length - 1];
-        if (lastSection) activateButton(lastSection.id);
-        return;
+  const activateButton = (targetId, options = {}) => {
+    const { reveal = true, center = false } = options;
+    if (!targetId || targetId === activeTargetId) {
+      if (center && targetId) {
+        const sameButton = navButtons.find((btn) => btn.dataset.target === targetId);
+        revealButtonHorizontally(sameButton, "smooth", true);
       }
-
-      const visibleEntries = entries.filter((e) => e.isIntersecting);
-
-      if (visibleEntries.length > 0) {
-        const mostVisible = visibleEntries.reduce((prev, current) =>
-          prev.intersectionRatio > current.intersectionRatio ? prev : current
-        );
-        activateButton(mostVisible.target.id);
-      }
-    },
-    {
-      rootMargin: "-10% 0px -25% 0px",
-      threshold: [0.1, 0.3, 0.5, 0.7, 0.9]
+      return;
     }
-  ) : null;
 
-  if (observer) {
-    sections.forEach((section) => observer.observe(section));
-  } else {
-    // Alternativa sencilla para navegadores sin IntersectionObserver.
-    window.addEventListener("scroll", () => {
-      if (isModalOpen || isManualScroll) return;
-      const current = [...sections].reverse().find((section) => section.getBoundingClientRect().top <= window.innerHeight * 0.35);
-      if (current) activateButton(current.id);
-    }, { passive: true });
-  }
+    activeTargetId = targetId;
+    let activeButton = null;
+
+    navButtons.forEach((btn) => {
+      const isTarget = btn.dataset.target === targetId;
+      btn.classList.toggle("is-active", isTarget);
+      if (isTarget) activeButton = btn;
+    });
+
+    if (reveal && activeButton) {
+      revealButtonHorizontally(activeButton, "smooth", center);
+    }
+  };
+
+  const updateActiveCategory = () => {
+    scrollFramePending = false;
+    if (isModalOpen || isManualScroll || sections.length === 0) return;
+
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+    // Línea de lectura en el tercio superior: evita alternar entre dos
+    // secciones cuando ambas están visibles al mismo tiempo.
+    const activationLine = Math.min(220, Math.max(110, viewportHeight * 0.28));
+    let currentSection = sections[0];
+
+    for (const section of sections) {
+      if (section.getBoundingClientRect().top <= activationLine) {
+        currentSection = section;
+      } else {
+        break;
+      }
+    }
+
+    const atPageBottom =
+      window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 8;
+    if (atPageBottom) currentSection = sections[sections.length - 1];
+
+    activateButton(currentSection.id, { reveal: true });
+  };
+
+  const scheduleActiveCategoryUpdate = () => {
+    if (scrollFramePending) return;
+    scrollFramePending = true;
+    window.requestAnimationFrame(updateActiveCategory);
+  };
+
+  window.addEventListener("scroll", scheduleActiveCategoryUpdate, { passive: true });
+  window.addEventListener("resize", scheduleActiveCategoryUpdate, { passive: true });
 
   navButtons.forEach((button) => {
-    button.addEventListener("click", (e) => {
-      e.preventDefault();
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
       const targetId = button.dataset.target;
       const section = document.getElementById(targetId);
+      if (!section) return;
 
-      if (section) {
-        isManualScroll = true;
-        if (scrollTimeout) clearTimeout(scrollTimeout);
+      isManualScroll = true;
+      if (manualScrollTimer) clearTimeout(manualScrollTimer);
 
-        activateButton(targetId, true);
-        section.scrollIntoView({ behavior: "smooth", block: "start" });
+      activateButton(targetId, { reveal: true, center: true });
 
-        // Margen aumentado para cubrir saltos de larga distancia (Frappe -> Omnilife)
-        scrollTimeout = setTimeout(() => {
-          isManualScroll = false;
-        }, 1000);
-      }
+      // scrollIntoView se usa solo por una acción explícita del usuario.
+      section.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+
+      // Se libera tras la animación para que el seguimiento automático retome
+      // el control sin pelearse con el desplazamiento suave.
+      manualScrollTimer = setTimeout(() => {
+        isManualScroll = false;
+        scheduleActiveCategoryUpdate();
+      }, 900);
     });
   });
+
+  // Alinea el estado inicial sin forzar un movimiento de página.
+  scheduleActiveCategoryUpdate();
 
   // 6. Carrusel Swiper (Modal Dinámico)
   const modalCarrusel = document.getElementById("modalCarrusel");
