@@ -324,3 +324,177 @@ dialog#modalPromociones > *:first-child {
   border-top-left-radius: inherit;
   border-top-right-radius: inherit;
 }
+
+
+/* =========================================================
+   DELGABOLIS DELICIUS
+   BARRA DE NAVEGACIÓN INFERIOR TIPO APP
+   Optimizada para celulares y tablets
+   ========================================================= */
+
+/* Barra fija en la parte inferior de la pantalla */
+.category-nav {
+  position: fixed !important;
+
+  left: 50% !important;
+  right: auto !important;
+  top: auto !important;
+
+  bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+
+  transform: translateX(-50%);
+
+  width: calc(100% - 20px);
+  max-width: 620px;
+
+  margin: 0 !important;
+  padding: 6px;
+
+  box-sizing: border-box;
+  z-index: 1000;
+
+  background: rgba(255, 255, 255, 0.90);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 24px;
+
+  box-shadow: 0 8px 28px rgba(31, 38, 135, 0.18);
+
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Contenedor de categorías con desplazamiento horizontal */
+.nav-scroll {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  width: 100%;
+  padding: 2px 4px;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scroll-behavior: smooth;
+
+  box-sizing: border-box;
+}
+
+.nav-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Botones de categorías */
+.nav-pill {
+  flex: 0 0 auto;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  min-height: 42px;
+  padding: 10px 15px;
+
+  border: none;
+  border-radius: 18px;
+
+  background: transparent;
+  color: var(--text-muted);
+
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+
+  white-space: nowrap;
+  cursor: pointer;
+
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+
+  /* Evita saltos al cambiar la categoría activa */
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+/* Iconos */
+.nav-pill i,
+.nav-pill svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* Categoría seleccionada */
+.nav-pill.is-active {
+  background: var(--primary-pink);
+  color: #ffffff;
+
+  box-shadow: 0 3px 10px rgba(236, 72, 153, 0.28);
+}
+
+/* Evita que los últimos productos queden debajo de la barra */
+body {
+  padding-bottom: calc(115px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+/* Ajustes para celulares pequeños */
+@media (max-width: 380px) {
+  .category-nav {
+    width: calc(100% - 14px);
+    bottom: calc(7px + env(safe-area-inset-bottom, 0px)) !important;
+    padding: 4px;
+    border-radius: 20px;
+  }
+
+  .nav-scroll {
+    gap: 4px;
+    padding: 2px;
+  }
+
+  .nav-pill {
+    gap: 5px;
+    min-height: 40px;
+    padding: 9px 11px;
+    font-size: 0.82rem;
+  }
+
+  .nav-pill i,
+  .nav-pill svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Ajustes para tablets */
+@media (min-width: 600px) {
+  .category-nav {
+    width: calc(100% - 32px);
+    max-width: 620px;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .nav-pill {
+    min-height: 44px;
+    padding: 11px 17px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Respeta la preferencia de reducir animaciones del dispositivo */
+@media (prefers-reduced-motion: reduce) {
+  .nav-scroll {
+    scroll-behavior: auto;
+  }
+
+  .nav-pill {
+    transition: none;
+  }
+}
