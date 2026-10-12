@@ -1,4 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const hasGSAP = () => typeof window.gsap !== "undefined";
+  const escapeHTML = (value) => String(value).replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[char]));
   // 1. Inicializar iconos de Lucide
   if (window.lucide) {
     lucide.createIcons();
@@ -41,44 +45,57 @@ document.addEventListener("DOMContentLoaded", () => {
     isModalOpen = true;
     activarBlurFondo(true);
 
-    gsap.killTweensOf(modalPromo);
-    gsap.set(modalPromo, {
-      opacity: 0,
-      scale: 0.7,
-      y: 40
-    });
+    if (hasGSAP()) {
+      gsap.killTweensOf(modalPromo);
+      gsap.set(modalPromo, { opacity: 0, scale: 0.7, y: 40 });
+    }
 
-    modalPromo.showModal();
+    if (!modalPromo.open) modalPromo.showModal();
 
-    // Animación de entrada
-    gsap.to(modalPromo, {
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      duration: 0.75,
-      ease: "back.out(1.7)",
-      force3D: true
-    });
+    // Animación de entrada; el modal sigue funcionando si GSAP no carga.
+    if (hasGSAP()) {
+      gsap.to(modalPromo, {
+        opacity: 1, scale: 1, y: 0, duration: 0.75,
+        ease: "back.out(1.7)", force3D: true
+      });
+    }
 
     // Animación de salida al cerrar
     const cerrarConAnimacion = () => {
+      if (!modalPromo.open) {
+        activarBlurFondo(false);
+        isModalOpen = false;
+        return;
+      }
       activarBlurFondo(false);
-      gsap.to(modalPromo, {
-        opacity: 0,
-        scale: 0.8,
-        y: 20,
-        duration: 0.25,
-        ease: "power2.in",
-        onComplete: () => {
-          modalPromo.close();
-          isModalOpen = false;
-        }
-      });
+      const finalizarCierre = () => {
+        if (modalPromo.open) modalPromo.close();
+        isModalOpen = false;
+      };
+      if (hasGSAP()) {
+        gsap.killTweensOf(modalPromo);
+        gsap.to(modalPromo, {
+          opacity: 0, scale: 0.8, y: 20, duration: 0.25,
+          ease: "power2.in", onComplete: finalizarCierre
+        });
+      } else {
+        finalizarCierre();
+      }
     };
 
     btnCerrarPromo?.addEventListener("click", (e) => {
       e.preventDefault();
       cerrarConAnimacion();
+    });
+
+    // Evita que Escape cierre el diálogo sin limpiar el overlay/estado.
+    modalPromo.addEventListener("cancel", (e) => {
+      e.preventDefault();
+      cerrarConAnimacion();
+    });
+    modalPromo.addEventListener("close", () => {
+      activarBlurFondo(false);
+      isModalOpen = false;
     });
 
     modalPromo.addEventListener("click", (e) => {
@@ -93,7 +110,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    blurOverlay.addEventListener("click", cerrarConAnimacion);
+    blurOverlay.addEventListener("click", () => {
+      if (modalPromo.open) cerrarConAnimacion();
+    });
   };
 
   // 3. ANIMACIÓN GSAP DEL PRELOADER
@@ -103,6 +122,14 @@ document.addEventListener("DOMContentLoaded", () => {
         logoTarget.style.visibility = "visible";
         logoTarget.style.opacity = "1";
       }
+      iniciarPopupPromocion();
+      return;
+    }
+
+    if (!hasGSAP()) {
+      logoTarget.style.visibility = "visible";
+      logoTarget.style.opacity = "1";
+      preloader.remove();
       iniciarPopupPromocion();
       return;
     }
@@ -178,11 +205,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const handleStickyNav = () => {
       if (window.innerWidth >= 768) {
         const navTop = categoryNav.getBoundingClientRect().top;
-        categoryNav.classList.toggle("is-stuck", navTop <= 0);
+        categoryNav.classList.toggle("is-stuck", navTop <= 12);
+      } else {
+        categoryNav.classList.remove("is-stuck");
       }
     };
 
     window.addEventListener("scroll", handleStickyNav, { passive: true });
+    window.addEventListener("resize", handleStickyNav, { passive: true });
     handleStickyNav();
   }
 
@@ -208,7 +238,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  const observer = new IntersectionObserver(
+  const observer = "IntersectionObserver" in window ? new IntersectionObserver(
     (entries) => {
       if ((typeof isModalOpen !== "undefined" && isModalOpen) || isManualScroll) return;
 
@@ -232,9 +262,18 @@ document.addEventListener("DOMContentLoaded", () => {
       rootMargin: "-10% 0px -25% 0px",
       threshold: [0.1, 0.3, 0.5, 0.7, 0.9]
     }
-  );
+  ) : null;
 
-  sections.forEach((section) => observer.observe(section));
+  if (observer) {
+    sections.forEach((section) => observer.observe(section));
+  } else {
+    // Alternativa sencilla para navegadores sin IntersectionObserver.
+    window.addEventListener("scroll", () => {
+      if (isModalOpen || isManualScroll) return;
+      const current = [...sections].reverse().find((section) => section.getBoundingClientRect().top <= window.innerHeight * 0.35);
+      if (current) activateButton(current.id);
+    }, { passive: true });
+  }
 
   navButtons.forEach((button) => {
     button.addEventListener("click", (e) => {
@@ -266,19 +305,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const cerrarCarruselConAnimacion = () => {
     if (!modalCarrusel || !modalCarrusel.open) return;
 
-    gsap.killTweensOf(modalCarrusel);
-    gsap.to(modalCarrusel, {
-      opacity: 0,
-      scale: 0.85,
-      y: 20,
-      duration: 0.25,
-      ease: "power2.in",
-      onComplete: () => {
-        modalCarrusel.close();
-        activarBlurFondo(false);
-        isModalOpen = false;
-      }
-    });
+    const finalizarCierre = () => {
+      if (modalCarrusel.open) modalCarrusel.close();
+      activarBlurFondo(false);
+      isModalOpen = false;
+    };
+    if (hasGSAP()) {
+      gsap.killTweensOf(modalCarrusel);
+      gsap.to(modalCarrusel, {
+        opacity: 0, scale: 0.85, y: 20, duration: 0.25,
+        ease: "power2.in", onComplete: finalizarCierre
+      });
+    } else {
+      finalizarCierre();
+    }
   };
 
   const setupFlavorGroup = (buttonSelector) => {
@@ -287,57 +327,55 @@ document.addEventListener("DOMContentLoaded", () => {
     buttons.forEach((btn, index) => {
       btn.addEventListener("click", (e) => {
         e.preventDefault();
+        if (!modalCarrusel || !swiperWrapper) return;
         isModalOpen = true;
         activarBlurFondo(true);
 
         if (swiperInstance) {
           swiperInstance.destroy(true, true);
+          swiperInstance = null;
         }
 
         swiperWrapper.innerHTML = buttons
           .map((b) => {
             const name = b.dataset.flavorName || "Sabor";
             const hasCustomImg = b.dataset.flavorImg && b.dataset.flavorImg.trim() !== "";
-            const imgSrc = hasCustomImg ? b.dataset.flavorImg : DEFAULT_IMAGE;
+            const imgSrc = escapeHTML(hasCustomImg ? b.dataset.flavorImg : DEFAULT_IMAGE);
+            const safeName = escapeHTML(name);
             const imgClass = hasCustomImg ? "" : "img-placeholder";
 
             return `
             <div class="swiper-slide">
               <img 
                 src="${imgSrc}" 
-                alt="${name}" 
+                alt="${safeName}" 
                 class="${imgClass}" 
-                onerror="this.src='${DEFAULT_IMAGE}'; this.classList.add('img-placeholder');" 
+                onerror="if(this.dataset.fallbackApplied){this.style.visibility='hidden';}else{this.dataset.fallbackApplied='1';this.onerror=null;this.src='${DEFAULT_IMAGE}';this.classList.add('img-placeholder');this.onerror=function(){this.style.visibility='hidden';};}" 
               />
               <div class="swiper-txt">
-                <h3>${name}</h3>
+                <h3>${safeName}</h3>
               </div>
             </div>
           `;
           })
           .join("");
 
-        gsap.killTweensOf(modalCarrusel);
-        gsap.set(modalCarrusel, {
-          opacity: 0,
-          scale: 0.6,
-          y: 50,
-          rotation: -3
-        });
+        if (hasGSAP()) {
+          gsap.killTweensOf(modalCarrusel);
+          gsap.set(modalCarrusel, { opacity: 0, scale: 0.6, y: 50, rotation: -3 });
+        }
 
-        modalCarrusel?.showModal();
+        if (!modalCarrusel.open) modalCarrusel.showModal();
 
-        gsap.to(modalCarrusel, {
-          opacity: 1,
-          scale: 1,
-          y: 0,
-          rotation: 0,
-          duration: 0.55,
-          ease: "back.out(1.5)",
-          clearProps: "transform"
-        });
+        if (hasGSAP()) {
+          gsap.to(modalCarrusel, {
+            opacity: 1, scale: 1, y: 0, rotation: 0,
+            duration: 0.55, ease: "back.out(1.5)", clearProps: "transform"
+          });
+        }
 
-        swiperInstance = new Swiper(".mySwiper", {
+        if (typeof window.Swiper === "function") {
+          swiperInstance = new Swiper(".mySwiper", {
           effect: "cards",
           grabCursor: true,
           loop: true,
@@ -353,7 +391,7 @@ document.addEventListener("DOMContentLoaded", () => {
               const activeSlide = this.slides[this.activeIndex];
               if (activeSlide) {
                 const title = activeSlide.querySelector(".swiper-txt h3");
-                if (title) {
+                if (title && hasGSAP()) {
                   gsap.fromTo(
                     title,
                     { opacity: 0, y: 12 },
@@ -363,9 +401,13 @@ document.addEventListener("DOMContentLoaded", () => {
               }
             }
           }
-        });
-
-        swiperInstance.slideToLoop(index, 0);
+          });
+          swiperInstance.slideToLoop(index, 0);
+        } else {
+          // Sin Swiper, mostrar el sabor elegido y conservar el cierre del modal.
+          const slides = [...swiperWrapper.querySelectorAll(".swiper-slide")];
+          slides.forEach((slide, slideIndex) => { slide.hidden = slideIndex !== index; });
+        }
 
         if (btnCerrarCarrusel) {
           btnCerrarCarrusel.focus({ preventScroll: true });
@@ -400,8 +442,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  modalCarrusel?.addEventListener("cancel", (e) => {
+    e.preventDefault();
+    cerrarCarruselConAnimacion();
+  });
+
   modalCarrusel?.addEventListener("close", () => {
     activarBlurFondo(false);
     isModalOpen = false;
+    if (swiperInstance) {
+      swiperInstance.destroy(true, true);
+      swiperInstance = null;
+    }
   });
 });
